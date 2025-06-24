@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Completa tu Perfil - Fernando da Silva{% endblock %}
+
+{% block description %}Completa tu perfil para convertirte en miembro activo y acceder a contenido exclusivo.{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-background-light to-background-cream py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-2xl mx-auto">
+        
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <div class="mx-auto h-16 w-16 bg-primary-300 rounded-full flex items-center justify-center mb-6">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+            </div>
+            
+            <h1 class="title-main text-primary-700 mb-3">
+                Completa tu Perfil
+            </h1>
+            
+            <p class="text-intro text-neutral-600 mb-4">
+                Estás a un paso de convertirte en miembro activo de nuestra comunidad.
+            </p>
+            
+            <div class="bg-background-cream rounded-lg p-4 inline-block">
+                <p class="text-small text-primary-600">
+                    <span class="font-semibold">¡Último paso!</span> Completa estos datos para acceder a contenido exclusivo y el Programa CAMINO.
+                </p>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="bg-white rounded-lg shadow-xl border border-neutral-200">
+            <div class="px-8 py-6 border-b border-neutral-200">
+                <h2 class="title-subsection text-neutral-700">Información Personal</h2>
+                <p class="text-small text-neutral-500 mt-1">Comparte un poco sobre ti para personalizar tu experiencia</p>
+            </div>
+            
+            <form method="post" class="p-8 space-y-6">
+                {% csrf_token %}
+                
+                <!-- Name Fields Row -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- First Name -->
+                    <div>
+                        <label for="{{ form.first_name.id_for_label }}" class="label-form text-neutral-700 block mb-2">
+                            Nombre <span class="text-danger">*</span>
+                        </label>
+                        {{ form.first_name }}
+                        
+                        {% if form.first_name.errors %}
+                            <div class="mt-2">
+                                {% for error in form.first_name.errors %}
+                                    <p class="text-small text-danger">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Last Name -->
+                    <div>
+                        <label for="{{ form.last_name.id_for_label }}" class="label-form text-neutral-700 block mb-2">
+                            Apellidos <span class="text-danger">*</span>
+                        </label>
+                        {{ form.last_name }}
+                        
+                        {% if form.last_name.errors %}
+                            <div class="mt-2">
+                                {% for error in form.last_name.errors %}
+                                    <p class="text-small text-danger">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Password Fields Row -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Password -->
+                    <div>
+                        <label for="{{ form.password.id_for_label }}" class="label-form text-neutral-700 block mb-2">
+                            Contraseña <span class="text-danger">*</span>
+                        </label>
+                        {{ form.password }}
+                        
+                        {% if form.password.errors %}
+                            <div class="mt-2">
+                                {% for error in form.password.errors %}
+                                    <p class="text-small text-danger">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <p class="text-small text-neutral-500 mt-1">Mínimo 8 caracteres</p>
+                    </div>
+                    
+                    <!-- Confirm Password -->
+                    <div>
+                        <label for="{{ form.confirm_password.id_for_label }}" class="label-form text-neutral-700 block mb-2">
+                            Confirmar Contraseña <span class="text-danger">*</span>
+                        </label>
+                        {{ form.confirm_password }}
+                        
+                        {% if form.confirm_password.errors %}
+                            <div class="mt-2">
+                                {% for error in form.confirm_password.errors %}
+                                    <p class="text-small text-danger">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Bio Field -->
+                <div>
+                    <label for="{{ form.bio.id_for_label }}" class="label-form text-neutral-700 block mb-2">
+                        Una breve biografía
+                    </label>
+                    <p class="text-small text-neutral-500 mb-3">
+                        Comparte qué te trae aquí, tu momento actual, tus búsquedas o cualquier cosa que te parezca importante mencionar.
+                    </p>
+                    {{ form.bio }}
+                    
+                    {% if form.bio.errors %}
+                        <div class="mt-2">
+                            {% for error in form.bio.errors %}
+                                <p class="text-small text-danger">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Benefits Reminder -->
+                <div class="bg-primary-50 rounded-lg p-6">
+                    <h3 class="text-emphasis text-primary-700 mb-4">Como miembro tendrás acceso a:</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-primary-400 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            <span class="text-small text-primary-700">Programa CAMINO completo</span>
+                        </div>
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-primary-400 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            <span class="text-small text-primary-700">Sesiones individuales con descuento</span>
+                        </div>
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-primary-400 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            <span class="text-small text-primary-700">Masterclass exclusivas</span>
+                        </div>
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-primary-400 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            <span class="text-small text-primary-700">Comunidad privada de miembros</span>
+                        </div>
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-primary-400 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            <span class="text-small text-primary-700">Acceso a retiros presenciales</span>
+                        </div>
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 text-primary-400 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/>
+                            </svg>
+                            <span class="text-small text-primary-700">Biblioteca de recursos premium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-6">
+                    <button type="submit" 
+                            class="btn-primary w-full bg-primary-400 hover:bg-primary-500 text-white rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                        Convertirme en Miembro
+                    </button>
+                </div>
+
+                <!-- Privacy Notice -->
+                <p class="text-small text-neutral-500 text-center">
+                    Al completar tu perfil aceptas nuestros términos de uso y política de privacidad. 
+                    <br>Toda tu información está protegida y nunca será compartida con terceros.
+                </p>
+            </form>
+        </div>
+
+        <!-- Inspirational Quote -->
+        <div class="text-center mt-8">
+            <blockquote class="quote-small text-accent-blue italic">
+                "La decisión sagrada de crecer comienza cuando te animas a ser quien realmente eres."
+            </blockquote>
+            <cite class="text-small text-neutral-500 mt-2 block">— Fernando da Silva</cite>
+        </div>
+    </div>
+</div>
+{% endblock %}

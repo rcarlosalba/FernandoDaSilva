@@ -39,7 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'public.apps.PublicConfig',
+    'accounts.apps.AccountsConfig',
+    'blog.apps.BlogConfig',
+    'courses.apps.CoursesConfig',
+    'dashboard.apps.DashboardConfig',
+    'newsletter.apps.NewsletterConfig',
 ]
+
+AUTH_USER_MODEL = "accounts.User"  # Custom User Model
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
