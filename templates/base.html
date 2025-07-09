@@ -13,10 +13,16 @@
     <!-- Header/Navigation -->
     {% include "common/header.html" %}
     
+    <!-- Messages/Toasts -->
+    {% include "common/messages.html" %}
+    
     <!-- Main Content -->
     <main id="main-content" role="main">
         {% block content %}{% endblock %}
     </main>
+
+    <!-- Delete Modal -->
+    {% include "common/modal_delete.html" %}
     
     <!-- Footer -->
     {% include "common/footer.html" %}  

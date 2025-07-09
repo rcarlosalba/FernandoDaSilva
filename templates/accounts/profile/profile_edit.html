@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Editar Perfil - Fernando da Silva{% endblock %}
+
+{% block description %}Actualiza tu información personal y configuraciones de cuenta.{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-background-light to-background-cream py-8 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-3xl mx-auto">
+        
+        <!-- Header Section -->
+        <div class="mb-8">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                <div class="mb-4 sm:mb-0">
+                    <h1 class="title-main text-primary-700">Editar Perfil</h1>
+                    <p class="text-body text-neutral-600 mt-2">Actualiza tu información personal y configuraciones</p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="{% url 'accounts:profile' %}" 
+                       class="btn-secondary bg-neutral-200 text-neutral-700 rounded-lg hover:bg-neutral-300 transition-colors duration-300 text-center">
+                        ← Volver al Perfil
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="bg-white rounded-lg shadow-xl border border-neutral-200">
+            
+            <!-- Form Header -->
+            <div class="px-8 py-6 border-b border-neutral-200 bg-gradient-to-r from-primary-50 to-primary-100">
+                <div class="flex items-center">
+                    <div class="h-12 w-12 bg-primary-300 rounded-full flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="title-subsection text-primary-700">Información Personal</h2>
+                        <p class="text-small text-primary-600 mt-1">Los campos marcados con * son obligatorios</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form Body -->
+            <form method="post" enctype="multipart/form-data" class="p-8 space-y-8">
+                {% csrf_token %}
+                
+                <!-- Global Form Errors -->
+                {% if form.non_field_errors %}
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        {% for error in form.non_field_errors %}
+                            <p class="text-small text-red-600 flex items-center">
+                                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"/>
+                                </svg>
+                                {{ error }}
+                            </p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <!-- Avatar Section -->
+                <div class="bg-background-light rounded-lg p-6">
+                    <h3 class="title-subsection text-neutral-700 mb-4">Foto de Perfil</h3>
+                    
+                    <div class="flex flex-col md:flex-row md:items-center md:space-x-6">
+                        <!-- Current Avatar -->
+                        <div class="flex-shrink-0 mb-4 md:mb-0">
+                            <div class="h-24 w-24 rounded-full overflow-hidden bg-neutral-200 flex items-center justify-center">
+                                {% if form.instance.avatar %}
+                                    <img src="{{ form.instance.avatar.url }}" alt="Avatar actual" 
+                                         class="h-24 w-24 rounded-full object-cover">
+                                {% else %}
+                                    <svg class="w-12 h-12 text-neutral-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                                    </svg>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Avatar Upload -->
+                        <div class="flex-1">
+                            <label for="{{ form.avatar.id_for_label }}" class="label-form text-neutral-700 block mb-2">
+                                Nueva foto de perfil
+                            </label>
+                            {{ form.avatar }}
+                            
+                            {% if form.avatar.errors %}
+                                <div class="mt-2">
+                                    {% for error in form.avatar.errors %}
+                                        <p class="text-small text-danger">{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            
+                            <p class="text-small text-neutral-500 mt-2">
+                                Formatos permitidos: JPG, PNG. Tamaño máximo: 2MB.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Personal Information -->
+                <div class="space-y-6">
+                    <h3 class="title-subsection text-neutral-700 border-b border-neutral-200 pb-2">
+                        Datos Personales
+                    </h3>
+                    
+                    <!-- Name Fields Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- First Name -->
+                        <div>
+                            <label for="{{ form.first_name.id_for_label }}" class="label-form text-neutral-700 block mb-2">
+                                Nombre <span class="text-danger">*</span>
+                            </label>
+                            {{ form.first_name }}
+                            
+                            {% if form.first_name.errors %}
+                                <div class="mt-2">
+                                    {% for error in form.first_name.errors %}
+                                        <p class="text-small text-danger">{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Last Name -->
+                        <div>
+                            <label for="{{ form.last_name.id_for_label }}" class="label-form text-neutral-700 block mb-2">
+                                Apellidos <span class="text-danger">*</span>
+                            </label>
+                            {{ form.last_name }}
+                            
+                            {% if form.last_name.errors %}
+                                <div class="mt-2">
+                                    {% for error in form.last_name.errors %}
+                                        <p class="text-small text-danger">{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Email Display (Read-only) -->
+                    <div>
+                        <label class="label-form text-neutral-700 block mb-2">
+                            Correo Electrónico
+                        </label>
+                        <div class="w-full px-4 py-3 bg-neutral-100 border border-neutral-300 rounded-lg text-body text-neutral-600">
+                            {{ user.email }}
+                        </div>
+                        <p class="text-small text-neutral-500 mt-1">
+                            Para cambiar tu email, contacta al administrador.
+                        </p>
+                    </div>
+                    
+                    <!-- Bio Field -->
+                    <div>
+                        <label for="{{ form.bio.id_for_label }}" class="label-form text-neutral-700 block mb-2">
+                            Biografía Personal
+                        </label>
+                        <p class="text-small text-neutral-500 mb-3">
+                            Comparte un poco sobre ti, tu momento actual, tus búsquedas o cualquier cosa que consideres importante.
+                        </p>
+                        {{ form.bio }}
+                        
+                        {% if form.bio.errors %}
+                            <div class="mt-2">
+                                {% for error in form.bio.errors %}
+                                    <p class="text-small text-danger">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="flex justify-between mt-2">
+                            <p class="text-small text-neutral-500">Opcional</p>
+                            <p class="text-small text-neutral-400" id="bio-counter">0 caracteres</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Account Information -->
+                <div class="bg-neutral-50 rounded-lg p-6">
+                    <h3 class="title-subsection text-neutral-700 mb-4">Información de Cuenta</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="label-form text-neutral-600">Tipo de Cuenta</label>
+                            <p class="text-body text-neutral-800 mt-1 capitalize">{{ user.role }}</p>
+                        </div>
+                        <div>
+                            <label class="label-form text-neutral-600">Miembro desde</label>
+                            <p class="text-body text-neutral-800 mt-1">{{ user.date_joined|date:"d/m/Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center pt-6 border-t border-neutral-200 space-y-4 sm:space-y-0 sm:space-x-4">
+                    
+                    <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+                        <button type="submit" 
+                                class="btn-primary bg-primary-400 hover:bg-primary-500 text-white rounded-lg transition-colors duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                            <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            Guardar Cambios
+                        </button>
+                        
+                        <a href="{% url 'accounts:profile' %}" 
+                           class="btn-secondary bg-neutral-200 text-neutral-700 rounded-lg hover:bg-neutral-300 transition-colors duration-300 text-center">
+                            Cancelar
+                        </a>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <a href="#" 
+                           class="text-small text-primary-500 hover:text-primary-600 transition-colors duration-300">
+                            Cambiar Contraseña
+                        </a>
+                        <span class="text-neutral-300">|</span>
+                        <a href="#" 
+                            data-delete-url="{% url 'accounts:account_delete' %}"
+                            data-delete-title="Eliminar Cuenta"
+                            data-delete-message="¿Estás seguro de que deseas eliminar tu cuenta?"
+                            data-delete-confirmation="true"
+                            data-delete-confirm-word="ELIMINAR CUENTA"
+                            class="text-small text-danger hover:text-red-700 transition-colors duration-300">
+                                Eliminar Cuenta
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Help Section -->
+        <div class="mt-8 bg-white rounded-lg shadow-md border border-neutral-200 p-6">
+            <h3 class="title-subsection text-neutral-700 mb-3">¿Necesitas ayuda?</h3>
+            <p class="text-body text-neutral-600 mb-4">
+                Si tienes problemas para actualizar tu perfil o necesitas cambiar información sensible como tu email, 
+                no dudes en contactarnos.
+            </p>
+            <a href="#" 
+               class="btn-secondary bg-secondary-300 text-white rounded-lg hover:bg-secondary-400 transition-colors duration-300 inline-flex items-center">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+                Contactar Soporte
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Character counter for bio field
+document.addEventListener('DOMContentLoaded', function() {
+    const bioField = document.getElementById('{{ form.bio.id_for_label }}');
+    const counter = document.getElementById('bio-counter');
+    
+    if (bioField && counter) {
+        function updateCounter() {
+            const length = bioField.value.length;
+            counter.textContent = length + ' caracteres';
+            
+            if (length > 500) {
+                counter.classList.add('text-warning');
+            } else if (length > 750) {
+                counter.classList.add('text-danger');
+            } else {
+                counter.classList.remove('text-warning', 'text-danger');
+            }
+        }
+        
+        bioField.addEventListener('input', updateCounter);
+        updateCounter(); // Initial count
+    }
+});
+</script>
+{% endblock %}

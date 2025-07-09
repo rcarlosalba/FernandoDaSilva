@@ -1,0 +1,79 @@
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden transition-opacity duration-300 ease-in-out">
+    <div class="flex items-center justify-center min-h-screen px-4 py-6">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full transform transition-all duration-300 ease-in-out scale-95 opacity-0" id="deleteModalContent">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-neutral-200">
+                <div class="flex items-center">
+                    <div class="h-10 w-10 bg-danger rounded-full flex items-center justify-center mr-3">
+                        <i class="fas fa-exclamation-triangle text-white text-lg"></i>
+                    </div>
+                    <h3 id="deleteModalTitle" class="title-subsection text-neutral-800">
+                        Confirmar Eliminación
+                    </h3>
+                </div>
+                
+                <button type="button" id="closeDeleteModal" class="text-neutral-400 hover:text-neutral-600 transition-colors duration-300">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-6">
+                <div class="mb-4">
+                    <p id="deleteModalMessage" class="text-body text-neutral-600 mb-4">
+                        ¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.
+                    </p>
+                    
+                    <!-- Warning Box -->
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div class="flex">
+                            <i class="fas fa-exclamation-circle text-red-400 mr-3 flex-shrink-0 mt-0.5 text-lg"></i>
+                            <div>
+                                <h4 class="text-emphasis text-red-800">¡Atención!</h4>
+                                <p id="deleteModalWarning" class="text-small text-red-700 mt-1">
+                                    Esta acción es permanente y no se puede revertir.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Confirmation Input (Optional) -->
+                <div id="deleteConfirmationInput" class="mb-4 hidden">
+                    <label for="confirmationText" class="label-form text-neutral-700 block mb-2">
+                        Para confirmar, escribe "<span id="confirmationWord" class="font-semibold text-danger">ELIMINAR</span>" en el campo de abajo:
+                    </label>
+                    <input type="text" 
+                           id="confirmationText" 
+                           class="text-body w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-danger focus:border-danger transition-colors duration-300"
+                           placeholder="Escribe aquí...">
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="flex flex-col sm:flex-row sm:justify-end px-6 py-4 bg-neutral-50 border-t border-neutral-200 space-y-3 sm:space-y-0 sm:space-x-3">
+                <button type="button" 
+                        id="cancelDeleteModal" 
+                        class="btn-secondary bg-neutral-200 text-neutral-700 rounded-lg hover:bg-neutral-300 transition-colors duration-300 order-2 sm:order-1">
+                    Cancelar
+                </button>
+                
+                <button type="button" 
+                        id="confirmDeleteModal" 
+                        class="btn-primary bg-danger text-white rounded-lg hover:bg-red-600 transition-colors duration-300 order-1 sm:order-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled>
+                    <i class="fas fa-trash mr-2"></i>
+                    <span id="confirmDeleteText">Eliminar</span>
+                </button>
+            </div>
+            
+            <!-- Hidden Form for Actual Deletion -->
+            <form id="deleteForm" method="post" class="hidden">
+                {% csrf_token %}
+                <input type="hidden" name="_method" value="DELETE">
+            </form>
+        </div>
+    </div>
+</div>

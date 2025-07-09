@@ -1,0 +1,217 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">Moderación de Comentarios</h1>
+        <p class="text-gray-600">Administra y modera los comentarios del blog</p>
+    </div>
+
+    <!-- Statistics cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-clock text-yellow-500 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Pendientes</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ pending_comments }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Aprobados</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ approved_comments }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-ban text-red-500 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Spam</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ spam_comments }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments table -->
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Todos los Comentarios</h3>
+        </div>
+        
+        {% if comments %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Comentario</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Autor</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Artículo</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for comment in comments %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <div class="text-sm text-gray-900 max-w-xs">
+                                    {{ comment.content|truncatechars:100 }}
+                                </div>
+                                {% if comment.parent %}
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        <i class="fas fa-reply mr-1"></i>Respuesta a un comentario
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ comment.author.email }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <a href="{% url 'dashboard:blog_post_detail' comment.post.pk %}" class="text-sm text-primary-600 hover:text-primary-900">
+                                    {{ comment.post.title|truncatechars:30 }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {% if comment.status == 'approved' %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <i class="fas fa-check-circle mr-1"></i>Aprobado
+                                    </span>
+                                {% elif comment.status == 'pending' %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        <i class="fas fa-clock mr-1"></i>Pendiente
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        <i class="fas fa-ban mr-1"></i>Spam
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ comment.created_at|date:"d/m/Y H:i" }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-2">
+                                    {% if comment.status == 'pending' %}
+                                        <form method="post" action="{% url 'dashboard:comment_approve' comment.pk %}" class="inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="text-green-600 hover:text-green-900" title="Aprobar">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </form>
+                                        <form method="post" action="{% url 'dashboard:comment_reject' comment.pk %}" class="inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="text-red-600 hover:text-red-900" title="Marcar como spam">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                        </form>
+                                    {% elif comment.status == 'spam' %}
+                                        <form method="post" action="{% url 'dashboard:comment_approve' comment.pk %}" class="inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="text-green-600 hover:text-green-900" title="Aprobar">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </form>
+                                    {% elif comment.status == 'approved' %}
+                                        <form method="post" action="{% url 'dashboard:comment_reject' comment.pk %}" class="inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="text-red-600 hover:text-red-900" title="Marcar como spam">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                    <button type="button" 
+                                            data-delete-url="{% url 'dashboard:comment_delete' comment.pk %}"
+                                            data-delete-title="Eliminar Comentario"
+                                            data-delete-message="¿Estás seguro de que deseas eliminar el comentario de '{{ comment.author.email|escapejs }}'?"
+                                            data-delete-warning="Esta acción es permanente y no se puede revertir."
+                                            data-delete-confirmation="false"
+                                            data-delete-button-text="Eliminar Comentario"
+                                            class="text-red-600 hover:text-red-900" 
+                                            title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if comments.has_other_pages %}
+            <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                <div class="flex-1 flex justify-between sm:hidden">
+                    {% if comments.has_previous %}
+                        <a href="?page={{ comments.previous_page_number }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            Anterior
+                        </a>
+                    {% endif %}
+                    {% if comments.has_next %}
+                        <a href="?page={{ comments.next_page_number }}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            Siguiente
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Mostrando <span class="font-medium">{{ comments.start_index }}</span> a <span class="font-medium">{{ comments.end_index }}</span> de <span class="font-medium">{{ comments.paginator.count }}</span> resultados
+                        </p>
+                    </div>
+                    <div>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                            {% if comments.has_previous %}
+                                <a href="?page={{ comments.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            {% endif %}
+                            
+                            {% for num in comments.paginator.page_range %}
+                                {% if comments.number == num %}
+                                    <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-primary-50 text-sm font-medium text-primary-600">{{ num }}</span>
+                                {% elif num > comments.number|add:'-3' and num < comments.number|add:'3' %}
+                                    <a href="?page={{ num }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">{{ num }}</a>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if comments.has_next %}
+                                <a href="?page={{ comments.next_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            {% endif %}
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-12">
+                <i class="fas fa-comments text-gray-400 text-4xl mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No hay comentarios</h3>
+                <p class="text-gray-500">No se han encontrado comentarios para moderar.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Back to blog -->
+    <div class="mt-6">
+        <a href="{% url 'dashboard:blog_post_list' %}" class="inline-flex items-center text-primary-600 hover:text-primary-900">
+            <i class="fas fa-arrow-left mr-2"></i>Volver al blog
+        </a>
+    </div>
+</div>
+
+{% endblock %}

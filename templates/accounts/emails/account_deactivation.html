@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuenta desactivada - Fernando da Silva</title>
+    <style>
+        body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #6b7280;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            color: #1f2937;
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            margin: 0;
+        }
+        .header p {
+            color: #6b7280;
+            font-size: 16px;
+            margin: 5px 0 0 0;
+        }
+        .content {
+            margin-bottom: 30px;
+        }
+        .content h2 {
+            color: #1f2937;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        .content p {
+            margin-bottom: 15px;
+            color: #4b5563;
+        }
+        .info-box {
+            background-color: #fef3c7;
+            padding: 20px;
+            border-left: 4px solid #f59e0b;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Fernando da Silva</h1>
+            <p>Consultor Filosófico y Coach</p>
+        </div>
+        
+        <div class="content">
+            <h2>Tu cuenta ha sido desactivada</h2>
+            
+            <p>Estimado/a {{ recipient_email }},</p>
+            
+            <p>Hemos procesado tu solicitud de desactivación de cuenta. Lamentamos verte partir de nuestra comunidad, pero respetamos tu decisión y agradecemos el tiempo que compartiste con nosotros.</p>
+            
+            <div class="info-box">
+                <p><strong>Información importante sobre tu cuenta:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Tu cuenta ha sido desactivada, pero no eliminada permanentemente</li>
+                    <li>Si cambias de opinión, puedes contactarnos para reactivar tu cuenta</li>
+                    <li>Tus datos personales seguirán siendo tratados con la máxima confidencialidad</li>
+                    <li>Ya no recibirás comunicaciones automáticas de nuestra plataforma</li>
+                </ul>
+            </div>
+            
+            <p>El camino del crecimiento personal es único para cada persona, y entendemos que en algunos momentos necesitamos tomar diferentes direcciones. Te deseamos lo mejor en tu proceso de desarrollo personal y espiritual.</p>
+            
+            <p>Si en algún momento deseas reactivar tu cuenta o necesitas alguna información adicional, no dudes en contactarnos. Estaremos aquí para apoyarte cuando lo necesites.</p>
+            
+            <p>Te enviamos nuestros mejores deseos en tu camino de autodescubrimiento y crecimiento.</p>
+            
+            <p>Con cariño y respeto,<br>
+            <strong>Fernando da Silva</strong></p>
+        </div>
+        
+        <div class="footer">
+            <p>Este correo fue enviado a {{ recipient_email }}</p>
+            <p>{{ site_name }} - Acompañamiento filosófico para el crecimiento personal</p>
+            <p>Si necesitas reactivar tu cuenta, contáctanos directamente.</p>
+        </div>
+    </div>
+</body>
+</html>

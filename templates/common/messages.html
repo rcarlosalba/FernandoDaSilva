@@ -1,0 +1,56 @@
+{% if messages %}
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2" role="region" aria-label="Mensajes del sistema">
+        {% for message in messages %}
+            <div 
+                id="toast-{{ forloop.counter }}" 
+                class="toast-message transform translate-x-full transition-all duration-300 ease-in-out max-w-sm w-full bg-white border-l-4 shadow-lg rounded-lg overflow-hidden"
+                data-message-type="{{ message.tags }}"
+                data-message-id="{{ forloop.counter }}"
+                role="alert"
+                aria-live="polite"
+                aria-atomic="true"
+            >
+                <div class="flex items-start p-4">
+                    <!-- Icono según el tipo de mensaje -->
+                    <div class="flex-shrink-0 mr-3">
+                        {% if message.tags == 'success' %}
+                            <i class="fas fa-check-circle text-green-500 text-lg"></i>
+                        {% elif message.tags == 'error' %}
+                            <i class="fas fa-exclamation-circle text-red-500 text-lg"></i>
+                        {% elif message.tags == 'warning' %}
+                            <i class="fas fa-exclamation-triangle text-yellow-500 text-lg"></i>
+                        {% elif message.tags == 'info' %}
+                            <i class="fas fa-info-circle text-blue-500 text-lg"></i>
+                        {% else %}
+                            <i class="fas fa-info-circle text-gray-500 text-lg"></i>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Contenido del mensaje -->
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-gray-900">
+                            {{ message }}
+                        </p>
+                    </div>
+                    
+                    <!-- Botón de cerrar -->
+                    <div class="flex-shrink-0 ml-3">
+                        <button 
+                            type="button"
+                            class="toast-close-btn inline-flex text-gray-400 hover:text-gray-600 focus:outline-none focus:text-gray-600 transition-colors duration-200"
+                            aria-label="Cerrar mensaje"
+                            data-toast-id="{{ forloop.counter }}"
+                        >
+                            <i class="fas fa-times text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Barra de progreso -->
+                <div class="toast-progress h-1 bg-gray-200">
+                    <div class="toast-progress-bar h-full bg-green-500 transition-all duration-300 ease-linear" style="width: 100%"></div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

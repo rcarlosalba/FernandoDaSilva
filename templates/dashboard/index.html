@@ -1,0 +1,197 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4">
+    <!-- Page header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <p class="text-gray-600 mt-2">Resumen general del sitio</p>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Users -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Usuarios</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ user_stats.total_users }}</p>
+                </div>
+                <div class="h-12 w-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-users text-blue-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Posts -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Artículos</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ blog_stats.total_posts }}</p>
+                </div>
+                <div class="h-12 w-12 bg-green-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-file-alt text-green-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comments -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Comentarios</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ blog_stats.total_comments }}</p>
+                </div>
+                <div class="h-12 w-12 bg-purple-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-comments text-purple-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Views -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Vistas</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ blog_stats.total_views }}</p>
+                </div>
+                <div class="h-12 w-12 bg-orange-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-eye text-orange-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Overview -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="p-6 border-b border-gray-100">
+                <h2 class="text-lg font-semibold text-gray-900">Actividad Reciente</h2>
+            </div>
+            <div class="p-6">
+                {% if recent_posts %}
+                    <div class="space-y-4">
+                        {% for post in recent_posts|slice:":3" %}
+                            <div class="flex items-center space-x-3">
+                                <div class="h-8 w-8 bg-blue-50 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-file-alt text-blue-600 text-sm"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">{{ post.title }}</p>
+                                    <p class="text-xs text-gray-500">{{ post.created_at|date:"d/m/Y" }}</p>
+                                </div>
+                                <a href="{% url 'dashboard:blog_post_detail' post.pk %}" class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-chevron-right text-sm"></i>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-500 text-sm">No hay artículos recientes</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- User Stats -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="p-6 border-b border-gray-100">
+                <h2 class="text-lg font-semibold text-gray-900">Usuarios</h2>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">Activos</span>
+                        <span class="text-sm font-medium text-gray-900">{{ user_stats.active_users }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">Suscriptores</span>
+                        <span class="text-sm font-medium text-gray-900">{{ user_stats.subscribers }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">Miembros</span>
+                        <span class="text-sm font-medium text-gray-900">{{ user_stats.members }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-600">Estudiantes</span>
+                        <span class="text-sm font-medium text-gray-900">{{ user_stats.students }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blog Status -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Published Posts -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex items-center space-x-3">
+                <div class="h-10 w-10 bg-green-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-check-circle text-green-600"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Publicados</p>
+                    <p class="text-xl font-bold text-gray-900">{{ blog_stats.published_posts }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Draft Posts -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex items-center space-x-3">
+                <div class="h-10 w-10 bg-yellow-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-edit text-yellow-600"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Borradores</p>
+                    <p class="text-xl font-bold text-gray-900">{{ blog_stats.draft_posts }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Comments -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <div class="flex items-center space-x-3">
+                <div class="h-10 w-10 bg-orange-50 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-clock text-orange-600"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Pendientes</p>
+                    <p class="text-xl font-bold text-gray-900">{{ blog_stats.pending_comments }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="p-6 border-b border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-900">Acciones Rápidas</h2>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <a href="{% url 'dashboard:user_list' %}" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-users-cog text-gray-600 mr-3"></i>
+                    <span class="text-sm font-medium text-gray-700">Usuarios</span>
+                </a>
+                
+                <a href="{% url 'dashboard:blog_post_list' %}" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-blog text-gray-600 mr-3"></i>
+                    <span class="text-sm font-medium text-gray-700">Blog</span>
+                </a>
+                
+                <a href="{% url 'dashboard:comment_moderation' %}" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-comments text-gray-600 mr-3"></i>
+                    <span class="text-sm font-medium text-gray-700">Comentarios</span>
+                </a>
+                
+                <a href="{% url 'public:index' %}" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <i class="fas fa-external-link-alt text-gray-600 mr-3"></i>
+                    <span class="text-sm font-medium text-gray-700">Sitio</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

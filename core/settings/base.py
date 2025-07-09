@@ -39,7 +39,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'public.apps.PublicConfig',
+    'accounts.apps.AccountsConfig',
+    'blog.apps.BlogConfig',
+    'courses.apps.CoursesConfig',
+    'dashboard.apps.DashboardConfig',
+    'newsletter.apps.NewsletterConfig',
 ]
+
+AUTH_USER_MODEL = "accounts.User"  # Custom User Model
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -137,3 +144,8 @@ else:
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Authentication settings
+LOGIN_URL = '/accounts/iniciar-sesion/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
