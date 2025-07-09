@@ -5,6 +5,7 @@ from .views import (
     AccountDeleteView,
     CompleteProfileView,
     CustomLoginView,
+    CustomLogoutView,
     ProfileEditView,
     ProfileView,
     RegistrationDoneView,
@@ -34,7 +35,7 @@ urlpatterns = [
     path("iniciar-sesion/", CustomLoginView.as_view(), name="login"),
     path(
         "cerrar-sesion/",
-        auth_views.LogoutView.as_view(next_page="public:index"),
+        CustomLogoutView.as_view(),
         name="logout",
     ),
     # Profile Management

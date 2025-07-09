@@ -3,10 +3,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import (
     LoginView
 )
+from django.contrib import messages
 from django.core.signing import BadSignature, SignatureExpired, Signer
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, TemplateView, UpdateView
+from django.views import View
 
 from constants.constant import UserRoles
 from .forms import (
@@ -98,6 +100,15 @@ class CustomLoginView(LoginView):
     form_class = LoginForm
     template_name = 'accounts/login.html'
 
+    def form_valid(self, form):
+        """
+        Log the user in and show a success message.
+        """
+        response = super().form_valid(form)
+        messages.success(
+            self.request, f'¡Bienvenido de vuelta, {self.request.user.email}! Has iniciado sesión correctamente.')
+        return response
+
 
 class ProfileView(LoginRequiredMixin, DetailView):
     """
@@ -155,3 +166,20 @@ class AccountDeleteView(LoginRequiredMixin, DeleteView):
         send_account_deactivation_email(user.email)
         logout(self.request)
         return redirect(self.get_success_url())
+
+
+class CustomLogoutView(View):
+    """
+    Custom logout view that shows a success message.
+    """
+
+    def get(self, request):
+        """
+        Log the user out and show a success message.
+        """
+        if request.user.is_authenticated:
+            user_email = request.user.email
+            logout(request)
+            messages.success(
+                request, f'Has cerrado sesión correctamente. ¡Esperamos verte pronto!')
+        return redirect('public:index')
