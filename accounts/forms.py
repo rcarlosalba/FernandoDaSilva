@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 
+from constants.form_styles import BASE_INPUT, PASSWORD_INPUT, SEARCH_INPUT, BASE_TEXTAREA, FILE_INPUT
 from .models import Profile, User
 
 
@@ -16,7 +17,7 @@ class SubscriberRegistrationForm(forms.ModelForm):
         widgets = {
             "email": forms.EmailInput(attrs={
                 "placeholder": "tu@correo.com",
-                "class": "text-body w-full pl-10 pr-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-300 transition-colors duration-300"
+                "class": SEARCH_INPUT
             })
         }
 
@@ -32,7 +33,7 @@ class CompleteProfileForm(forms.ModelForm):
         widget=forms.PasswordInput(
             attrs={
                 "placeholder": "Crea una contraseña",
-                "class": "text-body w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-300 transition-colors duration-300"
+                "class": PASSWORD_INPUT
             }
         ),
     )
@@ -41,7 +42,7 @@ class CompleteProfileForm(forms.ModelForm):
         widget=forms.PasswordInput(
             attrs={
                 "placeholder": "Confirma tu contraseña",
-                "class": "text-body w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-300 transition-colors duration-300"
+                "class": PASSWORD_INPUT
             }
         ),
     )
@@ -52,16 +53,16 @@ class CompleteProfileForm(forms.ModelForm):
         widgets = {
             "first_name": forms.TextInput(attrs={
                 "placeholder": "Nombre",
-                "class": "text-body w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-300 transition-colors duration-300"
+                "class": BASE_INPUT
             }),
             "last_name": forms.TextInput(attrs={
                 "placeholder": "Apellidos",
-                "class": "text-body w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-300 transition-colors duration-300"
+                "class": BASE_INPUT
             }),
             "bio": forms.Textarea(attrs={
                 "placeholder": "Comparte qué te trae aquí, tu momento actual, tus búsquedas...",
                 "rows": 4,
-                "class": "text-body w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-300 transition-colors duration-300 resize-none"
+                "class": BASE_TEXTAREA + " resize-none"
             }),
         }
 
@@ -87,7 +88,7 @@ class LoginForm(AuthenticationForm):
             attrs={
                 "autofocus": True,
                 "placeholder": "email@ejemplo.com",
-                "class": "text-body w-full pl-10 pr-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-300 transition-colors duration-300"
+                "class": SEARCH_INPUT
             }
         ),
     )
@@ -98,7 +99,7 @@ class LoginForm(AuthenticationForm):
             attrs={
                 "autocomplete": "current-password",
                 "placeholder": "Tu contraseña",
-                "class": "text-body w-full pl-10 pr-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-300 transition-colors duration-300"
+                "class": SEARCH_INPUT
             }
         ),
     )
@@ -115,19 +116,19 @@ class ProfileEditForm(forms.ModelForm):
         widgets = {
             "first_name": forms.TextInput(attrs={
                 "placeholder": "Nombre",
-                "class": "text-body w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-300 transition-colors duration-300"
+                "class": BASE_INPUT
             }),
             "last_name": forms.TextInput(attrs={
                 "placeholder": "Apellidos",
-                "class": "text-body w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-300 transition-colors duration-300"
+                "class": BASE_INPUT
             }),
             "bio": forms.Textarea(attrs={
                 "placeholder": "Comparte un poco sobre ti, tu momento actual, tus búsquedas...",
                 "rows": 5,
-                "class": "text-body w-full px-4 py-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-300 transition-colors duration-300 resize-none"
+                "class": BASE_TEXTAREA + " resize-none"
             }),
             "avatar": forms.FileInput(attrs={
-                "class": "text-body w-full px-3 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-300 focus:border-primary-300 transition-colors duration-300 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-primary-100 file:text-primary-700 hover:file:bg-primary-200",
+                "class": FILE_INPUT,
                 "accept": "image/jpeg,image/jpg,image/png"
             }),
         }
