@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido como miembro - Fernando da Silva</title>
+    <style>
+        body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #6b7280;
+            padding-bottom: 20px;
+        }
+        .header h1 {
+            color: #1f2937;
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            margin: 0;
+        }
+        .header p {
+            color: #6b7280;
+            font-size: 16px;
+            margin: 5px 0 0 0;
+        }
+        .content {
+            margin-bottom: 30px;
+        }
+        .content h2 {
+            color: #1f2937;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        .content p {
+            margin-bottom: 15px;
+            color: #4b5563;
+        }
+        .highlight-box {
+            background-color: #f3f4f6;
+            padding: 20px;
+            border-left: 4px solid #1f2937;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Fernando da Silva</h1>
+            <p>Consultor Filosófico y Coach</p>
+        </div>
+        
+        <div class="content">
+            <h2>¡Felicitaciones por convertirte en miembro!</h2>
+            
+            <p>Estimado/a {{ recipient_email }},</p>
+            
+            <p>¡Qué alegría tenerte oficialmente como miembro de nuestra comunidad! Has completado exitosamente tu registro y ahora formas parte de un grupo de personas comprometidas con el crecimiento personal y la búsqueda de sentido.</p>
+            
+            <div class="highlight-box">
+                <p><strong>Como miembro, ahora tienes acceso a:</strong></p>
+                <ul style="margin-left: 20px;">
+                    <li>Contenido exclusivo sobre consultoría filosófica</li>
+                    <li>Talleres y sesiones grupales</li>
+                    <li>Recursos descargables y herramientas de autoconocimiento</li>
+                    <li>Comunidad privada para compartir experiencias</li>
+                    <li>Descuentos especiales en sesiones individuales</li>
+                </ul>
+            </div>
+            
+            <p>Te invitamos a explorar todo lo que tenemos preparado para ti. Recuerda que este es un espacio seguro donde puedes compartir tus reflexiones, dudas y descubrimientos sin juicio alguno.</p>
+            
+            <p>El camino del autoconocimiento y la búsqueda de sentido es un proceso continuo, y estamos aquí para acompañarte en cada paso. No dudes en participar activamente en nuestras actividades y en conectar con otros miembros que, como tú, están en este hermoso proceso de crecimiento.</p>
+            
+            <p>¡Bienvenido/a a esta nueva etapa de tu desarrollo personal!</p>
+            
+            <p>Con gratitud y entusiasmo,<br>
+            <strong>Fernando da Silva</strong></p>
+        </div>
+        
+        <div class="footer">
+            <p>Este correo fue enviado a {{ recipient_email }}</p>
+            <p>{{ site_name }} - Acompañamiento filosófico para el crecimiento personal</p>
+        </div>
+    </div>
+</body>
+</html>

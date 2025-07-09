@@ -7,9 +7,7 @@
             <div class="flex items-center justify-between p-6 border-b border-neutral-200">
                 <div class="flex items-center">
                     <div class="h-10 w-10 bg-danger rounded-full flex items-center justify-center mr-3">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L4.316 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-                        </svg>
+                        <i class="fas fa-exclamation-triangle text-white text-lg"></i>
                     </div>
                     <h3 id="deleteModalTitle" class="title-subsection text-neutral-800">
                         Confirmar Eliminación
@@ -17,9 +15,7 @@
                 </div>
                 
                 <button type="button" id="closeDeleteModal" class="text-neutral-400 hover:text-neutral-600 transition-colors duration-300">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
+                    <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
             
@@ -33,9 +29,7 @@
                     <!-- Warning Box -->
                     <div class="bg-red-50 border border-red-200 rounded-lg p-4">
                         <div class="flex">
-                            <svg class="w-5 h-5 text-red-400 mr-3 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"/>
-                            </svg>
+                            <i class="fas fa-exclamation-circle text-red-400 mr-3 flex-shrink-0 mt-0.5 text-lg"></i>
                             <div>
                                 <h4 class="text-emphasis text-red-800">¡Atención!</h4>
                                 <p id="deleteModalWarning" class="text-small text-red-700 mt-1">
@@ -70,9 +64,7 @@
                         id="confirmDeleteModal" 
                         class="btn-primary bg-danger text-white rounded-lg hover:bg-red-600 transition-colors duration-300 order-1 sm:order-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled>
-                    <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                    </svg>
+                    <i class="fas fa-trash mr-2"></i>
                     <span id="confirmDeleteText">Eliminar</span>
                 </button>
             </div>

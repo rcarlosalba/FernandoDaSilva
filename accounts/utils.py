@@ -27,22 +27,22 @@ def send_email_notification(email_type, recipient_email, context=None, request=N
     email_configs = {
         'welcome_subscriber': {
             'subject': 'Bienvenido a Fernando da Silva - Completa tu perfil',
-            'template': 'emails/welcome_subscriber.html',
+            'template': 'accounts/emails/welcome_subscriber.html',
             'requires_signed_url': True,
         },
         'welcome_member': {
             'subject': 'Bienvenido como miembro - Fernando da Silva',
-            'template': 'emails/welcome_member.html',
+            'template': 'accounts/emails/welcome_member.html',
             'requires_signed_url': False,
         },
         'account_deactivation': {
             'subject': 'Cuenta desactivada - Fernando da Silva',
-            'template': 'emails/account_deactivation.html',
+            'template': 'accounts/emails/account_deactivation.html',
             'requires_signed_url': False,
         },
         'password_reset': {
             'subject': 'Recuperación de contraseña - Fernando da Silva',
-            'template': 'emails/password_reset.html',
+            'template': 'accounts/emails/password_reset.html',
             'requires_signed_url': True,
         }
     }
