@@ -7,14 +7,17 @@ from constants.form_styles import (
     BASE_SELECT,
     BASE_TEXTAREA,
     FORM_GROUP,
+    FILE_INPUT,
+    MULTIPLE_SELECT,
 )
+from blog.models import Post, Category, Tag
 
 User = get_user_model()
 
 
 class UserEditForm(forms.ModelForm):
     """Form for editing user information by managers."""
-    
+
     class Meta:
         model = User
         fields = ['email', 'role', 'is_active']
@@ -32,13 +35,14 @@ class UserEditForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Exclude manager role from choices for security
-        role_choices = [(k, v) for k, v in UserRoles.get_choices() if k != UserRoles.MANAGER]
+        role_choices = [(k, v) for k, v in UserRoles.get_choices()
+                        if k != UserRoles.MANAGER]
         self.fields['role'].choices = role_choices
 
 
 class ProfileEditForm(forms.ModelForm):
     """Form for editing user profile information by managers."""
-    
+
     class Meta:
         model = User.profile.related.related_model
         fields = ['first_name', 'last_name', 'bio']
@@ -56,16 +60,16 @@ class ProfileEditForm(forms.ModelForm):
 
 class UserFilterForm(forms.Form):
     """Form for filtering users by role."""
-    
+
     ROLE_CHOICES = [('', 'Todos los roles')] + list(UserRoles.get_choices())
-    
+
     role = forms.ChoiceField(
         choices=ROLE_CHOICES,
         required=False,
         widget=forms.Select(attrs={'class': BASE_SELECT}),
         label='Filtrar por rol'
     )
-    
+
     search = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
@@ -74,3 +78,51 @@ class UserFilterForm(forms.Form):
         }),
         label='Buscar'
     )
+
+
+class BlogPostForm(forms.ModelForm):
+    """Formulario personalizado para posts del blog con estilos uniformes."""
+
+    class Meta:
+        model = Post
+        fields = ['title', 'slug', 'introduction', 'body', 'featured_image',
+                  'status', 'category', 'tags', 'meta_title', 'meta_description']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': BASE_INPUT}),
+            'slug': forms.TextInput(attrs={'class': BASE_INPUT}),
+            'introduction': forms.Textarea(attrs={'class': BASE_TEXTAREA, 'rows': 3}),
+            # Hidden for Quill editor
+            'body': forms.Textarea(attrs={'class': 'hidden'}),
+            'featured_image': forms.FileInput(attrs={'class': FILE_INPUT}),
+            'status': forms.Select(attrs={'class': BASE_SELECT}),
+            'category': forms.Select(attrs={'class': BASE_SELECT}),
+            'tags': forms.SelectMultiple(attrs={'class': MULTIPLE_SELECT}),
+            'meta_title': forms.TextInput(attrs={'class': BASE_INPUT}),
+            'meta_description': forms.Textarea(attrs={'class': BASE_TEXTAREA, 'rows': 3}),
+        }
+
+
+class CategoryForm(forms.ModelForm):
+    """Formulario personalizado para categorías con estilos uniformes."""
+
+    class Meta:
+        model = Category
+        fields = ['name', 'slug', 'description']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': BASE_INPUT}),
+            'slug': forms.TextInput(attrs={'class': BASE_INPUT}),
+            'description': forms.Textarea(attrs={'class': BASE_TEXTAREA, 'rows': 3}),
+        }
+
+
+class TagForm(forms.ModelForm):
+    """Formulario personalizado para etiquetas con estilos uniformes."""
+
+    class Meta:
+        model = Tag
+        fields = ['name', 'slug', 'description']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': BASE_INPUT}),
+            'slug': forms.TextInput(attrs={'class': BASE_INPUT}),
+            'description': forms.Textarea(attrs={'class': BASE_TEXTAREA, 'rows': 3}),
+        }

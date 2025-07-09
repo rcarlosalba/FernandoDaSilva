@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ post.get_meta_title }}{% endblock %}
+
+{% block description %}{{ post.get_meta_description }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Article Header -->
+    <article class="max-w-4xl mx-auto">
+        <header class="mb-8">
+            <div class="flex items-center text-sm text-neutral-500 mb-4">
+                <a href="{% url 'blog:category_detail' post.category.slug %}" class="text-accent-blue hover:underline">
+                    {{ post.category.name }}
+                </a>
+                <span class="mx-2">•</span>
+                <span>{{ post.created_at|date:"d M Y" }}</span>
+                <span class="mx-2">•</span>
+                <span>{{ post.reading_time }} min lectura</span>
+                <span class="mx-2">•</span>
+                <span>{{ post.view_count }} vistas</span>
+            </div>
+            
+            <h1 class="text-4xl font-bold text-neutral-800 mb-4">{{ post.title }}</h1>
+            
+            <p class="text-xl text-neutral-600 mb-6">{{ post.introduction }}</p>
+            
+            {% if post.featured_image %}
+            <div class="mb-8">
+                <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full rounded-lg shadow-lg">
+            </div>
+            {% endif %}
+            
+            <div class="flex items-center gap-4 mb-8">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-user text-neutral-400"></i>
+                    <span class="text-neutral-600">Por {{ post.author.profile.full_name|default:post.author.email }}</span>
+                </div>
+                <div class="flex gap-2">
+                    {% for tag in post.tags.all %}
+                    <a href="{% url 'blog:tag_detail' tag.slug %}" class="text-sm bg-neutral-100 text-neutral-600 px-3 py-1 rounded-full hover:bg-neutral-200 transition-colors">
+                        #{{ tag.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </header>
+
+        <!-- Article Content -->
+        <div class="prose prose-lg max-w-none mb-12">
+            {{ post.body|safe }}
+        </div>
+
+        <!-- Share buttons -->
+        <div class="border-t border-neutral-200 pt-8 mb-12">
+            <h3 class="text-lg font-semibold mb-4">Compartir artículo</h3>
+            <div class="flex gap-4">
+                <a href="https://twitter.com/intent/tweet?text={{ post.title|urlencode }}&url={{ request.build_absolute_uri }}" 
+                   class="flex items-center gap-2 px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-colors"
+                   target="_blank">
+                    <i class="fab fa-twitter"></i>
+                    Twitter
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                   class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                   target="_blank">
+                    <i class="fab fa-facebook-f"></i>
+                    Facebook
+                </a>
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}" 
+                   class="flex items-center gap-2 px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors"
+                   target="_blank">
+                    <i class="fab fa-linkedin-in"></i>
+                    LinkedIn
+                </a>
+            </div>
+        </div>
+    </article>
+
+    <!-- Comments Section -->
+    <div class="max-w-4xl mx-auto">
+        <div class="border-t border-neutral-200 pt-8">
+            <h3 class="text-2xl font-bold mb-6">Comentarios ({{ comments.count }})</h3>
+            
+            {% if can_comment %}
+            <!-- Comment Form -->
+            <div class="bg-neutral-50 rounded-lg p-6 mb-8">
+                <h4 class="text-lg font-semibold mb-4">Deja tu comentario</h4>
+                <form method="post" action="{% url 'blog:add_comment' post.slug %}">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <textarea 
+                            name="content" 
+                            rows="4" 
+                            placeholder="Escribe tu comentario aquí..."
+                            class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                            required
+                        ></textarea>
+                    </div>
+                    <button type="submit" class="bg-accent-blue text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        Publicar comentario
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <div class="bg-neutral-50 rounded-lg p-6 mb-8 text-center">
+                <p class="text-neutral-600 mb-4">
+                    {% if user.is_authenticated %}
+                    Solo los miembros pueden comentar en los artículos.
+                    {% else %}
+                    <a href="{% url 'accounts:login' %}" class="text-accent-blue hover:underline">Inicia sesión</a> como miembro para comentar en este artículo.
+                    {% endif %}
+                </p>
+            </div>
+            {% endif %}
+
+            <!-- Comments List -->
+            {% for comment in comments %}
+            <div class="mb-6 p-6 bg-white rounded-lg shadow-sm border border-neutral-200">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-10 h-10 bg-accent-blue rounded-full flex items-center justify-center text-white font-semibold">
+                        {{ comment.author.profile.full_name|default:comment.author.email|first|upper }}
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-neutral-800">{{ comment.author.profile.full_name|default:comment.author.email }}</h5>
+                        <span class="text-sm text-neutral-500">{{ comment.created_at|date:"d M Y, H:i" }}</span>
+                    </div>
+                </div>
+                
+                <div class="text-neutral-700 mb-4">
+                    {{ comment.content|linebreaks }}
+                </div>
+                
+                {% if can_comment %}
+                <button class="text-sm text-accent-blue hover:underline reply-btn" data-comment-id="{{ comment.id }}">
+                    Responder
+                </button>
+                {% endif %}
+                
+                <!-- Reply Form (hidden by default) -->
+                {% if can_comment %}
+                <div class="reply-form mt-4 hidden" id="reply-form-{{ comment.id }}">
+                    <form method="post" action="{% url 'blog:add_comment' post.slug %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                        <div class="mb-4">
+                            <textarea 
+                                name="content" 
+                                rows="3" 
+                                placeholder="Escribe tu respuesta..."
+                                class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                                required
+                            ></textarea>
+                        </div>
+                        <div class="flex gap-2">
+                            <button type="submit" class="bg-accent-blue text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                Responder
+                            </button>
+                            <button type="button" class="bg-neutral-200 text-neutral-700 px-4 py-2 rounded-lg hover:bg-neutral-300 transition-colors cancel-reply">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+                
+                <!-- Replies -->
+                {% for reply in comment.get_approved_replies %}
+                <div class="ml-8 mt-4 p-4 bg-neutral-50 rounded-lg">
+                    <div class="flex items-center gap-4 mb-2">
+                        <div class="w-8 h-8 bg-neutral-400 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                            {{ reply.author.profile.full_name|default:reply.author.email|first|upper }}
+                        </div>
+                        <div>
+                            <h6 class="font-semibold text-neutral-800">{{ reply.author.profile.full_name|default:reply.author.email }}</h6>
+                            <span class="text-sm text-neutral-500">{{ reply.created_at|date:"d M Y, H:i" }}</span>
+                        </div>
+                    </div>
+                    <div class="text-neutral-700">
+                        {{ reply.content|linebreaks }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% empty %}
+            <div class="text-center py-8">
+                <i class="fas fa-comments text-4xl text-neutral-300 mb-4"></i>
+                <p class="text-neutral-500">Aún no hay comentarios en este artículo.</p>
+                {% if can_comment %}
+                <p class="text-neutral-500">¡Sé el primero en comentar!</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Related Posts -->
+    {% if related_posts %}
+    <div class="max-w-4xl mx-auto mt-16">
+        <div class="border-t border-neutral-200 pt-8">
+            <h3 class="text-2xl font-bold mb-6">Artículos relacionados</h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                {% for related_post in related_posts %}
+                <article class="bg-white rounded-lg shadow-sm border border-neutral-200 overflow-hidden hover:shadow-md transition-shadow">
+                    {% if related_post.featured_image %}
+                    <div class="h-32 overflow-hidden">
+                        <img src="{{ related_post.featured_image.url }}" alt="{{ related_post.title }}" class="w-full h-full object-cover">
+                    </div>
+                    {% endif %}
+                    <div class="p-4">
+                        <h4 class="font-semibold text-neutral-800 mb-2">
+                            <a href="{{ related_post.get_absolute_url }}" class="hover:text-accent-blue transition-colors">
+                                {{ related_post.title }}
+                            </a>
+                        </h4>
+                        <p class="text-sm text-neutral-600 mb-2">{{ related_post.introduction|truncatewords:15 }}</p>
+                        <div class="text-xs text-neutral-500">
+                            {{ related_post.created_at|date:"d M Y" }} • {{ related_post.reading_time }} min
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Reply functionality
+    const replyBtns = document.querySelectorAll('.reply-btn');
+    const cancelBtns = document.querySelectorAll('.cancel-reply');
+    
+    replyBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const commentId = this.getAttribute('data-comment-id');
+            const replyForm = document.getElementById('reply-form-' + commentId);
+            replyForm.classList.remove('hidden');
+            this.style.display = 'none';
+        });
+    });
+    
+    cancelBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const replyForm = this.closest('.reply-form');
+            const commentId = replyForm.id.replace('reply-form-', '');
+            const replyBtn = document.querySelector(`[data-comment-id="${commentId}"]`);
+            
+            replyForm.classList.add('hidden');
+            replyBtn.style.display = 'inline-block';
+        });
+    });
+});
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Add proper Open Graph meta tags
+document.addEventListener('DOMContentLoaded', function() {
+    const head = document.head;
+    
+    // Open Graph meta tags
+    const ogMetas = [
+        { property: 'og:title', content: '{{ post.get_meta_title }}' },
+        { property: 'og:description', content: '{{ post.get_meta_description }}' },
+        { property: 'og:type', content: 'article' },
+        { property: 'og:url', content: '{{ request.build_absolute_uri }}' },
+        {% if post.featured_image %}
+        { property: 'og:image', content: '{{ post.featured_image.url }}' },
+        {% endif %}
+        { property: 'article:author', content: '{{ post.author.profile.full_name|default:post.author.email }}' },
+        { property: 'article:published_time', content: '{{ post.created_at|date:"c" }}' },
+        { property: 'article:modified_time', content: '{{ post.updated_at|date:"c" }}' },
+        { property: 'article:section', content: '{{ post.category.name }}' }
+    ];
+    
+    ogMetas.forEach(meta => {
+        const metaTag = document.createElement('meta');
+        metaTag.setAttribute('property', meta.property);
+        metaTag.setAttribute('content', meta.content);
+        head.appendChild(metaTag);
+    });
+    
+    // Twitter Card meta tags
+    const twitterMetas = [
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:title', content: '{{ post.get_meta_title }}' },
+        { name: 'twitter:description', content: '{{ post.get_meta_description }}' },
+        {% if post.featured_image %}
+        { name: 'twitter:image', content: '{{ post.featured_image.url }}' },
+        {% endif %}
+    ];
+    
+    twitterMetas.forEach(meta => {
+        const metaTag = document.createElement('meta');
+        metaTag.setAttribute('name', meta.name);
+        metaTag.setAttribute('content', meta.content);
+        head.appendChild(metaTag);
+    });
+});
+</script>
+{% endblock %}

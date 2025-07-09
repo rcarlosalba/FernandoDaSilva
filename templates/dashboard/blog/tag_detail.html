@@ -1,0 +1,145 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Detalles de la Etiqueta</h1>
+            <p class="text-gray-600">Información completa de la etiqueta</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'dashboard:tag_update' tag.pk %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                <i class="fas fa-edit mr-2"></i>Editar
+            </a>
+            <button type="button" 
+                    data-delete-url="{% url 'dashboard:tag_delete' tag.pk %}"
+                    data-delete-title="Eliminar Etiqueta"
+                    data-delete-message="¿Estás seguro de que deseas eliminar la etiqueta '{{ tag.name|escapejs }}'?"
+                    data-delete-warning="Esta acción es permanente y no se puede revertir."
+                    data-delete-confirmation="false"
+                    data-delete-button-text="Eliminar Etiqueta"
+                    class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                <i class="fas fa-trash mr-2"></i>Eliminar
+            </button>
+        </div>
+    </div>
+
+    <!-- Tag details -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main content -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 mr-3">
+                                #{{ tag.name }}
+                            </span>
+                            <h2 class="text-xl font-bold text-gray-900">{{ tag.name }}</h2>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            {{ tag.post_count }} artículo{{ tag.post_count|pluralize }}
+                        </span>
+                    </div>
+                    
+                    {% if tag.description %}
+                        <div class="prose max-w-none">
+                            <p class="text-gray-700">{{ tag.description }}</p>
+                        </div>
+                    {% else %}
+                        <p class="text-gray-500 italic">Sin descripción</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Recent posts with this tag -->
+            {% if posts %}
+                <div class="bg-white rounded-lg shadow-sm p-6 mt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Artículos Recientes</h3>
+                    <div class="space-y-4">
+                        {% for post in posts %}
+                            <div class="border-l-4 border-green-200 pl-4 py-2">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h4 class="text-sm font-medium text-gray-900">
+                                            <a href="{% url 'dashboard:blog_post_detail' post.pk %}" class="hover:text-primary-600">
+                                                {{ post.title }}
+                                            </a>
+                                        </h4>
+                                        <p class="text-xs text-gray-500">{{ post.author.email }} • {{ post.created_at|date:"d/m/Y" }}</p>
+                                    </div>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                                        {% if post.status == 'published' %}bg-green-100 text-green-800
+                                        {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                        {% if post.status == 'published' %}Publicado{% else %}Borrador{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if tag.post_count > 10 %}
+                        <div class="mt-4 text-center">
+                            <a href="{% url 'dashboard:blog_post_list' %}?tag={{ tag.pk }}" class="text-primary-600 hover:text-primary-900 text-sm">
+                                Ver todos los artículos con esta etiqueta
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Basic info -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Información Básica</h3>
+                <dl class="space-y-3">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Nombre</dt>
+                        <dd class="text-sm text-gray-900">{{ tag.name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Slug</dt>
+                        <dd class="text-sm text-gray-900">{{ tag.slug }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Total de artículos</dt>
+                        <dd class="text-sm text-gray-900">{{ tag.post_count }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Fecha de creación</dt>
+                        <dd class="text-sm text-gray-900">{{ tag.created_at|date:"d/m/Y H:i" }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Última actualización</dt>
+                        <dd class="text-sm text-gray-900">{{ tag.updated_at|date:"d/m/Y H:i" }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <!-- Statistics -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Estadísticas</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-500">Artículos publicados</span>
+                        <span class="text-sm font-medium text-gray-900">{{ published_posts_count }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-500">Borradores</span>
+                        <span class="text-sm font-medium text-gray-900">{{ draft_posts_count }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to list -->
+    <div class="mt-6">
+        <a href="{% url 'dashboard:tag_list' %}" class="inline-flex items-center text-primary-600 hover:text-primary-900">
+            <i class="fas fa-arrow-left mr-2"></i>Volver a la lista
+        </a>
+    </div>
+</div>
+{% endblock %} 
