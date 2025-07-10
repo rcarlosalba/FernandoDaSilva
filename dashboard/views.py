@@ -7,8 +7,7 @@ from django.views import View
 from django.urls import reverse_lazy
 from django.http import JsonResponse
 
-from constants.constant import UserRoles
-from .decorators import manager_required_class
+from constants.constant import UserRoles, manager_required_class
 from .forms import UserEditForm, ProfileEditForm, UserFilterForm, BlogPostForm, CategoryForm, TagForm
 from blog.models import Post, Category, Tag, Comment
 
