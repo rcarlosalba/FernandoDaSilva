@@ -4,7 +4,7 @@
         <div class="flex items-center justify-between">
             <!-- Logo/Brand -->
             <div class="flex items-center">
-                <a href="#" class="title-section warm-title hover:text-primary-400 transition-colors duration-300">
+                <a href="{% url "public:index" %}" class="title-section warm-title hover:text-primary-400 transition-colors duration-300">
                     Fernando Da Silva
                 </a>
             </div>
@@ -17,7 +17,7 @@
             
             <!-- Desktop Navigation -->
             <div class="hidden md:flex items-center space-x-8">
-                <a href="#" class="nav-link hover:text-primary-300 transition-colors duration-300">Inicio</a>
+                <a href="{% url "public:index" %}" class="nav-link hover:text-primary-300 transition-colors duration-300">Inicio</a>
                 <a href="{% url 'public:about' %}" class="nav-link hover:text-primary-300 transition-colors duration-300">Sobre Mí</a>
                 <a href="{% url 'public:services' %}" class="nav-link hover:text-primary-300 transition-colors duration-300">Servicios</a>
                 <a href="{% url "blog:post_list" %}" class="nav-link hover:text-primary-300 transition-colors duration-300">Recursos</a>
@@ -58,7 +58,7 @@
             
             <!-- Navigation Links -->
             <nav class="mt-12 flex flex-col space-y-6">
-                <a href="#" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Inicio</a>
+                <a href="{% url "public:index" %}" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Inicio</a>
                 <a href="{% url 'public:about' %}" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Sobre Mí</a>
                 <a href="{% url 'public:services' %}" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Servicios</a>
                 <a href="{% url "blog:post_list" %}" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Recursos</a>

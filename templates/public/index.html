@@ -1,7 +1,424 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Fernando Da Silva - Consultor Filosófico y Coach{% endblock %}
+{% block title %}Fernando da Silva - Consultor Filosófico y Coach{% endblock %}
+
+{% block description %}Acompañamiento filosófico para quienes atraviesan crisis, búsquedas existenciales y despertar interior. Programa CAMINO y sesiones individuales.{% endblock %}
 
 {% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-background-light via-background-cream to-primary-50 py-20 lg:py-32">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+            <!-- Content -->
+            <div class="order-2 lg:order-1 col-span-2">
+                <h1 class="title-hero warm-title mb-6">
+                    No vine a enseñarte ideas, vine a despertar tu alma
+                </h1>
+                <p class="text-intro text-neutral-700 mb-8">
+                    Si llegaste hasta acá, algo profundo en vos está pidiendo atención. 
+                    No te ofrezco recetas. Te acompaño en el camino de vuelta a vos mismo.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                    <a href="https://calendly.com/proffernandodasilva/30min" 
+                       class="btn-primary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300 text-center">
+                        Agenda tu consulta gratuita
+                    </a>
+                    <a href="#servicios" 
+                       class="btn-secondary border border-primary-300 text-primary-600 rounded-lg hover:bg-primary-50 transition-colors duration-300 text-center">
+                        Conocé el Programa CAMINO
+                    </a>
+                </div>
+                <p class="text-small text-neutral-500">
+                    ✓ Primera consulta sin costo • ✓ Confidencial • ✓ Sin compromiso
+                </p>
+            </div>
+            
+            <!-- Image -->
+            <div class="order-1 lg:order-2 col-span-1">
+                <div class="relative">
+                    <div class="bg-gradient-to-br from-white to-primary-100 rounded-2xl p-8 shadow-xl">
+                        <!-- Placeholder para imagen de Fernando -->
+                        <div class="aspect-[4/5] bg-primary-200 rounded-xl flex items-center justify-center">
+                            <p class="text-primary-600 text-center">
+                                <img src="{% static 'images/fernandoDaSilvaRe.jpeg' %}" alt="Fernando Da Silva" class="w-full h-full object-cover">
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Decorative elements -->
+                    <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-secondary-200 rounded-full opacity-40"></div>
+                    <div class="absolute -top-4 -left-4 w-16 h-16 bg-accent-blue/20 rounded-full opacity-60"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Introducción - Esencia de la filosofía -->
+<section class="py-16 lg:py-20 bg-background-cream">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="title-section mb-8 warm-title">
+                Una vida vivida desde el alma
+            </h2>
+            <blockquote class="quote-main text-primary-700 mb-8">
+                "Creo en una vida vivida desde el alma, con coraje, conciencia y propósito."
+            </blockquote>
+            <p class="text-body text-neutral-700 mb-12 max-w-3xl mx-auto">
+                Mi enfoque une la sabiduría de la filosofía, la fuerza del coaching transformacional y la profundidad de la espiritualidad cristiana, para acompañar procesos de cambio reales y duraderos. No trabajo con recetas: acompaño caminos. Porque cada persona es única, y su transformación también.
+            </p>
+            
+            <!-- Tres pilares -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                    </div>
+                    <h3 class="title-subsection text-primary-600 mb-3">Filosofía Sapiencial</h3>
+                    <p class="text-small text-neutral-600">
+                        Sabiduría ancestral aplicada a la vida cotidiana para despertar la conciencia.
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="title-subsection text-secondary-600 mb-3">Coaching Transformacional</h3>
+                    <p class="text-small text-neutral-600">
+                        Herramientas potentes para generar cambios profundos y duraderos.
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="w-16 h-16 bg-accent-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="title-subsection text-accent-blue mb-3">Espiritualidad Encarnada</h3>
+                    <p class="text-small text-neutral-600">
+                        Fe cristiana vivida desde la autenticidad y la presencia.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Servicios Destacados -->
+<section id="servicios" class="py-16 lg:py-20 bg-background-light">
+    <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="title-section mb-6 warm-title">
+                    Caminos de transformación
+                </h2>
+                <p class="text-intro text-neutral-700 max-w-3xl mx-auto">
+                    Cada proceso es único, pero todos comparten el mismo objetivo: 
+                    ayudarte a encontrar tu verdad y vivir desde ahí.
+                </p>
+            </div>
+            
+            <!-- Programa CAMINO - Destacado -->
+            <div class="bg-gradient-to-r from-primary-100 to-secondary-100 rounded-2xl p-8 lg:p-12 mb-12 shadow-lg">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <div class="flex items-center mb-4">
+                            <span class="inline-flex items-center px-3 py-1 bg-warning text-neutral-800 rounded-full text-small font-medium mr-4">
+                                ⭐ Programa Estrella
+                            </span>
+                        </div>
+                        <h3 class="title-main text-primary-700 mb-4">Programa CAMINO</h3>
+                        <p class="motto text-accent-blue mb-4">"Tres meses para volver a vos"</p>
+                        <p class="text-body text-neutral-700 mb-6">
+                            Un recorrido intensivo de 12 semanas que combina coaching, filosofía sapiencial, espiritualidad encarnada y Focusing para una transformación profunda y duradera.
+                        </p>
+                        <ul class="space-y-2 text-small text-neutral-600 mb-6">
+                            <li>• 3 módulos: Despertar, Raíces y Presencia</li>
+                            <li>• Modalidad híbrida: grupal + individual</li>
+                            <li>• Material completo + retiro de cierre</li>
+                        </ul>
+                        <a href="https://calendly.com/proffernandodasilva/30min" 
+                           class="btn-primary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300 inline-block">
+                            Conocer el programa
+                        </a>
+                    </div>
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <div class="text-center">
+                            <div class="w-20 h-20 bg-primary-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span class="text-primary-600 font-bold text-2xl">12</span>
+                            </div>
+                            <p class="text-small text-neutral-600 mb-4">SEMANAS DE TRANSFORMACIÓN</p>
+                            <div class="space-y-3">
+                                <div class="bg-primary-50 p-3 rounded-lg">
+                                    <p class="text-small font-medium text-primary-700">DESPERTAR</p>
+                                    <p class="text-small text-neutral-600">Semanas 1-4</p>
+                                </div>
+                                <div class="bg-secondary-50 p-3 rounded-lg">
+                                    <p class="text-small font-medium text-secondary-700">RAÍCES</p>
+                                    <p class="text-small text-neutral-600">Semanas 5-8</p>
+                                </div>
+                                <div class="bg-accent-blue/10 p-3 rounded-lg">
+                                    <p class="text-small font-medium text-accent-blue">PRESENCIA</p>
+                                    <p class="text-small text-neutral-600">Semanas 9-12</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Otros servicios -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 text-center">
+                    <div class="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <h4 class="title-subsection text-secondary-600 mb-3">Sesiones Individuales</h4>
+                    <p class="text-small text-neutral-600 mb-4">
+                        Acompañamiento personalizado para crisis existenciales y decisiones importantes.
+                    </p>
+                    <a href="https://calendly.com/proffernandodasilva/30min" 
+                       class="btn-secondary border border-secondary-300 text-secondary-600 rounded-lg hover:bg-secondary-50 transition-colors duration-300 w-full">
+                        Más información
+                    </a>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 text-center">
+                    <div class="w-16 h-16 bg-accent-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                    </div>
+                    <h4 class="title-subsection text-accent-blue mb-3">Coaching Vocacional</h4>
+                    <p class="text-small text-neutral-600 mb-4">
+                        Para adolescentes y jóvenes que buscan su propósito desde una mirada existencial.
+                    </p>
+                    <a href="https://calendly.com/proffernandodasilva/30min" 
+                       class="btn-secondary border border-accent-blue text-accent-blue rounded-lg hover:bg-accent-blue/5 transition-colors duration-300 w-full">
+                        Más información
+                    </a>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 text-center">
+                    <div class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                        </svg>
+                    </div>
+                    <h4 class="title-subsection text-neutral-700 mb-3">Retiros Espirituales</h4>
+                    <p class="text-small text-neutral-600 mb-4">
+                        Experiencias inmersivas de silencio, reflexión y reconexión con lo esencial.
+                    </p>
+                    <a href="https://calendly.com/proffernandodasilva/30min" 
+                       class="btn-secondary border border-neutral-300 text-neutral-600 rounded-lg hover:bg-neutral-50 transition-colors duration-300 w-full">
+                        Más información
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonio Destacado -->
+<section class="py-16 lg:py-20 bg-background-cream">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-2xl p-8 lg:p-12 shadow-sm">
+                <div class="text-center mb-8">
+                    <h2 class="title-section mb-4 warm-title">Una voz que transforma</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                    <div class="lg:col-span-2">
+                        <blockquote class="quote-testimonial text-neutral-700 mb-6">
+                            "Llegué al programa CAMINO después de años sintiéndome vacía, cumpliendo roles pero sin habitarlos realmente. Fernando me ayudó a reconectar con mi esencia. Hoy vivo desde un lugar auténtico que no sabía que existía en mí."
+                        </blockquote>
+                        <p class="text-small text-primary-600 italic mb-4">
+                            "El módulo de RAÍCES fue revelador. Por primera vez entendí cómo mis heridas dirigían mi vida. Ahora tengo herramientas para ser yo quien elija."
+                        </p>
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mr-4">
+                                <span class="text-primary-600 font-bold">M</span>
+                            </div>
+                            <div>
+                                <p class="text-emphasis text-neutral-800">María Elena</p>
+                                <p class="text-small text-neutral-500">34 años • Abogada • Buenos Aires</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-1 text-center">
+                        <div class="bg-gradient-to-br from-primary-50 to-secondary-50 rounded-xl p-6">
+                            <div class="text-6xl text-yellow-400 mb-4">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <p class="text-small text-neutral-600 mb-2">Calificación promedio</p>
+                            <p class="text-2xl font-bold text-primary-600">4.9/5</p>
+                            <p class="text-small text-neutral-500">Basado en 127 reseñas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ¿Estás atravesando? - Identificación -->
+<section class="py-16 lg:py-20 bg-background-light">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="title-section mb-8 warm-title">
+                ¿Estás atravesando alguna de estas situaciones?
+            </h2>
+            <p class="text-intro text-neutral-700 mb-12">
+                Si algo de esto resuena en vos, no estás solo. Cada crisis es una invitación a despertar.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-primary-300">
+                    <h3 class="text-emphasis text-primary-600 mb-3">Crisis existencial</h3>
+                    <p class="text-small text-neutral-600">
+                        "Tengo todo lo que se supone que me debería hacer feliz, pero siento un vacío profundo."
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-secondary-300">
+                    <h3 class="text-emphasis text-secondary-600 mb-3">Búsqueda vocacional</h3>
+                    <p class="text-small text-neutral-600">
+                        "No sé cuál es mi propósito. Siento que estoy viviendo la vida que otros esperan de mí."
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-accent-blue">
+                    <h3 class="text-emphasis text-accent-blue mb-3">Despertar espiritual</h3>
+                    <p class="text-small text-neutral-600">
+                        "Algo en mí está despertando. Necesito acompañamiento para este proceso."
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-primary-300">
+                    <h3 class="text-emphasis text-primary-600 mb-3">Transiciones importantes</h3>
+                    <p class="text-small text-neutral-600">
+                        "Estoy en un momento de cambio y necesito claridad para tomar decisiones importantes."
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-secondary-300">
+                    <h3 class="text-emphasis text-secondary-600 mb-3">Pérdida de sentido</h3>
+                    <p class="text-small text-neutral-600">
+                        "Atravesé una pérdida importante y necesito encontrar significado en todo esto."
+                    </p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-accent-blue">
+                    <h3 class="text-emphasis text-accent-blue mb-3">Autoconocimiento</h3>
+                    <p class="text-small text-neutral-600">
+                        "Quiero conocerme profundamente y vivir desde mi autenticidad."
+                    </p>
+                </div>
+            </div>
+            
+            <a href="https://calendly.com/proffernandodasilva/30min" 
+               class="btn-primary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300 inline-block font-semibold text-lg px-8 py-4">
+                Hablemos de tu momento actual
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Feed de Instagram -->
+<section class="py-16 bg-background-cream">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="title-section mb-8 warm-title">
+                Reflexiones diarias
+            </h2>
+            <p class="text-body text-neutral-700 mb-8">
+                Seguí mis reflexiones en Instagram para nutrir tu alma con sabiduría cotidiana.
+            </p>
+            
+            <!-- Placeholder para Instagram Feed -->
+            <div class="bg-white rounded-2xl p-8 shadow-sm">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="aspect-square bg-gradient-to-br from-primary-100 to-secondary-100 rounded-xl flex items-center justify-center">
+                        <p class="text-primary-600 text-small text-center">Post de Instagram #1</p>
+                    </div>
+                    <div class="aspect-square bg-gradient-to-br from-secondary-100 to-neutral-100 rounded-xl flex items-center justify-center">
+                        <p class="text-secondary-600 text-small text-center">Post de Instagram #2</p>
+                    </div>
+                    <div class="aspect-square bg-gradient-to-br from-accent-blue/10 to-primary-100 rounded-xl flex items-center justify-center">
+                        <p class="text-accent-blue text-small text-center">Post de Instagram #3</p>
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <a href="https://www.instagram.com/proffernandodasilva" 
+                       target="_blank"
+                       class="btn-secondary border border-primary-300 text-primary-600 rounded-lg hover:bg-primary-50 transition-colors duration-300 inline-flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                        Seguir en Instagram
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Final Potente -->
+<section class="py-20 lg:py-28 bg-gradient-to-r from-primary-300 via-secondary-300 to-primary-400 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="title-section mb-8">
+            Tu alma está esperando
+        </h2>
+        <p class="text-intro mb-12 max-w-3xl mx-auto opacity-90">
+            Si llegaste hasta acá, algo profundo en vos está pidiendo despertar. 
+            No esperés más. Tu transformación comienza con una simple conversación.
+        </p>
+        
+        <div class="max-w-2xl mx-auto">
+            <a href="https://calendly.com/proffernandodasilva/30min" 
+               class="btn-primary bg-white text-primary-600 rounded-lg hover:bg-neutral-100 transition-colors duration-300 inline-block font-bold text-xl px-12 py-6 mb-6">
+                Agenda tu consulta gratuita ahora
+            </a>
+            <p class="text-small opacity-75 mb-8">
+                ✓ 30 minutos sin costo • ✓ Confidencial • ✓ Sin compromiso
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div>
+                    <div class="text-3xl mb-2">🔥</div>
+                    <p class="text-small opacity-90">Enciendo fuegos dormidos</p>
+                </div>
+                <div>
+                    <div class="text-3xl mb-2">💫</div>
+                    <p class="text-small opacity-90">Despierto lo que está dormido</p>
+                </div>
+                <div>
+                    <div class="text-3xl mb-2">🌱</div>
+                    <p class="text-small opacity-90">Acompaño el florecer del alma</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-12">
+            <blockquote class="quote-main opacity-90 mb-4">
+                "No estás perdido, solo estás dormido. El camino no es hacia afuera, es hacia adentro."
+            </blockquote>
+            <p class="text-small opacity-75">— Fernando da Silva</p>
+        </div>
+    </div>
+</section>
 
 {% endblock %}
