@@ -1,7 +1,7 @@
 """
 URL configuration for dashboard app.
 """
-from django.urls import path
+from django.urls import path, include
 from .views import (
     DashboardIndexView,
     UserListView,
@@ -77,4 +77,7 @@ urlpatterns = [
          CommentRejectView.as_view(), name="comment_reject"),
     path("comentarios/<int:pk>/eliminar/",
          CommentDeleteView.as_view(), name="comment_delete"),
+
+    # Newsletter management URLs
+    path("newsletter/", include("newsletter.urls")),
 ]

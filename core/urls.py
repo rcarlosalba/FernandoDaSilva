@@ -24,6 +24,7 @@ urlpatterns = [
     path("cuentas/", include("accounts.urls")),
     path("dashboard/", include("dashboard.urls")),
     path("blog/", include("blog.urls")),
+    path("newsletter/", include("newsletter.urls")),
     path('', include('public.urls')),
 ]
 

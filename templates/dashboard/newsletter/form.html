@@ -1,0 +1,123 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+        <!-- Header -->
+        <div class="mb-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                    {{ title }}
+                </h2>
+                <a href="{% url 'newsletter:list' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Volver a la lista
+                </a>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <div class="bg-white shadow rounded-lg">
+            <form method="post" class="px-4 py-5 sm:p-6">
+                {% csrf_token %}
+                
+                <!-- Title Field -->
+                <div class="mb-6">
+                    <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.title.label }}
+                        {% if form.title.field.required %}
+                            <span class="text-red-500">*</span>
+                        {% endif %}
+                    </label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {{ form.title.errors.0 }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Content Field -->
+                <div class="mb-6">
+                    <label for="{{ form.content.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        {{ form.content.label }}
+                        {% if form.content.field.required %}
+                            <span class="text-red-500">*</span>
+                        {% endif %}
+                    </label>
+                    <!-- Quill Editor -->
+                    <div id="quill-editor" class="bg-white border border-gray-300 rounded-lg" style="height: 300px;"></div>
+                    <!-- Hidden textarea for form submission -->
+                    <textarea id="{{ form.content.id_for_label }}" name="{{ form.content.name }}" class="hidden">{{ form.content.value|default:'' }}</textarea>
+                    {% if form.content.errors %}
+                        <div class="mt-1 text-sm text-red-600">
+                            {{ form.content.errors.0 }}
+                        </div>
+                    {% endif %}
+                    <div class="mt-2 text-sm text-gray-500">
+                        Utiliza el editor de texto para crear tu contenido de newsletter. Puedes formatear texto, agregar imágenes, enlaces y más.
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex items-center justify-end space-x-4">
+                    <a href="{% url 'newsletter:list' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        {{ action }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<!-- Quill.js CSS local -->
+<link href="{% static 'css/quill.snow.css' %}" rel="stylesheet">
+<!-- Quill.js JavaScript local -->
+<script src="{% static 'js/quill.min.js' %}"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar Quill
+    var quill = new Quill('#quill-editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'script': 'sub'}, { 'script': 'super' }],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'indent': '-1'}, { 'indent': '+1' }],
+                [{ 'direction': 'rtl' }],
+                [{ 'align': [] }],
+                ['link', 'image', 'video'],
+                ['clean']
+            ]
+        }
+    });
+    // Setear contenido inicial
+    var contentTextarea = document.getElementById('{{ form.content.id_for_label }}');
+    if (contentTextarea.value) {
+        quill.root.innerHTML = contentTextarea.value;
+    }
+    // Actualizar textarea al cambiar el contenido
+    quill.on('text-change', function() {
+        contentTextarea.value = quill.root.innerHTML;
+    });
+    // Actualizar textarea antes de enviar el formulario
+    var form = document.querySelector('form');
+    form.addEventListener('submit', function() {
+        contentTextarea.value = quill.root.innerHTML;
+    });
+});
+</script>
+{% endblock %}

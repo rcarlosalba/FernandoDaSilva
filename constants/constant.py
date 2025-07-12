@@ -95,3 +95,11 @@ def manager_required_class(view_class):
 
     view_class.dispatch = dispatch
     return view_class
+
+
+# Newsletter Status
+NEWSLETTER_STATUS_CHOICES = [
+    ('draft', 'Borrador'),
+    ('sending', 'Enviando'),
+    ('sent', 'Enviado'),
+]
