@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+
+{% block title %}Servicios - Fernando da Silva - Consultor Filosófico{% endblock %}
+
+{% block description %}Programa CAMINO, sesiones individuales, coaching vocacional y retiros espirituales. Acompañamiento integral para tu transformación personal.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-primary-50 to-secondary-50 py-16 lg:py-24">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="title-hero warm-title mb-6">
+            Servicios que despiertan el alma
+        </h1>
+        <p class="text-intro text-neutral-700 mb-8 max-w-3xl mx-auto">
+            Cada camino de transformación es único. Por eso ofrezco diferentes modalidades de acompañamiento, todas diseñadas para llevarte desde donde estás hacia donde tu alma necesita ir.
+        </p>
+        <a href="https://calendly.com/proffernandodasilva/30min" 
+           class="btn-primary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300 inline-block">
+            Descubrí cuál es tu camino
+        </a>
+    </div>
+</section>
+
+<!-- Programa CAMINO - Servicio Estrella -->
+<section class="py-20 lg:py-28 bg-background-cream">
+    <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+            <!-- Badge Estrella -->
+            <div class="text-center mb-8">
+                <span class="inline-flex items-center px-4 py-2 bg-warning text-neutral-800 rounded-full text-small font-medium">
+                    ⭐ Servicio Estrella
+                </span>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <!-- Content -->
+                <div>
+                    <h2 class="title-main text-primary-600 mb-6">
+                        Programa CAMINO
+                    </h2>
+                    <p class="motto text-accent-blue mb-6">
+                        "Tres meses para volver a vos"
+                    </p>
+                    <p class="text-intro text-neutral-700 mb-6">
+                        Dejá de correr. Empezá a habitar. Un viaje desde la mente al alma, desde el ruido a la presencia.
+                    </p>
+                    
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-primary-400 rounded-full mr-4"></div>
+                            <span class="text-body"><strong>12 semanas</strong> de transformación profunda</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-primary-400 rounded-full mr-4"></div>
+                            <span class="text-body"><strong>Modalidad híbrida:</strong> grupales + individual</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-primary-400 rounded-full mr-4"></div>
+                            <span class="text-body"><strong>Material completo:</strong> cuaderno + audios + meditaciones</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-primary-400 rounded-full mr-4"></div>
+                            <span class="text-body"><strong>Bonus:</strong> Retiro al cierre del proceso</span>
+                        </div>
+                    </div>
+                    
+                    <a href="https://calendly.com/proffernandodasilva/30min" 
+                       class="btn-primary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300 inline-block mr-4 mb-4">
+                        Quiero conocer el programa
+                    </a>
+                    <button class="btn-secondary border border-primary-300 text-primary-600 rounded-lg hover:bg-primary-50 transition-colors duration-300" onclick="toggleCaminoDetails()">
+                        Ver estructura completa
+                    </button>
+                </div>
+                
+                <!-- Visual -->
+                <div class="relative">
+                    <div class="bg-gradient-to-br from-primary-100 to-secondary-100 rounded-2xl p-8 shadow-lg">
+                        <div class="aspect-[4/3] bg-white rounded-xl p-6 flex flex-col justify-center items-center text-center">
+                            <h3 class="title-subsection text-primary-600 mb-4">CAMINO</h3>
+                            <p class="text-small text-neutral-600 mb-4">3 MÓDULOS TRANSFORMADORES</p>
+                            <div class="space-y-2 text-left w-full">
+                                <div class="bg-primary-50 p-3 rounded-lg">
+                                    <p class="text-small font-medium text-primary-700">1. DESPERTAR</p>
+                                    <p class="text-small text-neutral-600">"Lo que no se habita, se repite"</p>
+                                </div>
+                                <div class="bg-secondary-50 p-3 rounded-lg">
+                                    <p class="text-small font-medium text-secondary-700">2. RAÍCES</p>
+                                    <p class="text-small text-neutral-600">"No hay presencia sin identidad"</p>
+                                </div>
+                                <div class="bg-accent-blue/10 p-3 rounded-lg">
+                                    <p class="text-small font-medium text-accent-blue">3. PRESENCIA</p>
+                                    <p class="text-small text-neutral-600">"Vivir con el alma despierta"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Estructura detallada (colapsible) -->
+            <div id="camino-details" class="hidden mt-12 bg-white rounded-2xl p-8 shadow-sm">
+                <h3 class="title-subsection text-center text-primary-600 mb-8">Estructura del Programa CAMINO</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Módulo 1 -->
+                    <div class="bg-primary-50 rounded-xl p-6">
+                        <h4 class="title-subsection text-primary-700 mb-4">MÓDULO 1: DESPERTAR</h4>
+                        <p class="text-small text-primary-600 mb-4 italic">"Lo que no se habita, se repite"</p>
+                        <ul class="space-y-2 text-small">
+                            <li>• <strong>Semana 1:</strong> El llamado</li>
+                            <li>• <strong>Semana 2:</strong> La mentira del piloto automático</li>
+                            <li>• <strong>Semana 3:</strong> El arte de parar</li>
+                            <li>• <strong>Semana 4:</strong> La decisión sagrada</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Módulo 2 -->
+                    <div class="bg-secondary-50 rounded-xl p-6">
+                        <h4 class="title-subsection text-secondary-700 mb-4">MÓDULO 2: RAÍCES</h4>
+                        <p class="text-small text-secondary-600 mb-4 italic">"No hay presencia sin identidad"</p>
+                        <ul class="space-y-2 text-small">
+                            <li>• <strong>Semana 5:</strong> ¿Quién soy cuando nadie me mira?</li>
+                            <li>• <strong>Semana 6:</strong> Heridas que hablan por vos</li>
+                            <li>• <strong>Semana 7:</strong> Memoria viva</li>
+                            <li>• <strong>Semana 8:</strong> Perdón y restitución</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Módulo 3 -->
+                    <div class="bg-accent-blue/10 rounded-xl p-6">
+                        <h4 class="title-subsection text-accent-blue mb-4">MÓDULO 3: PRESENCIA</h4>
+                        <p class="text-small text-accent-blue mb-4 italic">"Vivir con el alma despierta"</p>
+                        <ul class="space-y-2 text-small">
+                            <li>• <strong>Semana 9:</strong> El poder del ahora encarnado</li>
+                            <li>• <strong>Semana 10:</strong> Vocación, propósito y servicio</li>
+                            <li>• <strong>Semana 11:</strong> Diseñá tu nuevo mapa de vida</li>
+                            <li>• <strong>Semana 12:</strong> Celebración y compromiso</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-8 text-center">
+                    <blockquote class="quote-testimonial text-primary-700 mb-6">
+                        "No estás perdido, solo estás dormido. El camino no es hacia afuera, es hacia adentro. Y empieza cuando te detenés."
+                    </blockquote>
+                    <p class="text-small text-neutral-600">Frase guía del Programa CAMINO</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Otros Servicios -->
+<section class="py-20 bg-background-light">
+    <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="title-section text-center mb-16 warm-title">
+                Otros caminos de transformación
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Sesiones Individuales -->
+                <div class="bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="title-subsection text-center text-primary-600 mb-4">Sesiones Individuales</h3>
+                    <p class="text-body text-center mb-6">
+                        Acompañamiento personalizado para crisis existenciales, decisiones importantes y procesos de autoconocimiento profundo.
+                    </p>
+                    <ul class="space-y-2 text-small mb-6">
+                        <li>• Crisis existenciales y búsquedas de sentido</li>
+                        <li>• Procesos de duelo y transiciones</li>
+                        <li>• Decisiones vocacionales y de vida</li>
+                        <li>• Modalidad presencial o virtual</li>
+                    </ul>
+                    <div class="text-center">
+                        <a href="https://calendly.com/proffernandodasilva/30min" 
+                           class="btn-secondary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300 w-full">
+                            Agendar sesión
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Coaching Vocacional -->
+                <div class="bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div class="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                    </div>
+                    <h3 class="title-subsection text-center text-secondary-600 mb-4">Coaching Vocacional</h3>
+                    <p class="text-body text-center mb-6">
+                        Especialmente diseñado para adolescentes y jóvenes que buscan su propósito desde una mirada profunda y existencial.
+                    </p>
+                    <ul class="space-y-2 text-small mb-6">
+                        <li>• Adolescentes en búsqueda vocacional</li>
+                        <li>• Jóvenes en transición universitaria</li>
+                        <li>• Adultos en cambio de carrera</li>
+                        <li>• Enfoque existencial y de propósito</li>
+                    </ul>
+                    <div class="text-center">
+                        <a href="https://calendly.com/proffernandodasilva/30min" 
+                           class="btn-secondary bg-secondary-300 text-white rounded-lg hover:bg-secondary-400 transition-colors duration-300 w-full">
+                            Consultar proceso
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Retiros Espirituales -->
+                <div class="bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300 md:col-span-2 lg:col-span-1">
+                    <div class="w-16 h-16 bg-accent-blue/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                        </svg>
+                    </div>
+                    <h3 class="title-subsection text-center text-accent-blue mb-4">Retiros Espirituales</h3>
+                    <p class="text-body text-center mb-6">
+                        Experiencias inmersivas que combinan silencio, reflexión, naturaleza y guía personalizada para reconectar con lo esencial.
+                    </p>
+                    <ul class="space-y-2 text-small mb-6">
+                        <li>• Retiros de fin de semana</li>
+                        <li>• Experiencias en la naturaleza</li>
+                        <li>• Silencio y contemplación</li>
+                        <li>• Grupos reducidos</li>
+                    </ul>
+                    <div class="text-center">
+                        <a href="https://calendly.com/proffernandodasilva/30min" 
+                           class="btn-secondary bg-accent-blue text-white rounded-lg hover:bg-accent-blue/90 transition-colors duration-300 w-full">
+                            Conocer próximos retiros
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonios Breves -->
+<section class="py-16 bg-background-cream">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="title-section mb-12 warm-title">
+                Lo que dicen quienes ya empezaron su camino
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <blockquote class="quote-small text-neutral-700 mb-4">
+                        "El programa CAMINO me devolvió la conexión conmigo mismo. Fernando tiene la capacidad de verte donde otros no llegan."
+                    </blockquote>
+                    <p class="text-small text-neutral-500">— María, 34 años</p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <blockquote class="quote-small text-neutral-700 mb-4">
+                        "Por primera vez en años siento que tengo claridad sobre mi propósito. Las sesiones individuales fueron transformadoras."
+                    </blockquote>
+                    <p class="text-small text-neutral-500">— Juan, 28 años</p>
+                </div>
+            </div>
+            
+            <div class="mt-8">
+                <a href="#" class="text-primary-600 hover:text-primary-700 transition-colors duration-300 text-small font-medium">
+                    Ver más testimonios →
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Final -->
+<section class="py-20 bg-gradient-to-r from-primary-300 to-secondary-300 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="title-section mb-6">
+            Tu transformación empieza con una conversación
+        </h2>
+        <p class="text-intro mb-8 max-w-2xl mx-auto opacity-90">
+            No importa dónde estés en tu camino. Si llegaste hasta acá, algo en vos está pidiendo despertar. 
+            Hablemos y veamos qué servicio se ajusta mejor a tu momento actual.
+        </p>
+        <a href="https://calendly.com/proffernandodasilva/30min" 
+           class="btn-primary bg-white text-primary-600 rounded-lg hover:bg-neutral-100 transition-colors duration-300 inline-block font-semibold text-lg px-8 py-4">
+            Agenda tu consulta gratuita de 30 minutos
+        </a>
+        <p class="text-small mt-4 opacity-75">
+            Sin compromiso • Confidencial • Primera consulta sin costo
+        </p>
+    </div>
+</section>
+
+<script>
+function toggleCaminoDetails() {
+    const details = document.getElementById('camino-details');
+    const button = event.target;
+    
+    if (details.classList.contains('hidden')) {
+        details.classList.remove('hidden');
+        button.textContent = 'Ocultar estructura';
+    } else {
+        details.classList.add('hidden');
+        button.textContent = 'Ver estructura completa';
+    }
+}
+</script>
+
+{% endblock %}

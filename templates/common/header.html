@@ -18,11 +18,10 @@
             <!-- Desktop Navigation -->
             <div class="hidden md:flex items-center space-x-8">
                 <a href="#" class="nav-link hover:text-primary-300 transition-colors duration-300">Inicio</a>
-                <a href="#" class="nav-link hover:text-primary-300 transition-colors duration-300">Sobre Mí</a>
-                <a href="#" class="nav-link hover:text-primary-300 transition-colors duration-300">Servicios</a>
-                <a href="#" class="nav-link hover:text-primary-300 transition-colors duration-300">Recursos</a>
-                <a href="{% url "blog:post_list" %}" class="nav-link hover:text-primary-300 transition-colors duration-300">Blog</a>
-                <a href="#" class="nav-link hover:text-primary-300 transition-colors duration-300">Testimonios</a>
+                <a href="{% url 'public:about' %}" class="nav-link hover:text-primary-300 transition-colors duration-300">Sobre Mí</a>
+                <a href="{% url 'public:services' %}" class="nav-link hover:text-primary-300 transition-colors duration-300">Servicios</a>
+                <a href="{% url "blog:post_list" %}" class="nav-link hover:text-primary-300 transition-colors duration-300">Recursos</a>
+                <a href="{% url 'public:testimonials' %}" class="nav-link hover:text-primary-300 transition-colors duration-300">Testimonios</a>
                 <a href="#" class="btn-primary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300">Contacto</a>
                 
                 <!-- Authentication Links Desktop -->
@@ -60,11 +59,10 @@
             <!-- Navigation Links -->
             <nav class="mt-12 flex flex-col space-y-6">
                 <a href="#" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Inicio</a>
-                <a href="#" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Sobre Mí</a>
-                <a href="#" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Servicios</a>
-                <a href="#" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Recursos</a>
-                <a href="{% url "blog:post_list" %}" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Blog</a>
-                <a href="#" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Testimonios</a>
+                <a href="{% url 'public:about' %}" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Sobre Mí</a>
+                <a href="{% url 'public:services' %}" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Servicios</a>
+                <a href="{% url "blog:post_list" %}" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Recursos</a>
+                <a href="{% url 'public:testimonials' %}" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Testimonios</a>
                 <a href="#" class="w-full text-center mt-6 py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg shadow-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-opacity-75 transition-colors duration-300">Contacto</a>
                 
                 <!-- Authentication Links Mobile -->

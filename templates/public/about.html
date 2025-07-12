@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sobre Mí - Fernando da Silva - Consultor Filosófico{% endblock %}
+
+{% block description %}Conocé mi historia personal, filosofía de trabajo y formación. Desde Corrientes para el mundo, acompañando procesos de transformación profunda.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-background-light to-background-cream py-16 lg:py-24">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+            <!-- Content -->
+            <div class="order-2 lg:order-1 col-span-2">
+                <h1 class="title-hero warm-title mb-6">
+                    Mi historia es la de muchos: la búsqueda de respuestas en medio del dolor
+                </h1>
+                <p class="text-intro text-neutral-700 mb-8">
+                    Lo que enseño, lo viví. Lo que acompaño, lo atravesé. Mi camino comenzó en Paso de los Libres, donde la fe se baila en chamamé y el alma tiene raíces hondas.
+                </p>
+                <a href="https://calendly.com/proffernandodasilva/30min" 
+                   class="btn-primary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300 inline-block">
+                    Agenda una consulta conmigo
+                </a>
+            </div>
+            
+            <!-- Image -->
+            <div class="order-1 lg:order-2 col-span-1">
+                <div class="relative">
+                    <div class="bg-primary-100 rounded-2xl p-8 shadow-lg">
+                        <!-- Placeholder para imagen de Fernando -->
+                        <div class="aspect-[4/5] bg-primary-200 rounded-xl flex items-center justify-center">
+                            <p class="text-primary-600 text-center">
+                                <img src="{% static 'images/fernandoDaSilvaRe.jpeg' %}" alt="Fernando Da Silva" class="w-full h-full object-cover">
+                            </p>
+                        </div>
+                    </div>
+                    <!-- Decorative element -->
+                    <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-secondary-200 rounded-full opacity-60"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mi Historia -->
+<section class="py-16 lg:py-20 bg-background-cream">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="title-section text-center mb-12 warm-title">
+                Un despertar que cambió todo
+            </h2>
+            
+            <div class="prose-like space-y-8">
+                <div class="bg-white rounded-2xl p-8 shadow-sm">
+                    <h3 class="title-subsection text-primary-600 mb-4">Los inicios</h3>
+                    <p class="text-body mb-4">
+                        Nací en Paso de los Libres, Provincia de Corrientes, Argentina, tierra donde la fe se baila en chamamé y el alma tiene raíces hondas. Desde joven sentí el llamado interior a buscar sentido más allá de lo superficial.
+                    </p>
+                    <p class="text-body">
+                        Mi primer retiro espiritual a los 18 años marcó un antes y un después: fue el inicio de un camino que me llevó a abrazar la filosofía, el arte y la música como arte de vivir, y a hacer de la fe en Cristo una llama viva.
+                    </p>
+                </div>
+
+                <div class="bg-primary-50 rounded-2xl p-8">
+                    <blockquote class="quote-main text-primary-700 text-center mb-6">
+                        "Lo que enseño, lo viví. Lo que acompaño, lo atravesé."
+                    </blockquote>
+                    <p class="text-body text-center text-primary-600">
+                        Mi historia es la de muchos: la de quien buscó respuestas en medio del dolor, y encontró en su origen, su fe y su misión, un modo nuevo de habitar el mundo.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filosofía de Trabajo -->
+<section class="py-16 lg:py-20 bg-background-light">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="title-section text-center mb-12 warm-title">
+                Mi filosofía de trabajo
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <!-- Presencia -->
+                <div class="bg-white rounded-xl p-6 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <div class="w-8 h-8 bg-primary-400 rounded-full"></div>
+                    </div>
+                    <h3 class="title-subsection text-primary-600 mb-3">Presencia</h3>
+                    <p class="text-small text-neutral-600">
+                        Trabajo desde la presencia, creando un espacio sagrado donde la transformación es posible.
+                    </p>
+                </div>
+                
+                <!-- Escucha Profunda -->
+                <div class="bg-white rounded-xl p-6 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div class="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <div class="w-8 h-8 bg-secondary-400 rounded-full"></div>
+                    </div>
+                    <h3 class="title-subsection text-secondary-600 mb-3">Escucha Profunda</h3>
+                    <p class="text-small text-neutral-600">
+                        Más allá de las palabras, escucho el alma. Cada persona tiene su verdad única esperando ser descubierta.
+                    </p>
+                </div>
+                
+                <!-- Provocación Amorosa -->
+                <div class="bg-white rounded-xl p-6 text-center shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div class="w-16 h-16 bg-accent-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <div class="w-8 h-8 bg-accent-blue rounded-full"></div>
+                    </div>
+                    <h3 class="title-subsection text-accent-blue mb-3">Provocación Amorosa</h3>
+                    <p class="text-small text-neutral-600">
+                        Una voz que sacude pero abraza. Confronto con amor para despertar lo que está dormido.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Enfoque Integral -->
+            <div class="bg-white rounded-2xl p-8 shadow-sm">
+                <h3 class="title-subsection text-center text-primary-600 mb-6">
+                    Un enfoque integral y único
+                </h3>
+                <p class="text-body text-center mb-6 max-w-3xl mx-auto">
+                    Mi enfoque es integral: combino herramientas del coaching ontológico, el focusing corporal, la filosofía práctica y sapiencial, y el camino espiritual. Creo en el proceso más que en el resultado inmediato, y en que toda transformación verdadera comienza cuando nos animamos a mirar hacia adentro.
+                </p>
+                
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <span class="px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-small font-medium">Coaching Ontológico</span>
+                    <span class="px-4 py-2 bg-secondary-100 text-secondary-700 rounded-full text-small font-medium">Filosofía Práctica</span>
+                    <span class="px-4 py-2 bg-neutral-100 text-neutral-700 rounded-full text-small font-medium">Focusing Corporal</span>
+                    <span class="px-4 py-2 bg-accent-blue/10 text-accent-blue rounded-full text-small font-medium">Espiritualidad Cristiana</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Formación y Experiencia -->
+<section class="py-16 lg:py-20 bg-background-cream">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="title-section text-center mb-12 warm-title">
+                Formación y experiencia
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Formación Académica -->
+                <div class="bg-white rounded-xl p-8 shadow-sm">
+                    <h3 class="title-subsection text-primary-600 mb-6">Formación Académica</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <div class="w-2 h-2 bg-primary-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                            <div>
+                                <p class="text-emphasis">Filósofo</p>
+                                <p class="text-small text-neutral-600">Especialización en Filosofía Práctica</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-2 h-2 bg-primary-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                            <div>
+                                <p class="text-emphasis">Maestría en Filosofía Práctica</p>
+                                <p class="text-small text-neutral-600">Enfoque en aplicación existencial</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-2 h-2 bg-primary-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                            <div>
+                                <p class="text-emphasis">Profesor de Música y Artes</p>
+                                <p class="text-small text-neutral-600">Integración arte-filosofía-vida</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Certificaciones -->
+                <div class="bg-white rounded-xl p-8 shadow-sm">
+                    <h3 class="title-subsection text-secondary-600 mb-6">Certificaciones</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <div class="w-2 h-2 bg-secondary-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                            <div>
+                                <p class="text-emphasis">Coach Ontológico Profesional</p>
+                                <p class="text-small text-neutral-600">Avalado por la ICF</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-2 h-2 bg-secondary-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                            <div>
+                                <p class="text-emphasis">Coaching Vocacional</p>
+                                <p class="text-small text-neutral-600">Especialización en adolescentes y jóvenes</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="w-2 h-2 bg-secondary-400 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                            <div>
+                                <p class="text-emphasis">Focusing y Acompañamiento Espiritual</p>
+                                <p class="text-small text-neutral-600">Integración cuerpo-alma-espíritu</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Experiencia -->
+            <div class="mt-12 bg-gradient-to-r from-primary-50 to-secondary-50 rounded-2xl p-8">
+                <h3 class="title-subsection text-center text-neutral-800 mb-6">
+                    Más de 15 años de experiencia
+                </h3>
+                <p class="text-body text-center mb-6 max-w-3xl mx-auto">
+                    Hace más de 15 años acompaño procesos de transformación en escuelas, familias, comunidades y personas que buscan vivir con autenticidad. Mi experiencia combina lo académico, lo humano y lo espiritual, en un camino que sigue creciendo día a día.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                    <div>
+                        <p class="text-2xl font-bold text-primary-600 mb-2">15+</p>
+                        <p class="text-small text-neutral-600">Años de experiencia</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-secondary-600 mb-2">500+</p>
+                        <p class="text-small text-neutral-600">Personas acompañadas</p>
+                    </div>
+                    <div>
+                        <p class="text-2xl font-bold text-accent-blue mb-2">∞</p>
+                        <p class="text-small text-neutral-600">Vidas transformadas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Inspiraciones -->
+<section class="py-16 lg:py-20 bg-background-light">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="title-section mb-8 warm-title">
+                Mis inspiraciones
+            </h2>
+            <p class="text-body mb-8 max-w-3xl mx-auto">
+                Me inspiran pensadores como Karol Wojtyła, Spinoza, Viktor Frankl, David R. Hawkins y la espiritualidad de San Josemaría, sin perder la conexión con mi raíz chamamecera y la sabiduría popular de mi pueblo.
+            </p>
+            
+            <div class="flex flex-wrap justify-center gap-3">
+                <span class="px-4 py-2 bg-white text-neutral-700 rounded-full text-small border border-primary-200">Karol Wojtyła</span>
+                <span class="px-4 py-2 bg-white text-neutral-700 rounded-full text-small border border-primary-200">Spinoza</span>
+                <span class="px-4 py-2 bg-white text-neutral-700 rounded-full text-small border border-primary-200">Viktor Frankl</span>
+                <span class="px-4 py-2 bg-white text-neutral-700 rounded-full text-small border border-primary-200">David R. Hawkins</span>
+                <span class="px-4 py-2 bg-white text-neutral-700 rounded-full text-small border border-primary-200">San Josemaría</span>
+                <span class="px-4 py-2 bg-white text-neutral-700 rounded-full text-small border border-primary-200">Sabiduría Chamamecera</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Final -->
+<section class="py-16 lg:py-20 bg-gradient-to-r from-primary-300 to-secondary-300 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="title-section mb-6">
+            ¿Sentís que es momento de despertar?
+        </h2>
+        <p class="text-intro mb-8 max-w-2xl mx-auto opacity-90">
+            Si llegaste hasta acá, algo en vos está pidiendo cambio. No esperés más. El camino comienza con una conversación.
+        </p>
+        <a href="https://calendly.com/proffernandodasilva/30min" 
+           class="btn-primary bg-white text-primary-600 rounded-lg hover:bg-neutral-100 transition-colors duration-300 inline-block font-semibold">
+            Agenda tu consulta de 30 minutos
+        </a>
+        <p class="text-small mt-4 opacity-75">
+            Sin compromiso • Confidencial • Transformador
+        </p>
+    </div>
+</section>
+{% endblock %}

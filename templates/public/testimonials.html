@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+
+{% block title %}Testimonios - Fernando da Silva - Consultor Filosófico{% endblock %}
+
+{% block description %}Conocé las historias reales de transformación de quienes han vivido el acompañamiento filosófico y coaching con Fernando da Silva.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-primary-50 to-secondary-50 py-16 lg:py-24">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="title-hero warm-title mb-6">
+            Historias que despiertan
+        </h1>
+        <p class="text-intro text-neutral-700 mb-8 max-w-3xl mx-auto">
+            Cada testimonio es un universo. Cada transformación, un milagro cotidiano. 
+            Estas son las voces de quienes se animaron a despertar y encontraron su camino.
+        </p>
+        <blockquote class="quote-main text-primary-700 mb-8">
+            "Lo que compartimos no son casos de éxito. Son historias de coraje."
+        </blockquote>
+        <a href="https://calendly.com/proffernandodasilva/30min" 
+           class="btn-primary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300 inline-block">
+            Comenzá tu propia historia
+        </a>
+    </div>
+</section>
+
+<!-- Filtros de Testimonios -->
+<section class="py-8 bg-background-cream">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="filterTestimonials('todos')" class="filter-btn active px-6 py-2 bg-primary-300 text-white rounded-full text-small font-medium hover:bg-primary-400 transition-colors duration-300">
+                    Todos
+                </button>
+                <button onclick="filterTestimonials('camino')" class="filter-btn px-6 py-2 bg-white text-primary-600 border border-primary-300 rounded-full text-small font-medium hover:bg-primary-50 transition-colors duration-300">
+                    Programa CAMINO
+                </button>
+                <button onclick="filterTestimonials('individual')" class="filter-btn px-6 py-2 bg-white text-primary-600 border border-primary-300 rounded-full text-small font-medium hover:bg-primary-50 transition-colors duration-300">
+                    Sesiones Individuales
+                </button>
+                <button onclick="filterTestimonials('vocacional')" class="filter-btn px-6 py-2 bg-white text-primary-600 border border-primary-300 rounded-full text-small font-medium hover:bg-primary-50 transition-colors duration-300">
+                    Coaching Vocacional
+                </button>
+                <button onclick="filterTestimonials('retiros')" class="filter-btn px-6 py-2 bg-white text-primary-600 border border-primary-300 rounded-full text-small font-medium hover:bg-primary-50 transition-colors duration-300">
+                    Retiros
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonios Grid -->
+<section class="py-16 lg:py-20 bg-background-light">
+    <div class="container mx-auto px-4">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Testimonio 1 - Programa CAMINO -->
+                <div class="testimonio-card bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300" data-category="camino">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-primary-600 font-bold text-lg">M</span>
+                        </div>
+                        <div>
+                            <h3 class="text-emphasis text-neutral-800">María Elena</h3>
+                            <p class="text-small text-neutral-500">34 años • Abogada • Buenos Aires</p>
+                            <span class="inline-block mt-1 px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-small">Programa CAMINO</span>
+                        </div>
+                    </div>
+                    <blockquote class="quote-testimonial text-neutral-700 mb-6">
+                        "Llegué al programa CAMINO después de años sintiéndome vacía, cumpliendo roles pero sin habitarlos realmente. Fernando me ayudó a reconectar con mi esencia. Hoy vivo desde un lugar auténtico que no sabía que existía en mí."
+                    </blockquote>
+                    <div class="border-l-4 border-primary-300 pl-4">
+                        <p class="text-small text-neutral-600 italic">
+                            "El módulo de RAÍCES fue revelador. Por primera vez entendí cómo mis heridas dirigían mi vida. Ahora tengo herramientas para ser yo quien elija."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Testimonio 2 - Sesiones Individuales -->
+                <div class="testimonio-card bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300" data-category="individual">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-secondary-600 font-bold text-lg">J</span>
+                        </div>
+                        <div>
+                            <h3 class="text-emphasis text-neutral-800">Juan Carlos</h3>
+                            <p class="text-small text-neutral-500">42 años • Empresario • Corrientes</p>
+                            <span class="inline-block mt-1 px-3 py-1 bg-secondary-100 text-secondary-700 rounded-full text-small">Sesiones Individuales</span>
+                        </div>
+                    </div>
+                    <blockquote class="quote-testimonial text-neutral-700 mb-6">
+                        "Después de una crisis familiar devastadora, pensé que no había vuelta atrás. Las sesiones con Fernando me devolvieron no solo la esperanza, sino una comprensión profunda del propósito del dolor."
+                    </blockquote>
+                    <div class="border-l-4 border-secondary-300 pl-4">
+                        <p class="text-small text-neutral-600 italic">
+                            "Fernando tiene la capacidad de verte donde otros no llegan. Sus preguntas despertaron respuestas que ni sabía que tenía."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Testimonio 3 - Coaching Vocacional -->
+                <div class="testimonio-card bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300" data-category="vocacional">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-accent-blue/10 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-accent-blue font-bold text-lg">S</span>
+                        </div>
+                        <div>
+                            <h3 class="text-emphasis text-neutral-800">Sofía</h3>
+                            <p class="text-small text-neutral-500">19 años • Estudiante • Resistencia</p>
+                            <span class="inline-block mt-1 px-3 py-1 bg-accent-blue/10 text-accent-blue rounded-full text-small">Coaching Vocacional</span>
+                        </div>
+                    </div>
+                    <blockquote class="quote-testimonial text-neutral-700 mb-6">
+                        "Estaba perdida entre las expectativas de mis padres y mis propios sueños. Fernando me ayudó a descubrir que mi vocación no era una carrera, sino una forma de ser en el mundo."
+                    </blockquote>
+                    <div class="border-l-4 border-accent-blue pl-4">
+                        <p class="text-small text-neutral-600 italic">
+                            "Ahora estudio Psicología, pero más importante: vivo con propósito. Sé para qué estoy acá."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Testimonio 4 - Programa CAMINO -->
+                <div class="testimonio-card bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300" data-category="camino">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-primary-600 font-bold text-lg">R</span>
+                        </div>
+                        <div>
+                            <h3 class="text-emphasis text-neutral-800">Roberto</h3>
+                            <p class="text-small text-neutral-500">51 años • Contador • Posadas</p>
+                            <span class="inline-block mt-1 px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-small">Programa CAMINO</span>
+                        </div>
+                    </div>
+                    <blockquote class="quote-testimonial text-neutral-700 mb-6">
+                        "A los 50 sentí que había vivido la vida de otro. El programa CAMINO no solo me despertó, me devolvió la capacidad de asombrarme. Hoy cada día es una oportunidad de ser auténtico."
+                    </blockquote>
+                    <div class="border-l-4 border-primary-300 pl-4">
+                        <p class="text-small text-neutral-600 italic">
+                            "El ejercicio del 'yo de 90 años' cambió mi perspectiva para siempre. Ahora tomo decisiones desde mi sabiduría profunda."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Testimonio 5 - Retiros -->
+                <div class="testimonio-card bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300" data-category="retiros">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-neutral-100 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-neutral-600 font-bold text-lg">L</span>
+                        </div>
+                        <div>
+                            <h3 class="text-emphasis text-neutral-800">Lucía</h3>
+                            <p class="text-small text-neutral-500">29 años • Médica • Formosa</p>
+                            <span class="inline-block mt-1 px-3 py-1 bg-neutral-100 text-neutral-700 rounded-full text-small">Retiro Espiritual</span>
+                        </div>
+                    </div>
+                    <blockquote class="quote-testimonial text-neutral-700 mb-6">
+                        "El retiro fue un regalo para mi alma. Tres días de silencio y contemplación que valieron más que años de terapia. Fernando crea espacios sagrados donde lo imposible se vuelve posible."
+                    </blockquote>
+                    <div class="border-l-4 border-neutral-300 pl-4">
+                        <p class="text-small text-neutral-600 italic">
+                            "Volví a casa siendo la misma persona, pero habitándome de manera completamente diferente."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Testimonio 6 - Sesiones Individuales -->
+                <div class="testimonio-card bg-white rounded-xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300" data-category="individual">
+                    <div class="flex items-center mb-6">
+                        <div class="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mr-4">
+                            <span class="text-secondary-600 font-bold text-lg">A</span>
+                        </div>
+                        <div>
+                            <h3 class="text-emphasis text-neutral-800">Andrea</h3>
+                            <p class="text-small text-neutral-500">38 años • Madre y Artista • Goya</p>
+                            <span class="inline-block mt-1 px-3 py-1 bg-secondary-100 text-secondary-700 rounded-full text-small">Sesiones Individuales</span>
+                        </div>
+                    </div>
+                    <blockquote class="quote-testimonial text-neutral-700 mb-6">
+                        "Llegué con una depresión que me tenía postrada. Fernando no me dio consejos baratos, me acompañó a encontrar mi propia luz. Su presencia sanadora fue fundamental en mi proceso."
+                    </blockquote>
+                    <div class="border-l-4 border-secondary-300 pl-4">
+                        <p class="text-small text-neutral-600 italic">
+                            "Hoy pinto desde un lugar que no conocía en mí. Mi arte ahora tiene alma porque yo volví a tener alma."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Historias de Transformación Destacadas -->
+<section class="py-16 lg:py-20 bg-background-cream">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="title-section text-center mb-12 warm-title">
+                Historias de transformación profunda
+            </h2>
+            
+            <!-- Historia Destacada 1 -->
+            <div class="bg-white rounded-2xl p-8 lg:p-12 shadow-sm mb-12">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                    <div class="lg:col-span-1">
+                        <div class="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-primary-600 font-bold text-2xl">C</span>
+                        </div>
+                        <h3 class="title-subsection text-center text-primary-600 mb-2">Carlos</h3>
+                        <p class="text-small text-center text-neutral-500 mb-4">Executive burnout → Vida con propósito</p>
+                        <span class="block text-center px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-small w-fit mx-auto">Programa CAMINO</span>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <blockquote class="quote-testimonial text-neutral-700 mb-6">
+                            "Era exitoso según todos los parámetros externos, pero por dentro estaba muriendo. Trabajaba 14 horas diarias en una multinacional, tenía todo lo material que podía desear, pero sentía un vacío existencial devastador."
+                        </blockquote>
+                        <p class="text-body text-neutral-600 mb-4">
+                            Después del programa CAMINO, Carlos tomó la decisión más importante de su vida: dejó su puesto ejecutivo para crear una fundación educativa en su provincia natal.
+                        </p>
+                        <p class="text-small text-primary-600 italic">
+                            "Hoy gano la mitad del dinero pero tengo el triple de vida. Fernando me ayudó a recordar que no vine a este mundo a cumplir expectativas ajenas."
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Historia Destacada 2 -->
+            <div class="bg-gradient-to-r from-secondary-50 to-primary-50 rounded-2xl p-8 lg:p-12 shadow-sm">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+                    <div class="lg:col-span-1 order-2 lg:order-1">
+                        <div class="w-24 h-24 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-secondary-600 font-bold text-2xl">V</span>
+                        </div>
+                        <h3 class="title-subsection text-center text-secondary-600 mb-2">Valentina</h3>
+                        <p class="text-small text-center text-neutral-500 mb-4">Crisis espiritual → Renovación de fe</p>
+                        <span class="block text-center px-3 py-1 bg-secondary-100 text-secondary-700 rounded-full text-small w-fit mx-auto">Sesiones Individuales</span>
+                    </div>
+                    <div class="lg:col-span-2 order-1 lg:order-2">
+                        <blockquote class="quote-testimonial text-neutral-700 mb-6">
+                            "Había perdido la fe después de atravesar una tragedia familiar. Me sentía abandonada por Dios y por la vida. Fernando me acompañó en el proceso más doloroso y hermoso de mi existencia: el regreso a casa."
+                        </blockquote>
+                        <p class="text-body text-neutral-600 mb-4">
+                            A través de sesiones individuales, Valentina no solo recuperó su fe, sino que la profundizó de una manera que nunca había experimentado.
+                        </p>
+                        <p class="text-small text-secondary-600 italic">
+                            "Ahora mi fe no es ciega, es vidente. Fernando me enseñó que Dios no me había abandonado, sino que estaba conmigo en el dolor, esperando que yo estuviera lista para verlo."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Estadísticas de Impacto -->
+<section class="py-16 bg-accent-blue text-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="title-section mb-12">
+                El impacto de despertar
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <p class="text-4xl font-bold mb-2">500+</p>
+                    <p class="text-small opacity-90">Personas acompañadas</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-bold mb-2">15</p>
+                    <p class="text-small opacity-90">Años de experiencia</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-bold mb-2">98%</p>
+                    <p class="text-small opacity-90">Recomiendan el proceso</p>
+                </div>
+                <div>
+                    <p class="text-4xl font-bold mb-2">∞</p>
+                    <p class="text-small opacity-90">Vidas transformadas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA de Identificación -->
+<section class="py-20 bg-background-light">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="title-section mb-8 warm-title">
+            ¿Te identificás con alguna de estas historias?
+        </h2>
+        <p class="text-intro text-neutral-700 mb-8 max-w-3xl mx-auto">
+            Cada proceso es único, pero el despertar siempre comienza con el mismo paso: 
+            reconocer que algo profundo en vos está pidiendo atención.
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-12">
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <h3 class="text-emphasis text-primary-600 mb-3">¿Sentís vacío a pesar del éxito?</h3>
+                <p class="text-small text-neutral-600">Como Carlos, que lo tenía todo pero no se tenía a sí mismo</p>
+            </div>
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <h3 class="text-emphasis text-secondary-600 mb-3">¿Atravesás una crisis profunda?</h3>
+                <p class="text-small text-neutral-600">Como Juan Carlos, que encontró propósito en medio del dolor</p>
+            </div>
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+                <h3 class="text-emphasis text-accent-blue mb-3">¿Buscás tu verdadero propósito?</h3>
+                <p class="text-small text-neutral-600">Como Sofía, que descubrió que la vocación es una forma de ser</p>
+            </div>
+        </div>
+        
+        <a href="https://calendly.com/proffernandodasilva/30min" 
+           class="btn-primary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300 inline-block font-semibold text-lg px-8 py-4">
+            Conversemos sobre tu proceso
+        </a>
+        <p class="text-small text-neutral-500 mt-4">
+            Primera consulta sin costo • Confidencial • Sin compromiso
+        </p>
+    </div>
+</section>
+
+<script>
+function filterTestimonials(category) {
+    const cards = document.querySelectorAll('.testimonio-card');
+    const buttons = document.querySelectorAll('.filter-btn');
+    
+    // Reset button styles
+    buttons.forEach(btn => {
+        btn.classList.remove('active', 'bg-primary-300', 'text-white');
+        btn.classList.add('bg-white', 'text-primary-600', 'border', 'border-primary-300');
+    });
+    
+    // Set active button
+    event.target.classList.add('active', 'bg-primary-300', 'text-white');
+    event.target.classList.remove('bg-white', 'text-primary-600', 'border', 'border-primary-300');
+    
+    // Filter cards
+    cards.forEach(card => {
+        if (category === 'todos' || card.dataset.category === category) {
+            card.style.display = 'block';
+            card.classList.add('animate-fade-in');
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+</script>
+
+{% endblock %}
