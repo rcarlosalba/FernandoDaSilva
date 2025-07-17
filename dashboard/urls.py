@@ -29,6 +29,36 @@ from .views import (
     CommentRejectView,
     CommentDeleteView,
 )
+from events.views import (
+    # Event management views
+    event_list,
+    event_create,
+    event_detail,
+    event_update,
+    event_delete,
+    event_cancel,
+    # Event category management views
+    category_list,
+    category_create,
+    category_detail,
+    category_update,
+    category_delete,
+    # Payment method management views
+    payment_method_list,
+    payment_method_create,
+    payment_method_detail,
+    payment_method_update,
+    payment_method_delete,
+    # Registration management views
+    registration_list,
+    registration_detail,
+    registration_approve,
+    registration_reject,
+    # Payment management views
+    payment_verify,
+    # Statistics views
+    event_statistics,
+)
 
 app_name = "dashboard"
 
@@ -80,4 +110,49 @@ urlpatterns = [
 
     # Newsletter management URLs
     path("newsletter/", include("newsletter.urls")),
+
+    # Events management URLs
+    path("eventos/", event_list, name="event_list"),
+    path("eventos/crear/", event_create, name="event_create"),
+    path("eventos/<int:pk>/", event_detail, name="event_detail"),
+    path("eventos/<int:pk>/editar/", event_update, name="event_update"),
+    path("eventos/<int:pk>/eliminar/", event_delete, name="event_delete"),
+    path("eventos/<int:pk>/cancelar/", event_cancel, name="event_cancel"),
+
+    # Event categories management URLs
+    path("categorias-eventos/", category_list, name="event_category_list"),
+    path("categorias-eventos/crear/",
+         category_create, name="event_category_create"),
+    path("categorias-eventos/<int:pk>/",
+         category_detail, name="event_category_detail"),
+    path("categorias-eventos/<int:pk>/editar/",
+         category_update, name="event_category_update"),
+    path("categorias-eventos/<int:pk>/eliminar/",
+         category_delete, name="event_category_delete"),
+
+    # Payment methods management URLs
+    path("metodos-pago/", payment_method_list, name="payment_method_list"),
+    path("metodos-pago/crear/", payment_method_create,
+         name="payment_method_create"),
+    path("metodos-pago/<int:pk>/", payment_method_detail,
+         name="payment_method_detail"),
+    path("metodos-pago/<int:pk>/editar/",
+         payment_method_update, name="payment_method_update"),
+    path("metodos-pago/<int:pk>/eliminar/",
+         payment_method_delete, name="payment_method_delete"),
+
+    # Registrations management URLs
+    path("inscripciones/", registration_list, name="registration_list"),
+    path("inscripciones/<int:pk>/", registration_detail,
+         name="registration_detail"),
+    path("inscripciones/<int:pk>/aprobar/",
+         registration_approve, name="registration_approve"),
+    path("inscripciones/<int:pk>/rechazar/",
+         registration_reject, name="registration_reject"),
+
+    # Payments management URLs
+    path("pagos/<int:pk>/verificar/", payment_verify, name="payment_verify"),
+
+    # Events statistics URLs
+    path("estadisticas-eventos/", event_statistics, name="statistics"),
 ]

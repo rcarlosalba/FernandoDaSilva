@@ -24,6 +24,7 @@ urlpatterns = [
     path("cuentas/", include("accounts.urls")),
     path("dashboard/", include("dashboard.urls")),
     path("recursos/", include("blog.urls")),
+    path("eventos/", include("events.urls")),
     path("newsletter/", include("newsletter.urls")),
     path('', include('public.urls')),
 ]

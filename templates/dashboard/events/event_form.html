@@ -1,0 +1,325 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">
+            {% if object %}Editar Evento{% else %}Nuevo Evento{% endif %}
+        </h1>
+        <p class="text-gray-600">
+            {% if object %}Modifica la información del evento{% else %}Crea un nuevo evento{% endif %}
+        </p>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Title and Slug -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Título *
+                    </label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.title.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.slug.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Slug
+                    </label>
+                    {{ form.slug }}
+                    {% if form.slug.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.slug.errors.0 }}</p>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Dejar vacío para generar automáticamente</p>
+                </div>
+            </div>
+
+            <!-- Event Type and Modality -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="{{ form.event_type.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Tipo de Evento *
+                    </label>
+                    {{ form.event_type }}
+                    {% if form.event_type.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.event_type.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.modality.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Modalidad *
+                    </label>
+                    {{ form.modality }}
+                    {% if form.modality.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.modality.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Dates -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="{{ form.start_date.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Fecha y Hora de Inicio *
+                    </label>
+                    {{ form.start_date }}
+                    {% if form.start_date.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.start_date.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.end_date.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Fecha y Hora de Fin *
+                    </label>
+                    {{ form.end_date }}
+                    {% if form.end_date.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.end_date.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Price and Capacity -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div id="price-field" class="hidden">
+                    <label for="{{ form.price.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Precio *
+                    </label>
+                    {{ form.price }}
+                    {% if form.price.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.price.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.max_capacity.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Cupo Máximo *
+                    </label>
+                    {{ form.max_capacity }}
+                    {% if form.max_capacity.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.max_capacity.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Location and Event Link -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div id="location-field">
+                    <label for="{{ form.location.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Ubicación
+                    </label>
+                    {{ form.location }}
+                    {% if form.location.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.location.errors.0 }}</p>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Obligatorio para eventos presenciales</p>
+                </div>
+                
+                <div id="event-link-field">
+                    <label for="{{ form.event_link.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Enlace del Evento
+                    </label>
+                    {{ form.event_link }}
+                    {% if form.event_link.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.event_link.errors.0 }}</p>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Obligatorio para eventos online</p>
+                </div>
+            </div>
+
+            <!-- Categories and Payment Methods -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="{{ form.categories.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Categorías *
+                    </label>
+                    {{ form.categories }}
+                    {% if form.categories.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.categories.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div id="payment-methods-field" class="hidden">
+                    <label for="{{ form.payment_methods.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Métodos de Pago *
+                    </label>
+                    {{ form.payment_methods }}
+                    {% if form.payment_methods.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.payment_methods.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Featured Image -->
+            <div>
+                <label for="{{ form.featured_image.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Imagen de Portada
+                </label>
+                {{ form.featured_image }}
+                {% if form.featured_image.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.featured_image.errors.0 }}</p>
+                {% endif %}
+                {% if object and object.featured_image %}
+                    <div class="mt-2">
+                        <img src="{{ object.featured_image.url }}" alt="Imagen actual" class="h-32 w-32 object-cover rounded-lg">
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Status and Survey -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Estado *
+                    </label>
+                    {{ form.status }}
+                    {% if form.status.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.status.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.send_survey.id_for_label }}" class="flex items-center">
+                        {{ form.send_survey }}
+                        <span class="ml-2 text-sm font-medium text-gray-700">Enviar encuesta de satisfacción</span>
+                    </label>
+                    {% if form.send_survey.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.send_survey.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Description with Quill Editor -->
+            <div>
+                <label for="quill-editor" class="block text-sm font-medium text-gray-700 mb-2">
+                    Descripción *
+                </label>
+                <div id="quill-editor" class="mb-4">
+                    {% if object %}
+                        {{ object.description|safe }}
+                    {% endif %}
+                </div>
+                <!-- Hidden textarea to store Quill content -->
+                <textarea name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" class="hidden">
+                    {% if object %}{{ object.description }}{% endif %}
+                </textarea>
+                {% if form.description.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.description.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Form actions -->
+            <div class="flex justify-end space-x-3 pt-6 border-t">
+                <a href="{% url 'dashboard:event_list' %}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors">
+                    Cancelar
+                </a>
+                <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                    {% if object %}
+                        <i class="fas fa-save mr-2"></i>Guardar Cambios
+                    {% else %}
+                        <i class="fas fa-plus mr-2"></i>Crear Evento
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Quill.js CSS -->
+<link href="{% static 'css/quill.snow.css' %}" rel="stylesheet">
+
+<!-- Quill.js JavaScript -->
+<script src="{% static 'js/quill.min.js' %}"></script>
+
+<script>
+    // Initialize Quill editor
+    const quill = new Quill('#quill-editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'align': [] }],
+                ['link', 'image'],
+                ['clean']
+            ]
+        },
+        placeholder: 'Describe el evento aquí...'
+    });
+
+    // Auto-generate slug from title
+    document.getElementById('{{ form.title.id_for_label }}').addEventListener('input', function() {
+        const title = this.value;
+        const slugField = document.getElementById('{{ form.slug.id_for_label }}');
+        
+        if (slugField.value === '') {
+            const slug = title
+                .toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim('-');
+            slugField.value = slug;
+        }
+    });
+
+    // Toggle fields based on event type
+    function toggleFieldsByEventType() {
+        const eventType = document.getElementById('{{ form.event_type.id_for_label }}').value;
+        const locationField = document.getElementById('location-field');
+        const eventLinkField = document.getElementById('event-link-field');
+        
+        if (eventType === 'presential') {
+            locationField.classList.remove('hidden');
+            eventLinkField.classList.add('hidden');
+        } else if (eventType === 'online') {
+            locationField.classList.add('hidden');
+            eventLinkField.classList.remove('hidden');
+        }
+    }
+
+    // Toggle fields based on modality
+    function toggleFieldsByModality() {
+        const modality = document.getElementById('{{ form.modality.id_for_label }}').value;
+        const priceField = document.getElementById('price-field');
+        const paymentMethodsField = document.getElementById('payment-methods-field');
+        
+        if (modality === 'paid') {
+            priceField.classList.remove('hidden');
+            paymentMethodsField.classList.remove('hidden');
+        } else {
+            priceField.classList.add('hidden');
+            paymentMethodsField.classList.add('hidden');
+        }
+    }
+
+    // Event listeners for field toggling
+    document.getElementById('{{ form.event_type.id_for_label }}').addEventListener('change', toggleFieldsByEventType);
+    document.getElementById('{{ form.modality.id_for_label }}').addEventListener('change', toggleFieldsByModality);
+
+    // Initialize field visibility on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleFieldsByEventType();
+        toggleFieldsByModality();
+    });
+
+    // Update hidden textarea with Quill content before form submission
+    document.querySelector('form').addEventListener('submit', function() {
+        const quillContent = quill.root.innerHTML;
+        document.getElementById('{{ form.description.id_for_label }}').value = quillContent;
+    });
+</script>
+{% endblock %} 

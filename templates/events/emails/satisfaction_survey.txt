@@ -1,0 +1,22 @@
+Encuesta de Satisfacción
+
+¡Hola {{ registration.full_name }}!
+
+Esperamos que hayas disfrutado del evento {{ event.title }}.
+
+Tu opinión es muy importante para nosotros. Nos ayudaría mucho si pudieras dedicar unos minutos a completar nuestra encuesta de satisfacción.
+
+EVENTO PARTICIPADO:
+- Evento: {{ event.title }}
+- Fecha: {{ event.start_date|date:"d/m/Y H:i" }}
+- Tipo: {{ event.get_event_type_display }}
+
+La encuesta es completamente anónima y nos ayudará a mejorar nuestros futuros eventos.
+
+Completar encuesta: {{ site_url }}/encuesta/{{ registration.id }}/
+
+¡Gracias por tu participación!
+
+---
+© 2025 Fernando Da Silva. Todos los derechos reservados.
+{{ site_url }} 

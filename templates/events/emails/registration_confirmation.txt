@@ -1,0 +1,27 @@
+Confirmación de Inscripción
+
+¡Hola {{ registration.full_name }}!
+
+Hemos recibido tu inscripción para el evento {{ event.title }}.
+
+DETALLES DEL EVENTO:
+- Fecha: {{ event.start_date|date:"d/m/Y H:i" }}
+- Tipo: {{ event.get_event_type_display }}
+- Modalidad: {{ event.get_modality_display }}
+{% if event.location %}- Ubicación: {{ event.location }}{% endif %}
+{% if event.event_link %}- Enlace: {{ event.event_link }}{% endif %}
+
+{% if event.modality == 'paid' %}
+INFORMACIÓN DE PAGO:
+Este es un evento de pago. Pronto recibirás un email con las instrucciones de pago.
+{% endif %}
+
+Tu inscripción está actualmente pendiente de aprobación. Te notificaremos por email cuando sea revisada.
+
+Si tienes alguna pregunta, no dudes en contactarnos.
+
+Ver detalles del evento: {{ site_url }}{% url 'events:event_detail' event.slug %}
+
+---
+© 2025 Fernando Da Silva. Todos los derechos reservados.
+{{ site_url }} 

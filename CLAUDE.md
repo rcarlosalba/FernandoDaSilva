@@ -2,61 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## 🎯 CORE WORKFLOW PRINCIPLES (MANDATORY)
-
-**These principles override all other considerations and must be followed for every task:**
-
-### 1. Think First, Plan Always
-- **ALWAYS** start by thoroughly reading relevant codebase files
-- Read thoroughly the Conceptual Description in `tasks/todo_X.md` (where X is incremental: todo_1, todo_2, etc.) 
-- Then add a detailed plan in the same file
-- The plan must include a checklist of actionable todo items
-
-### 2. Get Approval Before Acting
-- **NEVER** begin coding without explicit user approval of the plan
-- Present the plan and wait for verification: "Please review this plan before I proceed"
-
-### 3. Work Incrementally
-- Execute todo items one by one
-- Mark each item as complete: `- [x] Completed task`
-- Provide high-level explanations of changes at each step
-
-### 4. Simplicity is Sacred
-- Every change must impact as little code as possible
-- Avoid massive or complex modifications
-- Break complex tasks into simple, atomic changes
-- When in doubt, choose the simpler approach
-
-### 5. Document Everything
-- Add a "## Review" section to each `tasks/todo_X.md`
-- Summarize all changes made
-- Include any relevant notes or considerations
-
-### 6. Workflow Template
-```markdown
-# Task X: [Brief Description]
-
-## Analysis
-- Files analyzed: [list]
-- Problem understanding: [description]
-
-## Plan
-- [ ] Task 1
-- [ ] Task 2
-- [ ] Task 3
-
-## Progress
-[Update as you complete items]
-
-## Review
-[Summary of changes and notes - add at completion]
-```
-
-**🚨 CRITICAL: If any request conflicts with these principles, prioritize these workflow rules.**
-
----
-
-
 ## Project Overview
 
 FDS (Fernando Da Silva) is a Django 4.2.19 web application for a personal/professional website with user management, blog, courses, and newsletter functionality. The project uses TailwindCSS for styling and includes a custom user authentication system.

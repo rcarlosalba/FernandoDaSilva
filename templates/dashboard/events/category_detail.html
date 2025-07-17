@@ -1,0 +1,183 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">{{ category.name }}</h1>
+            <p class="text-gray-600">Detalles de la categoría</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'dashboard:event_category_update' category.pk %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                <i class="fas fa-edit mr-2"></i>Editar
+            </a>
+            <button type="button" 
+                    data-delete-url="{% url 'dashboard:event_category_delete' category.pk %}"
+                    data-delete-title="Eliminar Categoría"
+                    data-delete-message="¿Estás seguro de que deseas eliminar la categoría '{{ category.name|escapejs }}'?"
+                    data-delete-warning="Esta acción es permanente y no se puede revertir. Los eventos asociados no se eliminarán pero perderán esta categoría."
+                    data-delete-confirmation="false"
+                    data-delete-button-text="Eliminar Categoría"
+                    class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                <i class="fas fa-trash mr-2"></i>Eliminar
+            </button>
+        </div>
+    </div>
+
+    <!-- Category information -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main info -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex items-center mb-6">
+                    <div class="h-16 w-16 rounded-lg bg-blue-100 flex items-center justify-center mr-4">
+                        <i class="fas fa-folder text-blue-600 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-900">{{ category.name }}</h2>
+                        <p class="text-gray-500">Categoría de eventos</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Slug</h3>
+                        <p class="mt-1 text-sm text-gray-900 font-mono bg-gray-50 px-2 py-1 rounded">{{ category.slug }}</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Descripción</h3>
+                        <p class="mt-1 text-sm text-gray-900">
+                            {% if category.description %}
+                                {{ category.description }}
+                            {% else %}
+                                <span class="text-gray-400">Sin descripción</span>
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Fecha de Creación</h3>
+                        <p class="mt-1 text-sm text-gray-900">{{ category.created_at|date:"d/m/Y H:i" }}</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Última Actualización</h3>
+                        <p class="mt-1 text-sm text-gray-900">{{ category.updated_at|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Estadísticas</h3>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-500">Total de Eventos</span>
+                        <span class="text-2xl font-bold text-blue-600">
+                            {% if category.annotated_event_count is not None %}
+                                {{ category.annotated_event_count }}
+                            {% else %}
+                                {{ category.event_count }}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events in this category -->
+    <div class="mt-8">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Eventos en esta Categoría</h3>
+            </div>
+            
+            {% if events %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Evento</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for event in events %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        {% if event.featured_image %}
+                                            <img class="h-10 w-10 rounded-lg object-cover mr-3" src="{{ event.featured_image.url }}" alt="{{ event.title }}">
+                                        {% else %}
+                                            <div class="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center mr-3">
+                                                <i class="fas fa-calendar text-gray-400"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900">{{ event.title }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if event.event_type == 'presential' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            <i class="fas fa-map-marker-alt mr-1"></i>Presencial
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                            <i class="fas fa-video mr-1"></i>Online
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if event.status == 'published' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-check-circle mr-1"></i>Publicado
+                                        </span>
+                                    {% elif event.status == 'draft' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            <i class="fas fa-edit mr-1"></i>Borrador
+                                        </span>
+                                    {% elif event.status == 'finished' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                            <i class="fas fa-flag-checkered mr-1"></i>Finalizado
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            <i class="fas fa-times-circle mr-1"></i>Cancelado
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ event.start_date|date:"d/m/Y H:i" }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="{% url 'dashboard:event_detail' event.pk %}" class="text-primary-600 hover:text-primary-900">
+                                        Ver detalles
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-calendar-times text-gray-400 text-4xl mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No hay eventos en esta categoría</h3>
+                    <p class="text-gray-500">Los eventos que se asignen a esta categoría aparecerán aquí</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

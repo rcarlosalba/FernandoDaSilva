@@ -103,3 +103,45 @@ NEWSLETTER_STATUS_CHOICES = [
     ('sending', 'Enviando'),
     ('sent', 'Enviado'),
 ]
+
+# Event Status
+EVENT_STATUS_CHOICES = [
+    ('draft', 'Borrador'),
+    ('published', 'Publicado'),
+    ('finished', 'Finalizado'),
+    ('cancelled', 'Cancelado'),
+]
+
+# Event Type
+EVENT_TYPE_CHOICES = [
+    ('presential', 'Presencial'),
+    ('online', 'Online'),
+]
+
+# Event Modality
+EVENT_MODALITY_CHOICES = [
+    ('free', 'Gratis'),
+    ('paid', 'De Pago'),
+]
+
+# Payment Method Type
+PAYMENT_METHOD_TYPE_CHOICES = [
+    ('transfer', 'Transferencia'),
+    ('cash', 'Efectivo'),
+    ('external_link', 'Enlace Externo'),
+]
+
+# Registration Status
+REGISTRATION_STATUS_CHOICES = [
+    ('pending', 'Pendiente de Aprobación'),
+    ('accepted', 'Aceptada'),
+    ('rejected', 'Rechazada'),
+    ('waitlist', 'En Lista de Espera'),
+]
+
+# Payment Status
+PAYMENT_STATUS_CHOICES = [
+    ('pending', 'Pendiente'),
+    ('verified', 'Verificado'),
+    ('failed', 'Fallido'),
+]

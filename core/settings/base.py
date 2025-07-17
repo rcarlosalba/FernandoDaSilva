@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'courses.apps.CoursesConfig',
     'dashboard.apps.DashboardConfig',
     'newsletter.apps.NewsletterConfig',
+    'events.apps.EventsConfig',
+    'programs.apps.ProgramsConfig',
 ]
 
 AUTH_USER_MODEL = "accounts.User"  # Custom User Model

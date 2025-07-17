@@ -1,0 +1,23 @@
+Evento Cancelado
+
+Hola {{ registration.full_name }}
+
+Lamentamos informarte que el evento {{ event.title }} ha sido cancelado.
+
+EVENTO CANCELADO:
+- Evento: {{ event.title }}
+- Fecha Programada: {{ event.start_date|date:"d/m/Y H:i" }}
+- Tipo: {{ event.get_event_type_display }}
+
+{% if event.modality == 'paid' %}
+REEMBOLSO:
+Si realizaste un pago, te contactaremos en los próximos días para coordinar el reembolso.
+{% endif %}
+
+Nos disculpamos por las molestias ocasionadas. Te invitamos a revisar nuestros próximos eventos.
+
+Ver otros eventos: {{ site_url }}{% url 'events:event_list' %}
+
+---
+© 2025 Fernando Da Silva. Todos los derechos reservados.
+{{ site_url }} 

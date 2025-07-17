@@ -1,0 +1,20 @@
+Inscripción No Aprobada
+
+Hola {{ registration.full_name }}
+
+Lamentamos informarte que tu inscripción para el evento {{ event.title }} no ha sido aprobada.
+
+EVENTO:
+- Evento: {{ event.title }}
+- Fecha: {{ event.start_date|date:"d/m/Y H:i" }}
+- Tipo: {{ event.get_event_type_display }}
+
+Esto puede deberse a diferentes razones como cupo completo, información incompleta, o criterios específicos del evento.
+
+Te invitamos a revisar nuestros próximos eventos y a inscribirte nuevamente.
+
+Ver otros eventos: {{ site_url }}{% url 'events:event_list' %}
+
+---
+© 2025 Fernando Da Silva. Todos los derechos reservados.
+{{ site_url }} 
