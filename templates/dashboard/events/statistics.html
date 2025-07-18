@@ -1,0 +1,266 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Estadísticas de Eventos{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Estadísticas de Eventos</h1>
+        <p class="text-gray-600 mt-2">Resumen general de eventos, inscripciones y encuestas</p>
+    </div>
+
+    <!-- Estadísticas Generales -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Eventos -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center">
+                <div class="h-12 w-12 rounded-lg bg-blue-100 flex items-center justify-center mr-4">
+                    <i class="fas fa-calendar text-blue-600 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Total Eventos</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_events }}</p>
+                </div>
+            </div>
+            <div class="mt-4 grid grid-cols-3 gap-2 text-xs">
+                <div class="text-center">
+                    <p class="font-medium text-green-600">{{ published_events }}</p>
+                    <p class="text-gray-500">Publicados</p>
+                </div>
+                <div class="text-center">
+                    <p class="font-medium text-blue-600">{{ upcoming_events }}</p>
+                    <p class="text-gray-500">Próximos</p>
+                </div>
+                <div class="text-center">
+                    <p class="font-medium text-gray-600">{{ finished_events }}</p>
+                    <p class="text-gray-500">Finalizados</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inscripciones -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center">
+                <div class="h-12 w-12 rounded-lg bg-green-100 flex items-center justify-center mr-4">
+                    <i class="fas fa-users text-green-600 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Total Inscripciones</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_registrations }}</p>
+                </div>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
+                <div class="text-center">
+                    <p class="font-medium text-green-600">{{ accepted_registrations }}</p>
+                    <p class="text-gray-500">Aceptadas</p>
+                </div>
+                <div class="text-center">
+                    <p class="font-medium text-yellow-600">{{ pending_registrations }}</p>
+                    <p class="text-gray-500">Pendientes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagos -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center">
+                <div class="h-12 w-12 rounded-lg bg-purple-100 flex items-center justify-center mr-4">
+                    <i class="fas fa-credit-card text-purple-600 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Total Pagos</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_payments }}</p>
+                </div>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
+                <div class="text-center">
+                    <p class="font-medium text-green-600">{{ verified_payments }}</p>
+                    <p class="text-gray-500">Verificados</p>
+                </div>
+                <div class="text-center">
+                    <p class="font-medium text-yellow-600">{{ pending_payments }}</p>
+                    <p class="text-gray-500">Pendientes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Encuestas -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center">
+                <div class="h-12 w-12 rounded-lg bg-indigo-100 flex items-center justify-center mr-4">
+                    <i class="fas fa-poll text-indigo-600 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-500">Total Encuestas</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_surveys }}</p>
+                </div>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
+                <div class="text-center">
+                    <p class="font-medium text-green-600">{{ active_surveys }}</p>
+                    <p class="text-gray-500">Activas</p>
+                </div>
+                <div class="text-center">
+                    <p class="font-medium text-blue-600">{{ completed_survey_responses }}</p>
+                    <p class="text-gray-500">Completadas</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos y Detalles -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Eventos Más Populares -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-star mr-2"></i>Eventos Más Populares
+            </h3>
+            {% if popular_events %}
+                <div class="space-y-3">
+                    {% for event in popular_events %}
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-900">{{ event.title }}</p>
+                            <p class="text-sm text-gray-500">{{ event.start_date|date:"d/m/Y" }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg font-bold text-blue-600">{{ event.registration_count }}</p>
+                            <p class="text-xs text-gray-500">inscripciones</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 text-center py-4">No hay eventos registrados</p>
+            {% endif %}
+        </div>
+
+        <!-- Categorías Más Populares -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-folder mr-2"></i>Categorías Más Populares
+            </h3>
+            {% if popular_categories %}
+                <div class="space-y-3">
+                    {% for category in popular_categories %}
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-900">{{ category.name }}</p>
+                            <p class="text-sm text-gray-500">{{ category.description|truncatechars:50 }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg font-bold text-green-600">{{ category.annotated_event_count }}</p>
+                            <p class="text-xs text-gray-500">eventos</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 text-center py-4">No hay categorías registradas</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Sección de Encuestas -->
+    <div class="mt-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-semibold text-gray-900">
+                    <i class="fas fa-chart-bar mr-2"></i>Estadísticas de Encuestas
+                </h3>
+                <a href="{% url 'dashboard:survey_list' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-sm">
+                    <i class="fas fa-list mr-2"></i>Ver Todas las Encuestas
+                </a>
+            </div>
+
+            <!-- Resumen de Encuestas -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="text-center p-4 bg-indigo-50 rounded-lg">
+                    <p class="text-2xl font-bold text-indigo-600">{{ total_survey_responses }}</p>
+                    <p class="text-sm text-gray-600">Total Respuestas</p>
+                </div>
+                <div class="text-center p-4 bg-green-50 rounded-lg">
+                    <p class="text-2xl font-bold text-green-600">{{ completed_survey_responses }}</p>
+                    <p class="text-sm text-gray-600">Completadas</p>
+                </div>
+                <div class="text-center p-4 bg-blue-50 rounded-lg">
+                    <p class="text-2xl font-bold text-blue-600">{{ events_with_surveys }}</p>
+                    <p class="text-sm text-gray-600">Eventos con Encuestas</p>
+                </div>
+            </div>
+
+            <!-- Encuestas Más Activas -->
+            <div>
+                <h4 class="text-md font-medium text-gray-900 mb-4">Encuestas Más Activas</h4>
+                {% if active_survey_list %}
+                    <div class="space-y-3">
+                        {% for survey in active_survey_list %}
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-900">{{ survey.title }}</p>
+                                <p class="text-sm text-gray-500">{{ survey.question_count }} preguntas</p>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-indigo-600">{{ survey.response_count }}</p>
+                                    <p class="text-xs text-gray-500">respuestas</p>
+                                </div>
+                                <a href="{% url 'dashboard:survey_results' survey.pk %}" 
+                                   class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded text-sm hover:bg-indigo-200 transition-colors">
+                                    <i class="fas fa-chart-bar mr-1"></i>Ver
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-500 text-center py-4">No hay encuestas activas</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="mt-8">
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-bolt mr-2"></i>Acciones Rápidas
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <a href="{% url 'dashboard:event_create' %}" class="flex items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+                    <i class="fas fa-plus text-blue-600 mr-3"></i>
+                    <div>
+                        <p class="font-medium text-gray-900">Crear Evento</p>
+                        <p class="text-sm text-gray-500">Nuevo evento</p>
+                    </div>
+                </a>
+                
+                <a href="{% url 'dashboard:survey_create' %}" class="flex items-center p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors">
+                    <i class="fas fa-poll text-indigo-600 mr-3"></i>
+                    <div>
+                        <p class="font-medium text-gray-900">Crear Encuesta</p>
+                        <p class="text-sm text-gray-500">Nueva encuesta</p>
+                    </div>
+                </a>
+                
+                <a href="{% url 'dashboard:registration_list' %}" class="flex items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+                    <i class="fas fa-users text-green-600 mr-3"></i>
+                    <div>
+                        <p class="font-medium text-gray-900">Ver Inscripciones</p>
+                        <p class="text-sm text-gray-500">Gestionar inscripciones</p>
+                    </div>
+                </a>
+                
+                <a href="{% url 'dashboard:survey_list' %}" class="flex items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+                    <i class="fas fa-chart-bar text-purple-600 mr-3"></i>
+                    <div>
+                        <p class="font-medium text-gray-900">Ver Encuestas</p>
+                        <p class="text-sm text-gray-500">Gestionar encuestas</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

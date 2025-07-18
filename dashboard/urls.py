@@ -67,6 +67,7 @@ from events.views import (
     survey_questions,
     question_options,
     survey_results,
+    survey_export,
     send_surveys,
 )
 
@@ -179,6 +180,8 @@ urlpatterns = [
          question_options, name="question_options"),
     path("encuestas/<int:pk>/resultados/",
          survey_results, name="survey_results"),
+    path("encuestas/<int:pk>/exportar/",
+         survey_export, name="survey_export"),
     path("eventos/<int:event_pk>/enviar-encuestas/",
          send_surveys, name="send_surveys"),
 ]

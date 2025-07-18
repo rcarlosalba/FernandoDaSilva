@@ -3,12 +3,15 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q, Count
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from constants.constant import manager_required
 from .models import Event, Category, PaymentMethod, Registration, Payment, Survey, SurveyQuestion, SurveyQuestionOption, SurveyResponse
-from .forms import EventForm, CategoryForm, PaymentMethodForm, RegistrationForm, PaymentForm, SurveyForm, SurveyQuestionForm, SurveyQuestionOptionForm, SurveyQuestionFormSet, SurveyQuestionOptionFormSet, EventSurveyForm
+from .forms import EventForm, CategoryForm, PaymentMethodForm, RegistrationForm, PaymentForm, SurveyForm, SurveyQuestionForm, SurveyQuestionOptionForm, SurveyQuestionFormSet, SurveyQuestionOptionFormSet, EventSurveyForm, SurveyResponseForm
 from .utils import send_registration_confirmation_email, send_registration_approved_email, send_registration_rejected_email, create_survey_responses_for_event, send_survey_invitation_email
+import csv
+import io
+from datetime import datetime
 
 
 # ===== VISTAS DE EVENTOS =====
@@ -136,7 +139,7 @@ def event_update(request, pk):
 
     context = {
         'form': form,
-        'event': event,
+        'object': event,
         'title': 'Editar Evento',
         'action': 'Guardar Cambios'
     }
@@ -560,6 +563,14 @@ def event_statistics(request):
     pending_payments = Payment.objects.filter(status='pending').count()
     verified_payments = Payment.objects.filter(status='verified').count()
 
+    # Estadísticas de encuestas
+    total_surveys = Survey.objects.count()
+    active_surveys = Survey.objects.filter(status='active').count()
+    total_survey_responses = SurveyResponse.objects.count()
+    completed_survey_responses = SurveyResponse.objects.filter(
+        status='completed').count()
+    events_with_surveys = Event.objects.filter(survey__isnull=False).count()
+
     # Eventos más populares
     popular_events = Event.objects.annotate(
         registration_count=Count('registrations')
@@ -569,6 +580,12 @@ def event_statistics(request):
     popular_categories = Category.objects.annotate(
         annotated_event_count=Count('events')
     ).order_by('-annotated_event_count')[:5]
+
+    # Encuestas más activas
+    active_survey_list = Survey.objects.filter(status='active').annotate(
+        response_count=Count('responses', filter=Q(
+            responses__status='completed'))
+    ).order_by('-response_count')[:5]
 
     context = {
         'total_events': total_events,
@@ -581,8 +598,14 @@ def event_statistics(request):
         'total_payments': total_payments,
         'pending_payments': pending_payments,
         'verified_payments': verified_payments,
+        'total_surveys': total_surveys,
+        'active_surveys': active_surveys,
+        'total_survey_responses': total_survey_responses,
+        'completed_survey_responses': completed_survey_responses,
+        'events_with_surveys': events_with_surveys,
         'popular_events': popular_events,
         'popular_categories': popular_categories,
+        'active_survey_list': active_survey_list,
     }
 
     return render(request, 'dashboard/events/statistics.html', context)
@@ -1128,6 +1151,263 @@ def survey_results(request, pk):
     }
 
     return render(request, 'dashboard/events/survey_results.html', context)
+
+
+@manager_required
+def survey_export(request, pk):
+    """
+    Exportar resultados de encuesta en diferentes formatos.
+    """
+    survey = get_object_or_404(
+        Survey.objects.prefetch_related(
+            'questions__options', 'responses__question_responses'),
+        pk=pk
+    )
+
+    format_type = request.GET.get('format', 'csv')
+
+    if format_type == 'csv':
+        return export_survey_csv(survey)
+    elif format_type == 'excel':
+        return export_survey_excel(survey)
+    elif format_type == 'pdf':
+        return export_survey_pdf(survey)
+    else:
+        messages.error(request, 'Formato de exportación no válido.')
+        return redirect('dashboard:survey_results', pk=pk)
+
+
+def export_survey_csv(survey):
+    """
+    Exportar resultados de encuesta a CSV.
+    """
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="encuesta_{survey.pk}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv"'
+
+    writer = csv.writer(response)
+
+    # Encabezados
+    headers = ['Pregunta', 'Tipo', 'Respuesta', 'Participante', 'Fecha']
+    writer.writerow(headers)
+
+    # Datos
+    for question in survey.questions.all():
+        responses = question.responses.filter(
+            survey_response__status='completed')
+
+        for response in responses:
+            if question.question_type == 'text':
+                value = response.text_response
+            elif question.question_type == 'scale':
+                value = f"{response.scale_response}/5"
+            elif question.question_type == 'multiple_choice':
+                value = response.selected_option.text if response.selected_option else ''
+            else:
+                value = ''
+
+            writer.writerow([
+                question.text,
+                question.get_question_type_display(),
+                value,
+                response.survey_response.registration.full_name,
+                response.created_at.strftime('%d/%m/%Y %H:%M')
+            ])
+
+    return response
+
+
+def export_survey_excel(survey):
+    """
+    Exportar resultados de encuesta a Excel.
+    """
+    try:
+        import openpyxl
+        from openpyxl.styles import Font, Alignment, PatternFill
+    except ImportError:
+        # Si no está instalado openpyxl, redirigir a CSV
+        return export_survey_csv(survey)
+
+    # Crear workbook
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Resultados de Encuesta"
+
+    # Estilos
+    header_font = Font(bold=True, color="FFFFFF")
+    header_fill = PatternFill(start_color="366092",
+                              end_color="366092", fill_type="solid")
+    header_alignment = Alignment(horizontal="center", vertical="center")
+
+    # Encabezados
+    headers = ['Pregunta', 'Tipo', 'Respuesta',
+               'Participante', 'Email', 'Fecha']
+    for col, header in enumerate(headers, 1):
+        cell = ws.cell(row=1, column=col, value=header)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.alignment = header_alignment
+
+    # Datos
+    row = 2
+    for question in survey.questions.all():
+        responses = question.responses.filter(
+            survey_response__status='completed')
+
+        for response in responses:
+            if question.question_type == 'text':
+                value = response.text_response
+            elif question.question_type == 'scale':
+                value = f"{response.scale_response}/5"
+            elif question.question_type == 'multiple_choice':
+                value = response.selected_option.text if response.selected_option else ''
+            else:
+                value = ''
+
+            ws.cell(row=row, column=1, value=question.text)
+            ws.cell(row=row, column=2, value=question.get_question_type_display())
+            ws.cell(row=row, column=3, value=value)
+            ws.cell(row=row, column=4,
+                    value=response.survey_response.registration.full_name)
+            ws.cell(row=row, column=5,
+                    value=response.survey_response.registration.email)
+            ws.cell(row=row, column=6,
+                    value=response.created_at.strftime('%d/%m/%Y %H:%M'))
+            row += 1
+
+    # Ajustar ancho de columnas
+    for column in ws.columns:
+        max_length = 0
+        column_letter = column[0].column_letter
+        for cell in column:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except:
+                pass
+        adjusted_width = min(max_length + 2, 50)
+        ws.column_dimensions[column_letter].width = adjusted_width
+
+    # Guardar
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = f'attachment; filename="encuesta_{survey.pk}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx"'
+
+    wb.save(response)
+    return response
+
+
+def export_survey_pdf(survey):
+    """
+    Exportar resultados de encuesta a PDF.
+    """
+    try:
+        from reportlab.lib.pagesizes import letter, A4
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.units import inch
+        from reportlab.lib import colors
+    except ImportError:
+        # Si no está instalado reportlab, redirigir a CSV
+        return export_survey_csv(survey)
+
+    # Crear buffer para el PDF
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    story = []
+
+    # Estilos
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=16,
+        spaceAfter=30,
+        alignment=1  # Centrado
+    )
+    heading_style = ParagraphStyle(
+        'CustomHeading',
+        parent=styles['Heading2'],
+        fontSize=14,
+        spaceAfter=12,
+        spaceBefore=20
+    )
+    normal_style = styles['Normal']
+
+    # Título
+    story.append(
+        Paragraph(f"Resultados de Encuesta: {survey.title}", title_style))
+    story.append(Spacer(1, 20))
+
+    # Información general
+    total_responses = survey.responses.filter(status='completed').count()
+    story.append(Paragraph(
+        f"<b>Total de respuestas completadas:</b> {total_responses}", normal_style))
+    story.append(Paragraph(
+        f"<b>Total de preguntas:</b> {survey.questions.count()}", normal_style))
+    story.append(Paragraph(
+        f"<b>Fecha de exportación:</b> {datetime.now().strftime('%d/%m/%Y %H:%M')}", normal_style))
+    story.append(Spacer(1, 20))
+
+    # Resultados por pregunta
+    for question in survey.questions.all():
+        story.append(Paragraph(f"<b>{question.text}</b>", heading_style))
+        story.append(
+            Paragraph(f"Tipo: {question.get_question_type_display()}", normal_style))
+
+        responses = question.responses.filter(
+            survey_response__status='completed')
+
+        if question.question_type == 'text':
+            # Mostrar algunas respuestas de texto
+            text_responses = responses.exclude(text_response='')[:3]
+            for response in text_responses:
+                story.append(
+                    Paragraph(f"• {response.text_response[:200]}...", normal_style))
+                story.append(Paragraph(
+                    f"  <i>Por: {response.survey_response.registration.full_name}</i>", normal_style))
+
+        elif question.question_type == 'scale':
+            # Estadísticas de escala
+            scale_responses = responses.exclude(scale_response__isnull=True)
+            if scale_responses.exists():
+                avg_rating = sum(
+                    r.scale_response for r in scale_responses) / scale_responses.count()
+                story.append(
+                    Paragraph(f"Promedio: {avg_rating:.2f}/5", normal_style))
+
+                # Distribución
+                distribution = {}
+                for i in range(1, 6):
+                    distribution[i] = scale_responses.filter(
+                        scale_response=i).count()
+
+                for rating, count in distribution.items():
+                    story.append(
+                        Paragraph(f"{rating} estrellas: {count} respuestas", normal_style))
+
+        elif question.question_type == 'multiple_choice':
+            # Conteo de opciones
+            option_counts = {}
+            for option in question.options.all():
+                count = option.responses.filter(
+                    survey_response__status='completed').count()
+                option_counts[option.text] = count
+
+            for option_text, count in option_counts.items():
+                story.append(
+                    Paragraph(f"• {option_text}: {count} respuestas", normal_style))
+
+        story.append(Spacer(1, 15))
+
+    # Construir PDF
+    doc.build(story)
+    buffer.seek(0)
+
+    response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="encuesta_{survey.pk}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pdf"'
+
+    return response
 
 
 @manager_required

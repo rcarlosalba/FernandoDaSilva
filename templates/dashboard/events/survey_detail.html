@@ -9,6 +9,11 @@
             <p class="text-gray-600">Detalles de la encuesta</p>
         </div>
         <div class="flex space-x-3">
+            {% if survey.response_count > 0 %}
+            <a href="{% url 'dashboard:survey_results' survey.pk %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                <i class="fas fa-chart-bar mr-2"></i>Ver Resultados
+            </a>
+            {% endif %}
             <a href="{% url 'dashboard:survey_questions' survey.pk %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                 <i class="fas fa-question-circle mr-2"></i>Gestionar Preguntas
             </a>

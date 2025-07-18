@@ -203,11 +203,7 @@
                 <label for="quill-editor" class="block text-sm font-medium text-gray-700 mb-2">
                     Descripción *
                 </label>
-                <div id="quill-editor" class="mb-4">
-                    {% if object %}
-                        {{ object.description|safe }}
-                    {% endif %}
-                </div>
+                <div id="quill-editor" class="mb-4"></div>
                 <!-- Hidden textarea to store Quill content -->
                 <textarea name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" class="hidden">
                     {% if object %}{{ object.description }}{% endif %}
@@ -259,6 +255,15 @@
         },
         placeholder: 'Describe el evento aquí...'
     });
+
+    // Set initial content if editing an existing event
+    {% if object %}
+        const textarea = document.getElementById('{{ form.description.id_for_label }}');
+        const initialContent = textarea.value.trim();
+        if (initialContent) {
+            quill.root.innerHTML = initialContent;
+        }
+    {% endif %}
 
     // Auto-generate slug from title
     document.getElementById('{{ form.title.id_for_label }}').addEventListener('input', function() {
