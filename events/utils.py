@@ -152,3 +152,163 @@ def schedule_event_reminders():
         send_event_reminder_email(registration)
 
     return len(registrations)
+
+
+# ====== FUNCIONES DE ENCUESTAS ======
+
+def send_survey_invitation_email(survey_response):
+    """
+    Envía email de invitación para completar la encuesta de satisfacción.
+    """
+    try:
+        # Construir el enlace de la encuesta
+        survey_url = f"{settings.SITE_URL}/eventos/encuesta/{survey_response.token}/"
+
+        # Contexto para el template
+        context = {
+            'survey_response': survey_response,
+            'survey': survey_response.survey,
+            'event': survey_response.event,
+            'registration': survey_response.registration,
+            'survey_url': survey_url,
+            'expires_at': survey_response.expires_at,
+            'site_name': 'Fernando Da Silva',
+        }
+
+        # Renderizar contenido del email
+        html_message = render_to_string(
+            'events/emails/survey_invitation.html', context)
+        plain_message = strip_tags(html_message)
+
+        # Enviar email
+        send_mail(
+            subject=f'Encuesta de satisfacción - {survey_response.event.title}',
+            message=plain_message,
+            html_message=html_message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[survey_response.registration.email],
+            fail_silently=False,
+        )
+
+        # Marcar como enviada
+        survey_response.status = 'sent'
+        survey_response.save()
+
+        return True
+
+    except Exception as e:
+        print(
+            f"Error enviando encuesta a {survey_response.registration.email}: {e}")
+        return False
+
+
+def send_survey_reminder_email(survey_response):
+    """
+    Envía email de recordatorio para completar la encuesta.
+    """
+    try:
+        # Construir el enlace de la encuesta
+        survey_url = f"{settings.SITE_URL}/eventos/encuesta/{survey_response.token}/"
+
+        # Contexto para el template
+        context = {
+            'survey_response': survey_response,
+            'survey': survey_response.survey,
+            'event': survey_response.event,
+            'registration': survey_response.registration,
+            'survey_url': survey_url,
+            'expires_at': survey_response.expires_at,
+            'site_name': 'Fernando Da Silva',
+        }
+
+        # Renderizar contenido del email
+        html_message = render_to_string(
+            'events/emails/survey_reminder.html', context)
+        plain_message = strip_tags(html_message)
+
+        # Enviar email
+        send_mail(
+            subject=f'Recordatorio: Encuesta de satisfacción - {survey_response.event.title}',
+            message=plain_message,
+            html_message=html_message,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[survey_response.registration.email],
+            fail_silently=False,
+        )
+
+        return True
+
+    except Exception as e:
+        print(
+            f"Error enviando recordatorio a {survey_response.registration.email}: {e}")
+        return False
+
+
+def create_survey_responses_for_event(event):
+    """
+    Crea respuestas de encuesta para todos los participantes de un evento.
+    """
+    from .models import SurveyResponse
+
+    if not event.survey or not event.send_survey:
+        return 0
+
+    # Obtener inscripciones aceptadas que no tienen respuesta de encuesta
+    registrations = event.registrations.filter(
+        status='accepted',
+        survey_responses__isnull=True
+    )
+
+    created_count = 0
+    for registration in registrations:
+        # Crear respuesta de encuesta
+        survey_response = SurveyResponse.objects.create(
+            survey=event.survey,
+            event=event,
+            registration=registration
+        )
+        created_count += 1
+
+    return created_count
+
+
+def send_surveys_for_event_manual(event):
+    """
+    Envía encuestas para un evento específico de forma manual.
+    """
+    from .models import SurveyResponse
+
+    if not event.survey or not event.send_survey:
+        return 0
+
+    # Obtener respuestas de encuesta no enviadas
+    survey_responses = SurveyResponse.objects.filter(
+        survey=event.survey,
+        event=event,
+        status='sent'
+    )
+
+    sent_count = 0
+    for survey_response in survey_responses:
+        if send_survey_invitation_email(survey_response):
+            sent_count += 1
+
+    return sent_count
+
+
+def cleanup_expired_survey_responses():
+    """
+    Marca como expiradas las encuestas que han superado su tiempo límite.
+    """
+    from .models import SurveyResponse
+
+    expired_responses = SurveyResponse.objects.filter(
+        status__in=['sent', 'opened'],
+        expires_at__lt=timezone.now()
+    )
+
+    for response in expired_responses:
+        response.status = 'expired'
+        response.save()
+
+    return expired_responses.count()

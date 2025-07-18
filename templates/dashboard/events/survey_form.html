@@ -1,0 +1,96 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">{{ title }}</h1>
+        <p class="text-gray-600">
+            {% if object %}Modifica la información de la encuesta{% else %}Crea una nueva encuesta de satisfacción{% endif %}
+        </p>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Title -->
+            <div>
+                <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Título *
+                </label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.title.errors.0 }}</p>
+                {% endif %}
+                <p class="mt-1 text-sm text-gray-500">Nombre descriptivo de la encuesta</p>
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Descripción
+                </label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.description.errors.0 }}</p>
+                {% endif %}
+                <p class="mt-1 text-sm text-gray-500">Descripción opcional de la encuesta</p>
+            </div>
+
+            <!-- Status -->
+            <div>
+                <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Estado *
+                </label>
+                {{ form.status }}
+                {% if form.status.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.status.errors.0 }}</p>
+                {% endif %}
+                <p class="mt-1 text-sm text-gray-500">
+                    <strong>Borrador:</strong> Solo visible para edición<br>
+                    <strong>Activa:</strong> Disponible para asignar a eventos<br>
+                    <strong>Inactiva:</strong> No disponible para nuevos eventos
+                </p>
+            </div>
+
+            <!-- Form actions -->
+            <div class="flex justify-end space-x-3 pt-6 border-t">
+                <a href="{% url 'dashboard:survey_list' %}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors">
+                    Cancelar
+                </a>
+                <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                    {% if object %}
+                        <i class="fas fa-save mr-2"></i>Guardar Cambios
+                    {% else %}
+                        <i class="fas fa-plus mr-2"></i>Crear Encuesta
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Next steps info -->
+    {% if object %}
+        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-info-circle text-blue-400"></i>
+                </div>
+                <div class="ml-3">
+                    <h3 class="text-sm font-medium text-blue-800">Próximos pasos</h3>
+                    <div class="mt-2 text-sm text-blue-700">
+                        <p>Una vez guardada la encuesta, puedes:</p>
+                        <ul class="list-disc list-inside mt-1 space-y-1">
+                            <li><a href="{% url 'dashboard:survey_questions' object.pk %}" class="text-blue-600 hover:text-blue-800 underline">Agregar preguntas</a></li>
+                            <li><a href="{% url 'dashboard:survey_detail' object.pk %}" class="text-blue-600 hover:text-blue-800 underline">Ver detalles</a></li>
+                            <li>Asignar a eventos desde la gestión de eventos</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

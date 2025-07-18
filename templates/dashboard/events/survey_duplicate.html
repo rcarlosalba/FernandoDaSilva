@@ -1,0 +1,192 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Duplicar Encuesta</h1>
+                <p class="text-gray-600">Crear una copia de la encuesta existente</p>
+            </div>
+            <a href="{% url 'dashboard:survey_detail' survey.pk %}" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- Survey information -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex items-center mb-6">
+            <div class="h-16 w-16 rounded-lg bg-purple-100 flex items-center justify-center mr-4">
+                <i class="fas fa-copy text-purple-600 text-2xl"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900">{{ survey.title }}</h2>
+                <p class="text-gray-500">Encuesta a duplicar</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Descripción</h3>
+                <p class="text-sm text-gray-900">
+                    {% if survey.description %}
+                        {{ survey.description }}
+                    {% else %}
+                        <span class="text-gray-400">Sin descripción</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <div>
+                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Estado Actual</h3>
+                <div>
+                    {% if survey.status == 'active' %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="fas fa-check-circle mr-1"></i>Activa
+                        </span>
+                    {% elif survey.status == 'draft' %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                            <i class="fas fa-edit mr-1"></i>Borrador
+                        </span>
+                    {% else %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            <i class="fas fa-pause mr-1"></i>Inactiva
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Questions summary -->
+        {% if survey.questions.all %}
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Preguntas que se duplicarán</h3>
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
+                        <div>
+                            <div class="text-2xl font-bold text-blue-600">{{ survey.question_count }}</div>
+                            <div class="text-sm text-gray-500">Total de preguntas</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-green-600">
+                                {{ survey.question_count }}
+                            </div>
+                            <div class="text-sm text-gray-500">Se duplicarán</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Duplication form -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="mb-6">
+            <div class="flex items-center">
+                <div class="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                    <i class="fas fa-info-circle text-blue-600"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900">Información sobre la duplicación</h3>
+                    <p class="text-sm text-gray-600">Se creará una nueva encuesta con el contenido copiado</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div class="flex">
+                <i class="fas fa-info-circle text-blue-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                <div>
+                    <h4 class="text-sm font-medium text-blue-800">¿Qué se duplicará?</h4>
+                    <ul class="text-sm text-blue-700 mt-1 space-y-1">
+                        <li>• Título de la encuesta (se agregará "(Copia)" al final)</li>
+                        <li>• Descripción completa</li>
+                        <li>• Todas las preguntas y sus tipos</li>
+                        <li>• Opciones de preguntas múltiples</li>
+                        <li>• Configuración de preguntas obligatorias</li>
+                        <li>• Orden de las preguntas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+            <div class="flex">
+                <i class="fas fa-exclamation-triangle text-yellow-400 mr-3 flex-shrink-0 mt-0.5"></i>
+                <div>
+                    <h4 class="text-sm font-medium text-yellow-800">Nota importante</h4>
+                    <ul class="text-sm text-yellow-700 mt-1 space-y-1">
+                        <li>• La nueva encuesta se creará con estado "Borrador"</li>
+                        <li>• No se duplicarán las respuestas existentes</li>
+                        <li>• La nueva encuesta será independiente de la original</li>
+                        <li>• Podrás editar la nueva encuesta después de crearla</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmation form -->
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div class="flex items-center">
+                    <input type="checkbox" 
+                           id="confirm_duplicate" 
+                           name="confirm_duplicate" 
+                           class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                           required>
+                    <label for="confirm_duplicate" class="ml-2 text-sm text-gray-700">
+                        Confirmo que deseo duplicar la encuesta "<strong>{{ survey.title }}</strong>"
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex justify-end space-x-3">
+                <a href="{% url 'dashboard:survey_detail' survey.pk %}" 
+                   class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                    Cancelar
+                </a>
+                <button type="submit" 
+                        class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        id="duplicateButton"
+                        disabled>
+                    <i class="fas fa-copy mr-2"></i>Duplicar Encuesta
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmCheckbox = document.getElementById('confirm_duplicate');
+    const duplicateButton = document.getElementById('duplicateButton');
+    
+    // Habilitar/deshabilitar botón según el checkbox
+    confirmCheckbox.addEventListener('change', function() {
+        duplicateButton.disabled = !this.checked;
+    });
+    
+    // Confirmación adicional antes de enviar
+    document.querySelector('form').addEventListener('submit', function(e) {
+        if (!confirmCheckbox.checked) {
+            e.preventDefault();
+            alert('Debes confirmar la duplicación antes de continuar.');
+            return;
+        }
+        
+        if (!confirm('¿Estás seguro de que deseas duplicar esta encuesta?')) {
+            e.preventDefault();
+            return;
+        }
+        
+        // Mostrar indicador de carga
+        duplicateButton.disabled = true;
+        duplicateButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Duplicando...';
+    });
+});
+</script>
+{% endblock %} 

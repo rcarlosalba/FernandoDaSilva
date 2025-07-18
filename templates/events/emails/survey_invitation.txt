@@ -1,0 +1,27 @@
+{{ site_name }} - Encuesta de Satisfacción
+
+Hola {{ registration.first_name }},
+
+Esperamos que hayas disfrutado del evento "{{ event.title }}". Tu opinión es muy importante para nosotros y nos ayudará a mejorar nuestros futuros eventos.
+
+INFORMACIÓN DEL EVENTO:
+- Título: {{ event.title }}
+- Fecha: {{ event.start_date|date:"d/m/Y H:i" }}
+{% if event.location %}- Ubicación: {{ event.location }}{% endif %}
+
+ENCUESTA:
+{{ survey.title }}
+{{ survey.description }}
+
+Para responder la encuesta, visita el siguiente enlace:
+{{ survey_url }}
+
+⚠️ IMPORTANTE: Esta encuesta estará disponible hasta el {{ expires_at|date:"d/m/Y H:i" }}.
+
+La encuesta solo tomará unos minutos de tu tiempo y tus respuestas serán completamente anónimas.
+
+¡Gracias por tu participación!
+
+---
+Este email fue enviado por {{ site_name }}
+Si tienes alguna pregunta, no dudes en contactarnos. 

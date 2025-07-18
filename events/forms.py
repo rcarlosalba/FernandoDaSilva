@@ -1,8 +1,9 @@
 from django import forms
+from django.forms import inlineformset_factory
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from constants import form_styles
-from .models import Event, Category, PaymentMethod, Registration, Payment
+from .models import Event, Category, PaymentMethod, Registration, Payment, Survey, SurveyQuestion, SurveyQuestionOption, SurveyQuestionResponse
 
 
 class EventForm(forms.ModelForm):
@@ -15,7 +16,7 @@ class EventForm(forms.ModelForm):
             'title', 'slug', 'description', 'featured_image', 'start_date',
             'end_date', 'event_type', 'modality', 'price', 'max_capacity',
             'location', 'event_link', 'status', 'categories', 'payment_methods',
-            'send_survey'
+            'send_survey', 'survey'
         ]
         widgets = {
             'title': forms.TextInput(attrs={'class': form_styles.BASE_INPUT}),
@@ -40,6 +41,7 @@ class EventForm(forms.ModelForm):
             'categories': forms.SelectMultiple(attrs={'class': form_styles.MULTIPLE_SELECT}),
             'payment_methods': forms.SelectMultiple(attrs={'class': form_styles.MULTIPLE_SELECT}),
             'send_survey': forms.CheckboxInput(attrs={'class': form_styles.BASE_CHECKBOX}),
+            'survey': forms.Select(attrs={'class': form_styles.BASE_SELECT}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -50,6 +52,10 @@ class EventForm(forms.ModelForm):
                 self.fields['location'].required = False
             else:
                 self.fields['event_link'].required = False
+
+        # Filtrar encuestas activas para el campo survey
+        self.fields['survey'].queryset = Survey.objects.filter(status='active')
+        self.fields['survey'].empty_label = "Seleccionar encuesta (opcional)"
 
     def clean(self):
         cleaned_data = super().clean()
@@ -249,3 +255,272 @@ class EventFilterForm(forms.Form):
             'placeholder': 'Buscar eventos...'
         })
     )
+
+
+# ====== FORMULARIOS DE ENCUESTAS ======
+
+class SurveyForm(forms.ModelForm):
+    """
+    Formulario para crear y editar encuestas.
+    """
+    class Meta:
+        model = Survey
+        fields = ['title', 'description', 'status']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': form_styles.BASE_INPUT}),
+            'description': forms.Textarea(attrs={
+                'class': form_styles.BASE_TEXTAREA,
+                'rows': 4,
+                'placeholder': 'Descripción opcional de la encuesta...'
+            }),
+            'status': forms.Select(attrs={'class': form_styles.BASE_SELECT}),
+        }
+
+    def clean_title(self):
+        title = self.cleaned_data['title']
+        if len(title.strip()) < 3:
+            raise ValidationError(
+                "El título debe tener al menos 3 caracteres.")
+        return title.strip()
+
+
+class SurveyQuestionForm(forms.ModelForm):
+    """
+    Formulario para crear y editar preguntas de encuesta.
+    """
+    class Meta:
+        model = SurveyQuestion
+        fields = ['text', 'question_type', 'order', 'required']
+        widgets = {
+            'text': forms.TextInput(attrs={
+                'class': form_styles.BASE_INPUT,
+                'placeholder': 'Escribe tu pregunta aquí...'
+            }),
+            'question_type': forms.Select(attrs={'class': form_styles.BASE_SELECT}),
+            'order': forms.NumberInput(attrs={
+                'class': form_styles.BASE_INPUT,
+                'min': '1'
+            }),
+            'required': forms.CheckboxInput(attrs={'class': form_styles.BASE_CHECKBOX}),
+        }
+
+    def clean_text(self):
+        text = self.cleaned_data['text']
+        if len(text.strip()) < 5:
+            raise ValidationError(
+                "La pregunta debe tener al menos 5 caracteres.")
+        return text.strip()
+
+    def clean_order(self):
+        order = self.cleaned_data['order']
+        if order < 1:
+            raise ValidationError("El orden debe ser mayor a 0.")
+        return order
+
+
+class SurveyQuestionOptionForm(forms.ModelForm):
+    """
+    Formulario para crear y editar opciones de preguntas de opciones múltiples.
+    """
+    class Meta:
+        model = SurveyQuestionOption
+        fields = ['text', 'order']
+        widgets = {
+            'text': forms.TextInput(attrs={
+                'class': form_styles.BASE_INPUT,
+                'placeholder': 'Escribe la opción aquí...'
+            }),
+            'order': forms.NumberInput(attrs={
+                'class': form_styles.BASE_INPUT,
+                'min': '1'
+            }),
+        }
+
+    def clean_text(self):
+        text = self.cleaned_data['text']
+        if len(text.strip()) < 1:
+            raise ValidationError("La opción no puede estar vacía.")
+        return text.strip()
+
+    def clean_order(self):
+        order = self.cleaned_data['order']
+        if order < 1:
+            raise ValidationError("El orden debe ser mayor a 0.")
+        return order
+
+
+class SurveyQuestionFormSet(forms.BaseInlineFormSet):
+    """
+    FormSet para gestionar múltiples preguntas de una encuesta.
+    """
+
+    def clean(self):
+        super().clean()
+
+        # Verificar que hay al menos una pregunta
+        if not any(form.cleaned_data and not form.cleaned_data.get('DELETE', False)
+                   for form in self.forms):
+            raise ValidationError(
+                "La encuesta debe tener al menos una pregunta.")
+
+        # Verificar que no hay órdenes duplicados
+        orders = []
+        for form in self.forms:
+            if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                order = form.cleaned_data.get('order')
+                if order in orders:
+                    raise ValidationError(
+                        "No puede haber preguntas con el mismo orden.")
+                orders.append(order)
+
+
+class SurveyQuestionOptionFormSet(forms.BaseInlineFormSet):
+    """
+    FormSet para gestionar múltiples opciones de una pregunta de opciones múltiples.
+    """
+
+    def clean(self):
+        super().clean()
+
+        # Verificar que hay al menos dos opciones para preguntas de opciones múltiples
+        valid_options = []
+        for form in self.forms:
+            if form.cleaned_data and not form.cleaned_data.get('DELETE', False):
+                valid_options.append(form.cleaned_data)
+
+        if len(valid_options) < 2:
+            raise ValidationError(
+                "Las preguntas de opciones múltiples deben tener al menos 2 opciones.")
+
+        # Verificar que no hay órdenes duplicados
+        orders = []
+        for option in valid_options:
+            order = option.get('order')
+            if order in orders:
+                raise ValidationError(
+                    "No puede haber opciones con el mismo orden.")
+            orders.append(order)
+
+
+class SurveyResponseForm(forms.Form):
+    """
+    Formulario dinámico para responder una encuesta.
+    """
+
+    def __init__(self, survey_response, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.survey_response = survey_response
+
+        # Crear campos dinámicos para cada pregunta
+        for question in survey_response.survey.questions.all():
+            field_name = f'question_{question.id}'
+
+            if question.question_type == 'text':
+                self.fields[field_name] = forms.CharField(
+                    required=question.required,
+                    widget=forms.Textarea(attrs={
+                        'class': form_styles.BASE_TEXTAREA,
+                        'rows': 3,
+                        'placeholder': 'Escribe tu respuesta aquí...'
+                    })
+                )
+
+            elif question.question_type == 'scale':
+                self.fields[field_name] = forms.ChoiceField(
+                    required=question.required,
+                    choices=[(i, str(i)) for i in range(1, 6)],
+                    widget=forms.RadioSelect(attrs={'class': 'space-y-2'})
+                )
+
+            elif question.question_type == 'multiple_choice':
+                choices = [(option.id, option.text)
+                           for option in question.options.all()]
+                self.fields[field_name] = forms.ChoiceField(
+                    required=question.required,
+                    choices=choices,
+                    widget=forms.RadioSelect(attrs={'class': 'space-y-2'})
+                )
+
+            # Agregar label personalizado
+            self.fields[field_name].label = question.text
+            if question.required:
+                self.fields[field_name].label += ' *'
+
+    def save(self):
+        """Guarda las respuestas a la base de datos."""
+        for field_name, value in self.cleaned_data.items():
+            if field_name.startswith('question_'):
+                question_id = int(field_name.split('_')[1])
+                question = SurveyQuestion.objects.get(id=question_id)
+
+                # Crear o actualizar la respuesta
+                response, created = SurveyQuestionResponse.objects.get_or_create(
+                    survey_response=self.survey_response,
+                    question=question
+                )
+
+                # Guardar el valor según el tipo de pregunta
+                if question.question_type == 'text':
+                    response.text_response = value
+                elif question.question_type == 'scale':
+                    response.scale_response = int(value)
+                elif question.question_type == 'multiple_choice':
+                    response.selected_option = SurveyQuestionOption.objects.get(
+                        id=int(value))
+
+                response.save()
+
+        # Marcar la encuesta como completada
+        self.survey_response.mark_completed()
+
+
+class EventSurveyForm(forms.ModelForm):
+    """
+    Formulario para asignar encuestas a eventos.
+    """
+    class Meta:
+        model = Event
+        fields = ['survey', 'send_survey']
+        widgets = {
+            'survey': forms.Select(attrs={'class': form_styles.BASE_SELECT}),
+            'send_survey': forms.CheckboxInput(attrs={'class': form_styles.BASE_CHECKBOX}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filtrar solo encuestas activas
+        self.fields['survey'].queryset = Survey.objects.filter(status='active')
+        self.fields['survey'].empty_label = "Seleccionar encuesta (opcional)"
+
+    def clean(self):
+        cleaned_data = super().clean()
+        send_survey = cleaned_data.get('send_survey')
+        survey = cleaned_data.get('survey')
+
+        if send_survey and not survey:
+            raise ValidationError(
+                "Debe seleccionar una encuesta para enviar encuestas de satisfacción."
+            )
+
+        return cleaned_data
+
+
+# Crear los formsets usando inlineformset_factory
+SurveyQuestionFormSet = inlineformset_factory(
+    Survey,  # Modelo padre
+    SurveyQuestion,  # Modelo hijo
+    form=SurveyQuestionForm,
+    formset=SurveyQuestionFormSet,
+    extra=1,  # Número de formularios vacíos adicionales
+    can_delete=True,  # Permitir eliminar preguntas
+)
+
+SurveyQuestionOptionFormSet = inlineformset_factory(
+    SurveyQuestion,  # Modelo padre
+    SurveyQuestionOption,  # Modelo hijo
+    form=SurveyQuestionOptionForm,
+    formset=SurveyQuestionOptionFormSet,
+    extra=2,  # Número de formularios vacíos adicionales (mínimo 2 opciones)
+    can_delete=True,  # Permitir eliminar opciones
+    min_num=2,  # Mínimo número de formularios requeridos
+)

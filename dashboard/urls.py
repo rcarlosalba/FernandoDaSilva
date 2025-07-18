@@ -57,6 +57,17 @@ from events.views import (
     payment_verify,
     # Statistics views
     event_statistics,
+    # Survey management views
+    survey_list,
+    survey_create,
+    survey_detail,
+    survey_update,
+    survey_delete,
+    survey_duplicate,
+    survey_questions,
+    question_options,
+    survey_results,
+    send_surveys,
 )
 
 app_name = "dashboard"
@@ -153,4 +164,21 @@ urlpatterns = [
 
     # Events statistics URLs
     path("estadisticas-eventos/", event_statistics, name="statistics"),
+
+    # Survey management URLs
+    path("encuestas/", survey_list, name="survey_list"),
+    path("encuestas/crear/", survey_create, name="survey_create"),
+    path("encuestas/<int:pk>/", survey_detail, name="survey_detail"),
+    path("encuestas/<int:pk>/editar/", survey_update, name="survey_update"),
+    path("encuestas/<int:pk>/eliminar/", survey_delete, name="survey_delete"),
+    path("encuestas/<int:pk>/duplicar/",
+         survey_duplicate, name="survey_duplicate"),
+    path("encuestas/<int:pk>/preguntas/",
+         survey_questions, name="survey_questions"),
+    path("preguntas/<int:question_pk>/opciones/",
+         question_options, name="question_options"),
+    path("encuestas/<int:pk>/resultados/",
+         survey_results, name="survey_results"),
+    path("eventos/<int:event_pk>/enviar-encuestas/",
+         send_surveys, name="send_surveys"),
 ]

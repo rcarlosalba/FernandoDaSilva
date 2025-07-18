@@ -6,9 +6,9 @@ from django.db.models import Q, Count
 from django.http import JsonResponse
 from django.utils import timezone
 from constants.constant import manager_required
-from .models import Event, Category, PaymentMethod, Registration, Payment
-from .forms import EventForm, CategoryForm, PaymentMethodForm, RegistrationForm, PaymentForm
-from .utils import send_registration_confirmation_email, send_registration_approved_email, send_registration_rejected_email
+from .models import Event, Category, PaymentMethod, Registration, Payment, Survey, SurveyQuestion, SurveyQuestionOption, SurveyResponse
+from .forms import EventForm, CategoryForm, PaymentMethodForm, RegistrationForm, PaymentForm, SurveyForm, SurveyQuestionForm, SurveyQuestionOptionForm, SurveyQuestionFormSet, SurveyQuestionOptionFormSet, EventSurveyForm
+from .utils import send_registration_confirmation_email, send_registration_approved_email, send_registration_rejected_email, create_survey_responses_for_event, send_survey_invitation_email
 
 
 # ===== VISTAS DE EVENTOS =====
@@ -815,3 +815,433 @@ def registration_success(request, registration_id):
     }
 
     return render(request, 'events/registration_success.html', context)
+
+
+# ===== VISTAS DE GESTIÓN DE ENCUESTAS =====
+
+@manager_required
+def survey_list(request):
+    """
+    Lista de encuestas para el dashboard.
+    """
+    surveys = Survey.objects.select_related(
+        'created_by').prefetch_related('questions').all()
+
+    # Filtros
+    status = request.GET.get('status')
+    if status:
+        surveys = surveys.filter(status=status)
+
+    search = request.GET.get('search')
+    if search:
+        surveys = surveys.filter(
+            Q(title__icontains=search) |
+            Q(description__icontains=search)
+        )
+
+    # Estadísticas
+    total_surveys = surveys.count()
+    active_surveys = surveys.filter(status='active').count()
+    draft_surveys = surveys.filter(status='draft').count()
+
+    # Paginación
+    paginator = Paginator(surveys, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'surveys': page_obj,
+        'total_surveys': total_surveys,
+        'active_surveys': active_surveys,
+        'draft_surveys': draft_surveys,
+    }
+
+    return render(request, 'dashboard/events/survey_list.html', context)
+
+
+@manager_required
+def survey_create(request):
+    """
+    Crear nueva encuesta.
+    """
+    if request.method == 'POST':
+        form = SurveyForm(request.POST)
+        if form.is_valid():
+            survey = form.save(commit=False)
+            survey.created_by = request.user
+            survey.save()
+
+            messages.success(
+                request, f'Encuesta "{survey.title}" creada exitosamente.')
+            return redirect('dashboard:survey_detail', pk=survey.pk)
+    else:
+        form = SurveyForm()
+
+    context = {
+        'form': form,
+        'title': 'Nueva Encuesta',
+        'action': 'Crear Encuesta'
+    }
+
+    return render(request, 'dashboard/events/survey_form.html', context)
+
+
+@manager_required
+def survey_detail(request, pk):
+    """
+    Detalle de encuesta.
+    """
+    survey = get_object_or_404(
+        Survey.objects.select_related(
+            'created_by').prefetch_related('questions__options'),
+        pk=pk
+    )
+
+    # Estadísticas de respuestas
+    total_responses = survey.responses.count()
+    completed_responses = survey.responses.filter(status='completed').count()
+    opened_responses = survey.responses.filter(status='opened').count()
+    expired_responses = survey.responses.filter(status='expired').count()
+
+    # Eventos que usan esta encuesta
+    events_using_survey = survey.events.all()
+
+    context = {
+        'survey': survey,
+        'total_responses': total_responses,
+        'completed_responses': completed_responses,
+        'opened_responses': opened_responses,
+        'expired_responses': expired_responses,
+        'events_using_survey': events_using_survey,
+    }
+
+    return render(request, 'dashboard/events/survey_detail.html', context)
+
+
+@manager_required
+def survey_update(request, pk):
+    """
+    Editar encuesta.
+    """
+    survey = get_object_or_404(Survey, pk=pk)
+
+    if request.method == 'POST':
+        form = SurveyForm(request.POST, instance=survey)
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request, f'Encuesta "{survey.title}" actualizada exitosamente.')
+            return redirect('dashboard:survey_detail', pk=survey.pk)
+    else:
+        form = SurveyForm(instance=survey)
+
+    context = {
+        'form': form,
+        'survey': survey,
+        'title': 'Editar Encuesta',
+        'action': 'Guardar Cambios'
+    }
+
+    return render(request, 'dashboard/events/survey_form.html', context)
+
+
+@manager_required
+def survey_delete(request, pk):
+    """
+    Eliminar encuesta.
+    """
+    survey = get_object_or_404(Survey, pk=pk)
+
+    if request.method == 'POST':
+        survey_title = survey.title
+        survey.delete()
+        messages.success(
+            request, f'Encuesta "{survey_title}" eliminada exitosamente.')
+        return redirect('dashboard:survey_list')
+
+    context = {
+        'survey': survey
+    }
+
+    return render(request, 'dashboard/events/survey_delete.html', context)
+
+
+@manager_required
+def survey_duplicate(request, pk):
+    """
+    Duplicar encuesta.
+    """
+    survey = get_object_or_404(Survey, pk=pk)
+
+    if request.method == 'POST':
+        new_survey = survey.duplicate(request.user)
+        messages.success(
+            request, f'Encuesta "{survey.title}" duplicada exitosamente.')
+        return redirect('dashboard:survey_detail', pk=new_survey.pk)
+
+    context = {
+        'survey': survey
+    }
+
+    return render(request, 'dashboard/events/survey_duplicate.html', context)
+
+
+@manager_required
+def survey_questions(request, pk):
+    """
+    Gestionar preguntas de una encuesta.
+    """
+    survey = get_object_or_404(
+        Survey.objects.prefetch_related('questions__options'), pk=pk)
+
+    if request.method == 'POST':
+        formset = SurveyQuestionFormSet(request.POST, instance=survey)
+        if formset.is_valid():
+            formset.save()
+            messages.success(
+                request, f'Preguntas de la encuesta "{survey.title}" actualizadas exitosamente.')
+            return redirect('dashboard:survey_detail', pk=survey.pk)
+    else:
+        formset = SurveyQuestionFormSet(instance=survey)
+
+    context = {
+        'survey': survey,
+        'formset': formset,
+    }
+
+    return render(request, 'dashboard/events/survey_questions.html', context)
+
+
+@manager_required
+def question_options(request, question_pk):
+    """
+    Gestionar opciones de una pregunta de opciones múltiples.
+    """
+    question = get_object_or_404(
+        SurveyQuestion.objects.select_related('survey'), pk=question_pk)
+
+    if question.question_type != 'multiple_choice':
+        messages.error(request, 'Esta pregunta no es de opciones múltiples.')
+        return redirect('dashboard:survey_questions', pk=question.survey.pk)
+
+    if request.method == 'POST':
+        formset = SurveyQuestionOptionFormSet(request.POST, instance=question)
+        if formset.is_valid():
+            formset.save()
+            messages.success(
+                request, f'Opciones de la pregunta actualizadas exitosamente.')
+            return redirect('dashboard:survey_questions', pk=question.survey.pk)
+        else:
+            # Debug: mostrar errores del formset
+            for i, form in enumerate(formset.forms):
+                if form.errors:
+                    messages.error(
+                        request, f'Errores en formulario {i}: {form.errors}')
+            if formset.non_form_errors():
+                messages.error(
+                    request, f'Errores del formset: {formset.non_form_errors()}')
+    else:
+        formset = SurveyQuestionOptionFormSet(instance=question)
+
+    context = {
+        'question': question,
+        'survey': question.survey,
+        'formset': formset,
+    }
+
+    return render(request, 'dashboard/events/question_options.html', context)
+
+
+@manager_required
+def survey_results(request, pk):
+    """
+    Ver resultados de una encuesta.
+    """
+    survey = get_object_or_404(
+        Survey.objects.prefetch_related(
+            'questions__options', 'responses__question_responses'),
+        pk=pk
+    )
+
+    # Estadísticas generales
+    total_responses = survey.responses.filter(status='completed').count()
+
+    # Análisis por pregunta
+    question_analysis = []
+    for question in survey.questions.all():
+        responses = question.responses.filter(
+            survey_response__status='completed')
+
+        if question.question_type == 'text':
+            # Para preguntas de texto, mostrar algunas respuestas de ejemplo
+            text_responses = responses.exclude(text_response='')[:5]
+            analysis = {
+                'question': question,
+                'type': 'text',
+                'response_count': responses.count(),
+                'sample_responses': text_responses,
+            }
+
+        elif question.question_type == 'scale':
+            # Para escalas, calcular promedio y distribución
+            scale_responses = responses.exclude(scale_response__isnull=True)
+            if scale_responses.exists():
+                avg_rating = sum(
+                    r.scale_response for r in scale_responses) / scale_responses.count()
+                distribution = {}
+                for i in range(1, 6):
+                    distribution[i] = scale_responses.filter(
+                        scale_response=i).count()
+            else:
+                avg_rating = 0
+                distribution = {i: 0 for i in range(1, 6)}
+
+            analysis = {
+                'question': question,
+                'type': 'scale',
+                'response_count': responses.count(),
+                'average_rating': round(avg_rating, 2),
+                'distribution': distribution,
+            }
+
+        elif question.question_type == 'multiple_choice':
+            # Para opciones múltiples, contar cada opción
+            option_counts = {}
+            for option in question.options.all():
+                count = option.responses.filter(
+                    survey_response__status='completed').count()
+                option_counts[option.text] = count
+
+            analysis = {
+                'question': question,
+                'type': 'multiple_choice',
+                'response_count': responses.count(),
+                'option_counts': option_counts,
+            }
+
+        question_analysis.append(analysis)
+
+    context = {
+        'survey': survey,
+        'total_responses': total_responses,
+        'question_analysis': question_analysis,
+    }
+
+    return render(request, 'dashboard/events/survey_results.html', context)
+
+
+@manager_required
+def send_surveys(request, event_pk):
+    """
+    Enviar encuestas a los participantes de un evento.
+    """
+    event = get_object_or_404(
+        Event.objects.select_related('survey'), pk=event_pk)
+
+    if not event.survey:
+        messages.error(request, 'Este evento no tiene una encuesta asignada.')
+        return redirect('dashboard:event_detail', pk=event.pk)
+
+    if not event.send_survey:
+        messages.error(
+            request, 'El envío de encuestas no está habilitado para este evento.')
+        return redirect('dashboard:event_detail', pk=event.pk)
+
+    if request.method == 'POST':
+        # Crear respuestas de encuesta para participantes
+        created_count = create_survey_responses_for_event(event)
+
+        # Obtener las respuestas creadas y enviar emails
+        survey_responses = SurveyResponse.objects.filter(
+            survey=event.survey,
+            event=event,
+            status='sent'
+        )
+
+        sent_count = 0
+        for survey_response in survey_responses:
+            if send_survey_invitation_email(survey_response):
+                sent_count += 1
+
+        messages.success(
+            request, f'Se enviaron {sent_count} encuestas exitosamente.')
+        return redirect('dashboard:event_detail', pk=event.pk)
+
+    # Mostrar vista previa de envío
+    registrations_to_send = event.registrations.filter(
+        status='accepted',
+        survey_responses__isnull=True
+    )
+
+    already_sent = event.registrations.filter(
+        status='accepted',
+        survey_responses__isnull=False
+    )
+
+    context = {
+        'event': event,
+        'registrations_to_send': registrations_to_send,
+        'already_sent': already_sent,
+        'total_to_send': registrations_to_send.count(),
+        'total_sent': already_sent.count(),
+    }
+
+    return render(request, 'dashboard/events/send_surveys.html', context)
+
+
+# ===== VISTAS PÚBLICAS DE ENCUESTAS =====
+
+def survey_response(request, token):
+    """
+    Vista pública para responder una encuesta.
+    """
+    survey_response_obj = get_object_or_404(
+        SurveyResponse.objects.select_related(
+            'survey', 'event', 'registration'),
+        token=token
+    )
+
+    # Verificar si la encuesta ha expirado
+    if survey_response_obj.is_expired:
+        messages.error(request, 'Esta encuesta ha expirado.')
+        return redirect('events:survey_expired')
+
+    # Verificar si ya fue completada
+    if survey_response_obj.status == 'completed':
+        messages.info(request, 'Ya has completado esta encuesta.')
+        return redirect('events:survey_thanks')
+
+    # Marcar como abierta
+    survey_response_obj.mark_opened()
+
+    if request.method == 'POST':
+        form = SurveyResponseForm(survey_response_obj, request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '¡Gracias por completar la encuesta!')
+            return redirect('events:survey_thanks')
+    else:
+        form = SurveyResponseForm(survey_response_obj)
+
+    context = {
+        'survey_response': survey_response_obj,
+        'survey': survey_response_obj.survey,
+        'event': survey_response_obj.event,
+        'form': form,
+    }
+
+    return render(request, 'events/survey_response.html', context)
+
+
+def survey_thanks(request):
+    """
+    Página de agradecimiento después de completar la encuesta.
+    """
+    return render(request, 'events/survey_thanks.html')
+
+
+def survey_expired(request):
+    """
+    Página para encuestas expiradas.
+    """
+    return render(request, 'events/survey_expired.html')

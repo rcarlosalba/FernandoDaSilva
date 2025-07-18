@@ -145,3 +145,25 @@ PAYMENT_STATUS_CHOICES = [
     ('verified', 'Verificado'),
     ('failed', 'Fallido'),
 ]
+
+# Survey Question Types
+SURVEY_QUESTION_TYPE_CHOICES = [
+    ('text', 'Texto libre'),
+    ('scale', 'Escala (1-5)'),
+    ('multiple_choice', 'Opciones múltiples'),
+]
+
+# Survey Status
+SURVEY_STATUS_CHOICES = [
+    ('draft', 'Borrador'),
+    ('active', 'Activa'),
+    ('inactive', 'Inactiva'),
+]
+
+# Survey Response Status
+SURVEY_RESPONSE_STATUS_CHOICES = [
+    ('sent', 'Enviada'),
+    ('opened', 'Abierta'),
+    ('completed', 'Completada'),
+    ('expired', 'Expirada'),
+]
