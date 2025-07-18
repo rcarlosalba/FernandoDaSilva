@@ -1,0 +1,275 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Gestión de Inscripciones</h1>
+            <p class="text-gray-600">Administra las inscripciones a eventos</p>
+        </div>
+        <a href="{% url 'dashboard:event_list' %}" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+            <i class="fas fa-calendar mr-2"></i>Ver Eventos
+        </a>
+    </div>
+
+    <!-- Statistics cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-users text-blue-500 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Total Inscripciones</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_registrations }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-clock text-yellow-500 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Pendientes</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ pending_registrations }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Aceptadas</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ accepted_registrations }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-list text-orange-500 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <p class="text-sm font-medium text-gray-500">Lista de Espera</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ waitlist_registrations }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Filtros</h3>
+        <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                <select name="status" id="status" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                    <option value="">Todos los estados</option>
+                    <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pendiente de Aprobación</option>
+                    <option value="accepted" {% if request.GET.status == 'accepted' %}selected{% endif %}>Aceptada</option>
+                    <option value="rejected" {% if request.GET.status == 'rejected' %}selected{% endif %}>Rechazada</option>
+                    <option value="waitlist" {% if request.GET.status == 'waitlist' %}selected{% endif %}>En Lista de Espera</option>
+                </select>
+            </div>
+            
+            <div>
+                <label for="event" class="block text-sm font-medium text-gray-700 mb-1">Evento</label>
+                <select name="event" id="event" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                    <option value="">Todos los eventos</option>
+                    {% for event in events %}
+                        <option value="{{ event.pk }}" {% if request.GET.event == event.pk|stringformat:"s" %}selected{% endif %}>
+                            {{ event.title }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Buscar</label>
+                <input type="text" name="search" id="search" value="{{ request.GET.search }}" 
+                       placeholder="Nombre, email o evento..." 
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500">
+            </div>
+            
+            <div class="flex items-end">
+                <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors w-full">
+                    <i class="fas fa-search mr-2"></i>Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Registrations table -->
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Inscripciones</h3>
+        </div>
+        
+        {% if registrations %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participante</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Evento</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pago</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for registration in registrations %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center mr-3">
+                                        <i class="fas fa-user text-primary-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900">{{ registration.full_name }}</div>
+                                        <div class="text-sm text-gray-500">{{ registration.email }}</div>
+                                        <div class="text-sm text-gray-500">{{ registration.phone }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">{{ registration.event.title }}</div>
+                                    <div class="text-sm text-gray-500">{{ registration.event.start_date|date:"d/m/Y H:i" }}</div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {% if registration.status == 'accepted' %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        <i class="fas fa-check-circle mr-1"></i>Aceptada
+                                    </span>
+                                {% elif registration.status == 'pending' %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        <i class="fas fa-clock mr-1"></i>Pendiente
+                                    </span>
+                                {% elif registration.status == 'waitlist' %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                        <i class="fas fa-list mr-1"></i>Lista de Espera
+                                    </span>
+                                {% elif registration.status == 'rejected' %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        <i class="fas fa-times-circle mr-1"></i>Rechazada
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {% if registration.has_payment %}
+                                    {% if registration.payment.status == 'verified' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-check mr-1"></i>Verificado
+                                        </span>
+                                    {% elif registration.payment.status == 'pending' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            <i class="fas fa-clock mr-1"></i>Pendiente
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            <i class="fas fa-times mr-1"></i>Fallido
+                                        </span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="text-sm text-gray-400">Sin pago</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {{ registration.registration_date|date:"d/m/Y H:i" }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-2">
+                                    <a href="{% url 'dashboard:registration_detail' registration.pk %}" class="text-primary-600 hover:text-primary-900" title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    {% if registration.status == 'pending' %}
+                                        <a href="{% url 'dashboard:registration_approve' registration.pk %}" class="text-green-600 hover:text-green-900" title="Aprobar">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                        <a href="{% url 'dashboard:registration_reject' registration.pk %}" class="text-red-600 hover:text-red-900" title="Rechazar">
+                                            <i class="fas fa-times"></i>
+                                        </a>
+                                    {% endif %}
+                                    {% if registration.has_payment and registration.payment.status == 'pending' %}
+                                        <a href="{% url 'dashboard:payment_verify' registration.payment.pk %}" class="text-blue-600 hover:text-blue-900" title="Verificar pago">
+                                            <i class="fas fa-credit-card"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if registrations.has_other_pages %}
+            <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                <div class="flex-1 flex justify-between sm:hidden">
+                    {% if registrations.has_previous %}
+                        <a href="?page={{ registrations.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.event %}&event={{ request.GET.event }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            Anterior
+                        </a>
+                    {% endif %}
+                    {% if registrations.has_next %}
+                        <a href="?page={{ registrations.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.event %}&event={{ request.GET.event }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            Siguiente
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Mostrando <span class="font-medium">{{ registrations.start_index }}</span> a <span class="font-medium">{{ registrations.end_index }}</span> de <span class="font-medium">{{ registrations.paginator.count }}</span> resultados
+                        </p>
+                    </div>
+                    <div>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                            {% if registrations.has_previous %}
+                                <a href="?page={{ registrations.previous_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.event %}&event={{ request.GET.event }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            {% endif %}
+                            
+                            {% for num in registrations.paginator.page_range %}
+                                {% if registrations.number == num %}
+                                    <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-primary-50 text-sm font-medium text-primary-600">{{ num }}</span>
+                                {% elif num > registrations.number|add:'-3' and num < registrations.number|add:'3' %}
+                                    <a href="?page={{ num }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.event %}&event={{ request.GET.event }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">{{ num }}</a>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if registrations.has_next %}
+                                <a href="?page={{ registrations.next_page_number }}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.event %}&event={{ request.GET.event }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            {% endif %}
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-12">
+                <i class="fas fa-users text-gray-400 text-4xl mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No hay inscripciones</h3>
+                <p class="text-gray-500 mb-4">Los participantes que se inscriban a eventos aparecerán aquí</p>
+                <a href="{% url 'dashboard:event_list' %}" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                    <i class="fas fa-calendar mr-2"></i>Ver Eventos
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

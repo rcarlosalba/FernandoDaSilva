@@ -1,0 +1,287 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Inscripción #{{ registration.id }}</h1>
+            <p class="text-gray-600">Detalles de la inscripción</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'dashboard:registration_list' %}" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- Registration information -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main info -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex items-start mb-6">
+                    <div class="h-24 w-24 rounded-lg bg-blue-100 flex items-center justify-center mr-4">
+                        <i class="fas fa-user text-blue-600 text-2xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="text-xl font-semibold text-gray-900">{{ registration.full_name }}</h2>
+                        <p class="text-gray-500 mt-1">{{ registration.email }}</p>
+                        <div class="flex flex-wrap gap-3 mt-4">
+                            {% if registration.status == 'pending' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    <i class="fas fa-clock mr-1"></i>Pendiente de Aprobación
+                                </span>
+                            {% elif registration.status == 'accepted' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-check-circle mr-1"></i>Aceptada
+                                </span>
+                            {% elif registration.status == 'rejected' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    <i class="fas fa-times-circle mr-1"></i>Rechazada
+                                </span>
+                            {% elif registration.status == 'waitlist' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                    <i class="fas fa-hourglass-half mr-1"></i>En Lista de Espera
+                                </span>
+                            {% endif %}
+                            
+                            {% if registration.event.modality == 'free' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-gift mr-1"></i>Gratis
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                    <i class="fas fa-dollar-sign mr-1"></i>De Pago
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Información Personal</h3>
+                            <div class="mt-1 space-y-1">
+                                <p class="text-sm text-gray-900">
+                                    <strong>Nombre completo:</strong> {{ registration.full_name }}
+                                </p>
+                                <p class="text-sm text-gray-900">
+                                    <strong>Email:</strong> {{ registration.email }}
+                                </p>
+                                <p class="text-sm text-gray-900">
+                                    <strong>Teléfono:</strong> {{ registration.phone }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Evento</h3>
+                            <div class="mt-1 space-y-1">
+                                <p class="text-sm text-gray-900">
+                                    <strong>Título:</strong> 
+                                    <a href="{% url 'dashboard:event_detail' registration.event.pk %}" class="text-blue-600 hover:text-blue-800">
+                                        {{ registration.event.title }}
+                                    </a>
+                                </p>
+                                <p class="text-sm text-gray-900">
+                                    <strong>Fecha:</strong> {{ registration.event.start_date|date:"d/m/Y H:i" }}
+                                </p>
+                                <p class="text-sm text-gray-900">
+                                    <strong>Modalidad:</strong> 
+                                    {% if registration.event.modality == 'free' %}
+                                        Gratis
+                                    {% else %}
+                                        ${{ registration.event.price }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+
+                        {% if registration.notes %}
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Notas</h3>
+                            <p class="mt-1 text-sm text-gray-900">{{ registration.notes|linebreaks }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Estado de la Inscripción</h3>
+                            <div class="mt-1 space-y-1">
+                                <p class="text-sm text-gray-900">
+                                    <strong>Estado actual:</strong> 
+                                    {% if registration.status == 'pending' %}
+                                        Pendiente de Aprobación
+                                    {% elif registration.status == 'accepted' %}
+                                        Aceptada
+                                    {% elif registration.status == 'rejected' %}
+                                        Rechazada
+                                    {% elif registration.status == 'waitlist' %}
+                                        En Lista de Espera
+                                    {% endif %}
+                                </p>
+                                <p class="text-sm text-gray-900">
+                                    <strong>Fecha de inscripción:</strong> {{ registration.registration_date|date:"d/m/Y H:i" }}
+                                </p>
+                            </div>
+                        </div>
+
+                        {% if registration.payment %}
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Información de Pago</h3>
+                            <div class="mt-1 space-y-1">
+                                <p class="text-sm text-gray-900">
+                                    <strong>Método de pago:</strong> {{ registration.payment.payment_method.name }}
+                                </p>
+                                <p class="text-sm text-gray-900">
+                                    <strong>Monto:</strong> ${{ registration.payment.amount }}
+                                </p>
+                                <p class="text-sm text-gray-900">
+                                    <strong>Estado del pago:</strong> 
+                                    {% if registration.payment.status == 'pending' %}
+                                        <span class="text-yellow-600">Pendiente</span>
+                                    {% elif registration.payment.status == 'verified' %}
+                                        <span class="text-green-600">Verificado</span>
+                                    {% elif registration.payment.status == 'failed' %}
+                                        <span class="text-red-600">Fallido</span>
+                                    {% endif %}
+                                </p>
+                                {% if registration.payment.verification_date %}
+                                <p class="text-sm text-gray-900">
+                                    <strong>Verificado el:</strong> {{ registration.payment.verification_date|date:"d/m/Y H:i" }}
+                                </p>
+                                {% endif %}
+                                {% if registration.payment.verified_by %}
+                                <p class="text-sm text-gray-900">
+                                    <strong>Verificado por:</strong> {{ registration.payment.verified_by.get_full_name|default:registration.payment.verified_by.email }}
+                                </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Acciones Disponibles</h3>
+                            <div class="mt-3 space-y-4">
+                                {% if registration.status == 'pending' %}
+                                    <form method="post" action="{% url 'dashboard:registration_approve' registration.pk %}" class="inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                                            <i class="fas fa-check mr-2"></i>Aprobar Inscripción
+                                        </button>
+                                    </form>
+                                    
+                                    <form method="post" action="{% url 'dashboard:registration_reject' registration.pk %}" class="inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                                            <i class="fas fa-times mr-2"></i>Rechazar Inscripción
+                                        </button>
+                                    </form>
+                                {% elif registration.status == 'accepted' %}
+                                    <div class="text-sm text-green-600 bg-green-50 p-3 rounded-lg">
+                                        <i class="fas fa-check-circle mr-2"></i>Inscripción aprobada
+                                    </div>
+                                {% elif registration.status == 'rejected' %}
+                                    <div class="text-sm text-red-600 bg-red-50 p-3 rounded-lg">
+                                        <i class="fas fa-times-circle mr-2"></i>Inscripción rechazada
+                                    </div>
+                                {% elif registration.status == 'waitlist' %}
+                                    <div class="text-sm text-orange-600 bg-orange-50 p-3 rounded-lg">
+                                        <i class="fas fa-hourglass-half mr-2"></i>En lista de espera
+                                    </div>
+                                {% endif %}
+
+                                {% if registration.payment and registration.payment.status == 'pending' %}
+                                    <form method="post" action="{% url 'dashboard:payment_verify' registration.payment.pk %}" class="inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                            <i class="fas fa-check-double mr-2"></i>Verificar Pago
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event summary -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Resumen del Evento</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Información General</h4>
+                        <div class="mt-2 space-y-2">
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar text-gray-400 mr-2"></i>
+                                <span class="text-sm text-gray-900">{{ registration.event.start_date|date:"d/m/Y" }}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fas fa-clock text-gray-400 mr-2"></i>
+                                <span class="text-sm text-gray-900">{{ registration.event.start_date|date:"H:i" }} - {{ registration.event.end_date|date:"H:i" }}</span>
+                            </div>
+                            {% if registration.event.location %}
+                            <div class="flex items-center">
+                                <i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>
+                                <span class="text-sm text-gray-900">{{ registration.event.location }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Cupos</h4>
+                        <div class="mt-2 space-y-1">
+                            <p class="text-sm text-gray-900">
+                                <strong>Disponibles:</strong> {{ registration.event.available_spots }}/{{ registration.event.max_capacity }}
+                            </p>
+                            <p class="text-sm text-gray-900">
+                                <strong>Inscripciones activas:</strong> {{ registration.event.active_registrations_count }}
+                            </p>
+                            {% if registration.event.is_full %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    <i class="fas fa-exclamation-triangle mr-1"></i>Evento lleno
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Estado del Evento</h4>
+                        <div class="mt-2 space-y-1">
+                            {% if registration.event.is_finished %}
+                                <div class="flex items-center">
+                                    <i class="fas fa-flag-checkered text-gray-400 mr-2"></i>
+                                    <span class="text-sm text-gray-900">Evento finalizado</span>
+                                </div>
+                            {% elif registration.event.is_upcoming %}
+                                <div class="flex items-center">
+                                    <i class="fas fa-clock text-blue-400 mr-2"></i>
+                                    <span class="text-sm text-gray-900">Evento próximo</span>
+                                </div>
+                            {% else %}
+                                <div class="flex items-center">
+                                    <i class="fas fa-play text-green-400 mr-2"></i>
+                                    <span class="text-sm text-gray-900">Evento en curso</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-200">
+                        <a href="{% url 'dashboard:event_detail' registration.event.pk %}" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-center block">
+                            <i class="fas fa-eye mr-2"></i>Ver Evento Completo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

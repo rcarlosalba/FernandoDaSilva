@@ -8,6 +8,7 @@ from django.utils import timezone
 from constants.constant import manager_required
 from .models import Event, Category, PaymentMethod, Registration, Payment
 from .forms import EventForm, CategoryForm, PaymentMethodForm, RegistrationForm, PaymentForm
+from .utils import send_registration_confirmation_email, send_registration_approved_email, send_registration_rejected_email
 
 
 # ===== VISTAS DE EVENTOS =====
@@ -42,9 +43,6 @@ def event_list(request):
     published_events = events.filter(status='published').count()
     draft_events = events.filter(status='draft').count()
     upcoming_events = events.filter(start_date__gt=timezone.now()).count()
-
-    # Ordenar por fecha de inicio (más recientes primero)
-    events = events.order_by('-start_date')
 
     # Paginación
     paginator = Paginator(events, 10)
@@ -167,27 +165,6 @@ def event_delete(request, pk):
     return render(request, 'dashboard/events/event_delete.html', context)
 
 
-@manager_required
-def event_cancel(request, pk):
-    """
-    Cancelar evento.
-    """
-    event = get_object_or_404(Event, pk=pk)
-
-    if request.method == 'POST':
-        from .services import EventService
-        if EventService.cancel_event(event, request.user):
-            messages.success(request, 'Evento cancelado exitosamente.')
-        else:
-            messages.error(request, 'Error al cancelar el evento.')
-        return redirect('dashboard:event_list')
-
-    context = {
-        'event': event,
-    }
-    return render(request, 'dashboard/events/event_cancel.html', context)
-
-
 # ===== VISTAS DE CATEGORÍAS =====
 
 @manager_required
@@ -196,7 +173,7 @@ def category_list(request):
     Lista de categorías.
     """
     categories = Category.objects.annotate(
-        annotated_event_count=Count('events')).order_by('name')
+        annotated_event_count=Count('events')).all()
 
     # Paginación
     paginator = Paginator(categories, 10)
@@ -306,7 +283,7 @@ def payment_method_list(request):
     """
     Lista de métodos de pago.
     """
-    payment_methods = PaymentMethod.objects.order_by('name')
+    payment_methods = PaymentMethod.objects.all()
 
     # Paginación
     paginator = Paginator(payment_methods, 10)
@@ -442,7 +419,6 @@ def registration_list(request):
     waitlist_registrations = registrations.filter(status='waitlist').count()
 
     # Paginación
-    registrations = registrations.order_by('-registration_date')
     paginator = Paginator(registrations, 20)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -482,13 +458,18 @@ def registration_approve(request, pk):
     registration = get_object_or_404(Registration, pk=pk)
 
     if registration.status == 'pending':
-        from .services import RegistrationService
-        if RegistrationService.accept_registration(registration, request.user):
-            messages.success(
-                request, f'Inscripción de {registration.full_name} aprobada.')
-        else:
-            messages.error(
-                request, 'Error al aprobar la inscripción.')
+        registration.status = 'accepted'
+        registration.save()
+
+        # Enviar email de aprobación
+        try:
+            send_registration_approved_email(registration)
+        except Exception as e:
+            # Log error pero no fallar la aprobación
+            print(f"Error sending approval email: {e}")
+
+        messages.success(
+            request, f'Inscripción de {registration.full_name} aprobada.')
     else:
         messages.error(
             request, 'Solo se pueden aprobar inscripciones pendientes.')
@@ -504,13 +485,18 @@ def registration_reject(request, pk):
     registration = get_object_or_404(Registration, pk=pk)
 
     if registration.status == 'pending':
-        from .services import RegistrationService
-        if RegistrationService.reject_registration(registration, request.user):
-            messages.success(
-                request, f'Inscripción de {registration.full_name} rechazada.')
-        else:
-            messages.error(
-                request, 'Error al rechazar la inscripción.')
+        registration.status = 'rejected'
+        registration.save()
+
+        # Enviar email de rechazo
+        try:
+            send_registration_rejected_email(registration)
+        except Exception as e:
+            # Log error pero no fallar el rechazo
+            print(f"Error sending rejection email: {e}")
+
+        messages.success(
+            request, f'Inscripción de {registration.full_name} rechazada.')
     else:
         messages.error(
             request, 'Solo se pueden rechazar inscripciones pendientes.')
@@ -526,13 +512,22 @@ def payment_verify(request, pk):
     payment = get_object_or_404(Payment, pk=pk)
 
     if payment.status == 'pending':
-        from .services import PaymentService
-        if PaymentService.verify_payment(payment, request.user):
-            messages.success(
-                request, f'Pago de {payment.registration.full_name} verificado.')
-        else:
-            messages.error(
-                request, 'Error al verificar el pago.')
+        # Verificar si la inscripción estaba pendiente antes
+        was_pending = payment.registration.status == 'pending'
+
+        payment.verify_payment(request.user)
+
+        # Si la inscripción estaba pendiente y ahora está aceptada, enviar email
+        if was_pending and payment.registration.status == 'accepted':
+            try:
+                send_registration_approved_email(payment.registration)
+            except Exception as e:
+                # Log error pero no fallar la verificación
+                print(
+                    f"Error sending approval email after payment verification: {e}")
+
+        messages.success(
+            request, f'Pago de {payment.registration.full_name} verificado.')
     else:
         messages.error(request, 'Solo se pueden verificar pagos pendientes.')
 
@@ -744,7 +739,8 @@ def event_registration(request, slug):
             return redirect('events:event_detail', slug=slug)
 
     if request.method == 'POST':
-        form = RegistrationForm(request.POST, request.FILES)
+        form = RegistrationForm(
+            event=event, data=request.POST, files=request.FILES)
         if form.is_valid():
             registration = form.save(commit=False)
             registration.event = event
@@ -773,20 +769,28 @@ def event_registration(request, slug):
                         amount=event.price
                     )
 
-            # Enviar email de confirmación usando el servicio
-            from .services import NotificationService
-            NotificationService.send_registration_confirmation(registration)
+            # Enviar email de confirmación
+            try:
+                send_registration_confirmation_email(registration)
+            except Exception as e:
+                # Log error pero no fallar la inscripción
+                print(f"Error sending confirmation email: {e}")
 
             return redirect('events:registration_success', registration_id=registration.id)
     else:
         # Pre-llenar el formulario si el usuario está autenticado
         initial_data = {}
         if request.user.is_authenticated:
+            # Obtener el nombre completo desde el perfil del usuario
+            full_name = ""
+            if hasattr(request.user, 'profile') and request.user.profile:
+                full_name = request.user.profile.full_name
+
             initial_data = {
-                'full_name': f"{request.user.first_name} {request.user.last_name}".strip(),
+                'full_name': full_name,
                 'email': request.user.email,
             }
-        form = RegistrationForm(initial=initial_data)
+        form = RegistrationForm(event=event, initial=initial_data)
 
     context = {
         'event': event,

@@ -1,0 +1,346 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">{{ event.title }}</h1>
+            <p class="text-gray-600">Detalles del evento</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'dashboard:event_update' event.pk %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                <i class="fas fa-edit mr-2"></i>Editar
+            </a>
+            <button type="button" 
+                    data-delete-url="{% url 'dashboard:event_delete' event.pk %}"
+                    data-delete-title="Eliminar Evento"
+                    data-delete-message="¿Estás seguro de que deseas eliminar el evento '{{ event.title|escapejs }}'?"
+                    data-delete-warning="Esta acción es permanente y no se puede revertir."
+                    data-delete-confirmation="false"
+                    data-delete-button-text="Eliminar Evento"
+                    class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                <i class="fas fa-trash mr-2"></i>Eliminar
+            </button>
+        </div>
+    </div>
+
+    <!-- Event information -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main info -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex items-start mb-6">
+                    {% if event.featured_image %}
+                        <img class="h-24 w-24 rounded-lg object-cover mr-4" src="{{ event.featured_image.url }}" alt="{{ event.title }}">
+                    {% else %}
+                        <div class="h-24 w-24 rounded-lg bg-gray-200 flex items-center justify-center mr-4">
+                            <i class="fas fa-calendar text-gray-400 text-2xl"></i>
+                        </div>
+                    {% endif %}
+                    <div class="flex-1">
+                        <h2 class="text-xl font-semibold text-gray-900">{{ event.title }}</h2>
+                        <p class="text-gray-500 mt-1">{{ event.description|truncatechars:100 }}</p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            {% if event.event_type == 'presential' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    <i class="fas fa-map-marker-alt mr-1"></i>Presencial
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                    <i class="fas fa-video mr-1"></i>Online
+                                </span>
+                            {% endif %}
+                            
+                            {% if event.modality == 'free' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-gift mr-1"></i>Gratis
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                    <i class="fas fa-dollar-sign mr-1"></i>${{ event.price }}
+                                </span>
+                            {% endif %}
+                            
+                            {% if event.status == 'published' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-check-circle mr-1"></i>Publicado
+                                </span>
+                            {% elif event.status == 'draft' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    <i class="fas fa-edit mr-1"></i>Borrador
+                                </span>
+                            {% elif event.status == 'finished' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                    <i class="fas fa-flag-checkered mr-1"></i>Finalizado
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    <i class="fas fa-times-circle mr-1"></i>Cancelado
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Descripción</h3>
+                            <p class="mt-1 text-sm text-gray-900">{{ event.description|linebreaks }}</p>
+                        </div>
+
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Fechas</h3>
+                            <div class="mt-1 space-y-1">
+                                <p class="text-sm text-gray-900">
+                                    <i class="fas fa-play text-green-500 mr-2"></i>
+                                    <strong>Inicio:</strong> {{ event.start_date|date:"d/m/Y H:i" }}
+                                </p>
+                                <p class="text-sm text-gray-900">
+                                    <i class="fas fa-stop text-red-500 mr-2"></i>
+                                    <strong>Fin:</strong> {{ event.end_date|date:"d/m/Y H:i" }}
+                                </p>
+                            </div>
+                        </div>
+
+                        {% if event.location %}
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Ubicación</h3>
+                            <p class="mt-1 text-sm text-gray-900">{{ event.location }}</p>
+                        </div>
+                        {% endif %}
+
+                        {% if event.event_link %}
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Enlace del Evento</h3>
+                            <a href="{{ event.event_link }}" target="_blank" class="mt-1 text-sm text-blue-600 hover:text-blue-800">
+                                {{ event.event_link }}
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Cupos</h3>
+                            <div class="mt-1 space-y-1">
+                                <p class="text-sm text-gray-900">
+                                    <strong>Disponibles:</strong> {{ event.available_spots }}/{{ event.max_capacity }}
+                                </p>
+                                {% if event.is_full %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        <i class="fas fa-exclamation-triangle mr-1"></i>Evento lleno
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Categorías</h3>
+                            <div class="mt-1 flex flex-wrap gap-1">
+                                {% for category in event.categories.all %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                        <i class="fas fa-folder mr-1"></i>{{ category.name }}
+                                    </span>
+                                {% empty %}
+                                    <span class="text-sm text-gray-400">Sin categorías</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        {% if event.payment_methods.exists %}
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Métodos de Pago</h3>
+                            <div class="mt-1 space-y-1">
+                                {% for payment_method in event.payment_methods.all %}
+                                    <div class="flex items-center">
+                                        <i class="fas fa-credit-card text-gray-400 mr-2"></i>
+                                        <span class="text-sm text-gray-900">{{ payment_method.name }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div>
+                            <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Información Adicional</h3>
+                            <div class="mt-1 space-y-1">
+                                <p class="text-sm text-gray-900">
+                                    <strong>Creado por:</strong> {{ event.created_by.get_full_name|default:event.created_by.email }}
+                                </p>
+                                <p class="text-sm text-gray-900">
+                                    <strong>Fecha de creación:</strong> {{ event.created_at|date:"d/m/Y H:i" }}
+                                </p>
+                                <p class="text-sm text-gray-900">
+                                    <strong>Última actualización:</strong> {{ event.updated_at|date:"d/m/Y H:i" }}
+                                </p>
+                                {% if event.send_survey %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                        <i class="fas fa-poll mr-1"></i>Encuesta habilitada
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Estadísticas de Inscripciones</h3>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-500">Total Inscripciones</span>
+                        <span class="text-2xl font-bold text-blue-600">{{ total_registrations }}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-500">Aceptadas</span>
+                        <span class="text-xl font-bold text-green-600">{{ accepted_registrations }}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-500">Pendientes</span>
+                        <span class="text-xl font-bold text-yellow-600">{{ pending_registrations }}</span>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-500">Lista de Espera</span>
+                        <span class="text-xl font-bold text-orange-600">{{ waitlist_registrations }}</span>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-gray-200">
+                    <h4 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Estado del Evento</h4>
+                    <div class="space-y-2">
+                        {% if event.is_finished %}
+                            <div class="flex items-center">
+                                <i class="fas fa-flag-checkered text-gray-400 mr-2"></i>
+                                <span class="text-sm text-gray-900">Evento finalizado</span>
+                            </div>
+                        {% elif event.is_upcoming %}
+                            <div class="flex items-center">
+                                <i class="fas fa-clock text-blue-400 mr-2"></i>
+                                <span class="text-sm text-gray-900">Evento próximo</span>
+                            </div>
+                        {% else %}
+                            <div class="flex items-center">
+                                <i class="fas fa-play text-green-400 mr-2"></i>
+                                <span class="text-sm text-gray-900">Evento en curso</span>
+                            </div>
+                        {% endif %}
+                        
+                        {% if event.is_full %}
+                            <div class="flex items-center">
+                                <i class="fas fa-exclamation-triangle text-red-400 mr-2"></i>
+                                <span class="text-sm text-gray-900">Cupo completo</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registrations table -->
+    <div class="mt-8">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-gray-900">Inscripciones</h3>
+                <a href="{% url 'dashboard:registration_list' %}?event={{ event.pk }}" class="text-primary-600 hover:text-primary-900 text-sm">
+                    Ver todas las inscripciones
+                </a>
+            </div>
+            
+            {% if registrations %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participante</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teléfono</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pago</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for registration in registrations %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900">{{ registration.full_name }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">{{ registration.email }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">{{ registration.phone }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if registration.status == 'accepted' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-check-circle mr-1"></i>Aceptada
+                                        </span>
+                                    {% elif registration.status == 'pending' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            <i class="fas fa-clock mr-1"></i>Pendiente
+                                        </span>
+                                    {% elif registration.status == 'waitlist' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                            <i class="fas fa-list mr-1"></i>Lista de Espera
+                                        </span>
+                                    {% elif registration.status == 'rejected' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            <i class="fas fa-times-circle mr-1"></i>Rechazada
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if registration.has_payment %}
+                                        {% if registration.payment.status == 'verified' %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <i class="fas fa-check mr-1"></i>Verificado
+                                            </span>
+                                        {% elif registration.payment.status == 'pending' %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                <i class="fas fa-clock mr-1"></i>Pendiente
+                                            </span>
+                                        {% else %}
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                <i class="fas fa-times mr-1"></i>Rechazado
+                                            </span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="text-sm text-gray-400">Sin pago</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ registration.registration_date|date:"d/m/Y H:i" }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="{% url 'dashboard:registration_detail' registration.pk %}" class="text-primary-600 hover:text-primary-900">
+                                        Ver detalles
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-users text-gray-400 text-4xl mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No hay inscripciones</h3>
+                    <p class="text-gray-500">Los participantes que se inscriban aparecerán aquí</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

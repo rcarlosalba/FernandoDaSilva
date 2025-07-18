@@ -36,7 +36,6 @@ from events.views import (
     event_detail,
     event_update,
     event_delete,
-    event_cancel,
     # Event category management views
     category_list,
     category_create,
@@ -117,7 +116,6 @@ urlpatterns = [
     path("eventos/<int:pk>/", event_detail, name="event_detail"),
     path("eventos/<int:pk>/editar/", event_update, name="event_update"),
     path("eventos/<int:pk>/eliminar/", event_delete, name="event_delete"),
-    path("eventos/<int:pk>/cancelar/", event_cancel, name="event_cancel"),
 
     # Event categories management URLs
     path("categorias-eventos/", category_list, name="event_category_list"),

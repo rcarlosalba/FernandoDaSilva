@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscripción No Aprobada</title>
+    <title>Inscripción Aprobada</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -44,6 +44,16 @@
         .content {
             margin-bottom: 30px;
         }
+        .success-badge {
+            display: inline-block;
+            background-color: #c6f6d5;
+            color: #22543d;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
         .event-details {
             background-color: #f7fafc;
             border-radius: 6px;
@@ -69,25 +79,45 @@
         .detail-value {
             color: #2d3748;
         }
-        .next-steps {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 6px;
+        .important-info {
+            background-color: #fef5e7;
+            border-left: 4px solid #d69e2e;
             padding: 20px;
             margin: 20px 0;
         }
-        .next-steps h3 {
-            color: #856404;
-            margin-bottom: 10px;
+        .important-info h3 {
+            color: #744210;
+            margin-bottom: 15px;
             font-size: 16px;
         }
-        .next-steps ul {
+        .important-info ul {
             margin: 0;
             padding-left: 20px;
         }
-        .next-steps li {
-            color: #856404;
-            margin-bottom: 5px;
+        .important-info li {
+            margin-bottom: 8px;
+            color: #2d3748;
+        }
+        .online-link {
+            background-color: #ebf8ff;
+            border: 1px solid #bee3f8;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .online-link a {
+            display: inline-block;
+            background-color: #3182ce;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .online-link a:hover {
+            background-color: #2c5282;
         }
         .footer {
             text-align: center;
@@ -98,58 +128,8 @@
             font-size: 14px;
         }
         .contact-info {
-            background-color: #e3f2fd;
-            border-radius: 6px;
-            padding: 15px;
-            margin: 20px 0;
-        }
-        .contact-info h3 {
-            color: #1976d2;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-        .contact-info p {
-            color: #1976d2;
-            margin: 5px 0;
-        }
-        .future-events {
-            background-color: #f3e5f5;
-            border-radius: 6px;
-            padding: 20px;
-            margin: 20px 0;
-        }
-        .future-events h3 {
-            color: #7b1fa2;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-        .future-events p {
-            color: #7b1fa2;
-            margin-bottom: 10px;
-        }
-        .cta-button {
-            display: inline-block;
-            background-color: #6b46c1;
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 6px;
-            font-weight: 500;
-            margin-top: 10px;
-        }
-        .cta-button:hover {
-            background-color: #553c9a;
-        }
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
-            .detail-row {
-                flex-direction: column;
-            }
-            .detail-label {
-                margin-bottom: 5px;
-            }
+            margin-top: 15px;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -157,14 +137,16 @@
     <div class="container">
         <div class="header">
             <div class="logo">Fernando Da Silva</div>
-            <div class="title">Inscripción No Aprobada</div>
-            <div class="subtitle">Información importante sobre tu solicitud</div>
+            <div class="title">¡Inscripción Aprobada!</div>
+            <div class="subtitle">Tu lugar está confirmado</div>
         </div>
 
         <div class="content">
+            <div class="success-badge">✅ Inscripción Confirmada</div>
+            
             <p>Hola {{ registration.full_name }},</p>
             
-            <p>Gracias por tu interés en participar en nuestro evento. Después de revisar cuidadosamente tu solicitud, lamentamos informarte que no hemos podido aprobar tu inscripción para el siguiente evento:</p>
+            <p>¡Excelentes noticias! Tu inscripción ha sido aprobada y tu lugar está confirmado para el siguiente evento:</p>
 
             <div class="event-details">
                 <div class="event-title">{{ registration.event.title }}</div>
@@ -188,41 +170,51 @@
                 {% endif %}
             </div>
 
-            <div class="next-steps">
-                <h3>🤝 ¿Por qué no se aprobó mi inscripción?</h3>
-                <p>Las razones más comunes pueden incluir:</p>
+            {% if registration.event.event_type == 'online' and registration.event.event_link %}
+            <div class="online-link">
+                <h3>🔗 Enlace de Acceso</h3>
+                <p>Para unirte al evento online, haz clic en el siguiente enlace:</p>
+                <a href="{{ registration.event.event_link }}" target="_blank">
+                    Unirse al Evento Online
+                </a>
+                <p style="margin-top: 10px; font-size: 12px; color: #718096;">
+                    Te recomendamos probar el enlace unos minutos antes del inicio del evento.
+                </p>
+            </div>
+            {% endif %}
+
+            <div class="important-info">
+                <h3>📋 Información Importante</h3>
                 <ul>
-                    <li>El evento ha alcanzado su capacidad máxima</li>
-                    <li>La fecha límite de inscripción ya pasó</li>
-                    <li>No se cumplieron los requisitos específicos del evento</li>
-                    <li>Problemas con la verificación de información</li>
+                    <li>Llega 10 minutos antes del inicio del evento</li>
+                    {% if registration.event.event_type == 'online' %}
+                    <li>Prueba tu conexión a internet y audio antes del evento</li>
+                    <li>Ten listo un lugar tranquilo para participar</li>
+                    {% endif %}
+                    {% if registration.event.event_type == 'presential' %}
+                    <li>Lleva algo para tomar notas</li>
+                    <li>Viste ropa cómoda</li>
+                    {% endif %}
+                    <li>Recibirás un recordatorio 24 horas antes del evento</li>
                 </ul>
             </div>
 
-            <div class="future-events">
-                <h3>🌟 Próximos Eventos</h3>
-                <p>No te desanimes. Tenemos muchos eventos emocionantes programados para el futuro. Te invitamos a estar atento a nuestras próximas convocatorias.</p>
-                <a href="http://{{ site_name|lower }}.com/eventos" class="cta-button">
-                    Ver Próximos Eventos
-                </a>
+            {% if registration.has_payment and registration.payment.status == 'verified' %}
+            <div class="event-details">
+                <div class="detail-label">💳 Pago Verificado</div>
+                <div class="detail-value" style="margin-top: 8px;">
+                    Tu pago de ${{ registration.payment.amount }} ha sido verificado correctamente.
+                </div>
             </div>
-
-            <div class="contact-info">
-                <h3>📞 ¿Tienes preguntas?</h3>
-                <p>Si tienes alguna pregunta sobre esta decisión o quieres saber más sobre nuestros eventos, no dudes en contactarnos:</p>
-                <p><strong>Email:</strong> info@fernandodasilva.com</p>
-                <p><strong>Teléfono:</strong> +54 9 11 1234-5678</p>
-            </div>
-
-            <p>Gracias por tu comprensión y esperamos verte en futuros eventos.</p>
-            
-            <p>Saludos cordiales,<br>
-            <strong>El equipo de Fernando Da Silva</strong></p>
+            {% endif %}
         </div>
 
         <div class="footer">
-            <p>Este es un email automático. Por favor, no respondas a este mensaje.</p>
-            <p>© 2024 Fernando Da Silva. Todos los derechos reservados.</p>
+            <p>¡Nos vemos en el evento!</p>
+            <div class="contact-info">
+                <p>Si tienes alguna pregunta, no dudes en contactarnos:</p>
+                <p>📧 info@fernandodasilva.com</p>
+            </div>
         </div>
     </div>
 </body>

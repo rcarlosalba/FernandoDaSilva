@@ -142,11 +142,16 @@ class RegistrationForm(forms.ModelForm):
     """
     class Meta:
         model = Registration
-        fields = ['full_name', 'email', 'phone']
+        fields = ['full_name', 'email', 'phone', 'notes']
         widgets = {
             'full_name': forms.TextInput(attrs={'class': form_styles.BASE_INPUT}),
             'email': forms.EmailInput(attrs={'class': form_styles.BASE_INPUT}),
             'phone': forms.TextInput(attrs={'class': form_styles.PHONE_INPUT}),
+            'notes': forms.Textarea(attrs={
+                'class': form_styles.BASE_TEXTAREA,
+                'rows': 4,
+                'placeholder': 'Información adicional que quieras compartir (opcional)'
+            }),
         }
 
     def __init__(self, event=None, *args, **kwargs):

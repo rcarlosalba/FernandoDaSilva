@@ -4,82 +4,203 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirmación de Inscripción</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #6b46c1;
+            margin-bottom: 10px;
+        }
+        .title {
+            color: #2d3748;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #718096;
+            font-size: 16px;
+        }
+        .content {
+            margin-bottom: 30px;
+        }
+        .event-details {
+            background-color: #f7fafc;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .event-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .detail-label {
+            color: #718096;
+            font-weight: 500;
+        }
+        .detail-value {
+            color: #2d3748;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-pending {
+            background-color: #fef5e7;
+            color: #d69e2e;
+        }
+        .status-waitlist {
+            background-color: #e6fffa;
+            color: #319795;
+        }
+        .next-steps {
+            background-color: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .next-steps h3 {
+            color: #2c5282;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        .next-steps ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .next-steps li {
+            margin-bottom: 8px;
+            color: #2d3748;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+            color: #718096;
+            font-size: 14px;
+        }
+        .contact-info {
+            margin-top: 15px;
+            font-size: 12px;
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
-    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4;">
-        <tr>
-            <td align="center" style="padding: 40px 0;">
-                <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-                    <!-- Header -->
-                    <tr>
-                        <td style="background-color: #2563eb; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-                            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">Confirmación de Inscripción</h1>
-                        </td>
-                    </tr>
-                    
-                    <!-- Content -->
-                    <tr>
-                        <td style="padding: 40px 30px;">
-                            <h2 style="color: #1f2937; margin: 0 0 20px 0; font-size: 20px;">¡Hola {{ registration.full_name }}!</h2>
-                            
-                            <p style="color: #4b5563; line-height: 1.6; margin: 0 0 20px 0;">
-                                Hemos recibido tu inscripción para el evento <strong>{{ event.title }}</strong>.
-                            </p>
-                            
-                            <div style="background-color: #f8fafc; border-left: 4px solid #2563eb; padding: 20px; margin: 20px 0;">
-                                <h3 style="color: #1f2937; margin: 0 0 15px 0; font-size: 18px;">Detalles del Evento:</h3>
-                                <ul style="color: #4b5563; line-height: 1.6; margin: 0; padding-left: 20px;">
-                                    <li><strong>Fecha:</strong> {{ event.start_date|date:"d/m/Y H:i" }}</li>
-                                    <li><strong>Tipo:</strong> {{ event.get_event_type_display }}</li>
-                                    <li><strong>Modalidad:</strong> {{ event.get_modality_display }}</li>
-                                    {% if event.location %}
-                                        <li><strong>Ubicación:</strong> {{ event.location }}</li>
-                                    {% endif %}
-                                    {% if event.event_link %}
-                                        <li><strong>Enlace:</strong> <a href="{{ event.event_link }}" style="color: #2563eb;">Acceder al evento</a></li>
-                                    {% endif %}
-                                </ul>
-                            </div>
-                            
-                            {% if event.modality == 'paid' %}
-                                <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 20px; margin: 20px 0;">
-                                    <h3 style="color: #92400e; margin: 0 0 15px 0; font-size: 18px;">Información de Pago:</h3>
-                                    <p style="color: #92400e; line-height: 1.6; margin: 0;">
-                                        Este es un evento de pago. Pronto recibirás un email con las instrucciones de pago.
-                                    </p>
-                                </div>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Fernando Da Silva</div>
+            <div class="title">Confirmación de Inscripción</div>
+            <div class="subtitle">Tu inscripción ha sido recibida</div>
+        </div>
+
+        <div class="content">
+            <p>Hola {{ registration.full_name }},</p>
+            
+            <p>Hemos recibido tu inscripción para el siguiente evento:</p>
+
+            <div class="event-details">
+                <div class="event-title">{{ registration.event.title }}</div>
+                <div class="detail-row">
+                    <span class="detail-label">Fecha:</span>
+                    <span class="detail-value">{{ registration.event.start_date|date:"l, d de F de Y" }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Horario:</span>
+                    <span class="detail-value">{{ registration.event.start_date|date:"H:i" }} - {{ registration.event.end_date|date:"H:i" }}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Modalidad:</span>
+                    <span class="detail-value">{{ registration.event.get_modality_display }}</span>
+                </div>
+                {% if registration.event.event_type == 'presential' and registration.event.location %}
+                <div class="detail-row">
+                    <span class="detail-label">Ubicación:</span>
+                    <span class="detail-value">{{ registration.event.location }}</span>
+                </div>
+                {% endif %}
+                <div class="detail-row">
+                    <span class="detail-label">Estado:</span>
+                    <span class="detail-value">
+                        <span class="status-badge {% if registration.status == 'pending' %}status-pending{% elif registration.status == 'waitlist' %}status-waitlist{% endif %}">
+                            {% if registration.status == 'pending' %}
+                                Pendiente de Aprobación
+                            {% elif registration.status == 'waitlist' %}
+                                En Lista de Espera
                             {% endif %}
-                            
-                            <p style="color: #4b5563; line-height: 1.6; margin: 20px 0;">
-                                Tu inscripción está actualmente <strong>pendiente de aprobación</strong>. Te notificaremos por email cuando sea revisada.
-                            </p>
-                            
-                            <p style="color: #4b5563; line-height: 1.6; margin: 20px 0;">
-                                Si tienes alguna pregunta, no dudes en contactarnos.
-                            </p>
-                            
-                            <div style="text-align: center; margin: 30px 0;">
-                                <a href="{{ site_url }}{% url 'events:event_detail' event.slug %}" style="background-color: #2563eb; color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold;">
-                                    Ver Detalles del Evento
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    
-                    <!-- Footer -->
-                    <tr>
-                        <td style="background-color: #f8fafc; padding: 20px; text-align: center; border-radius: 0 0 8px 8px;">
-                            <p style="color: #6b7280; margin: 0; font-size: 14px;">
-                                © 2025 Fernando Da Silva. Todos los derechos reservados.
-                            </p>
-                            <p style="color: #6b7280; margin: 10px 0 0 0; font-size: 14px;">
-                                <a href="{{ site_url }}" style="color: #2563eb;">{{ site_url }}</a>
-                            </p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            {% if registration.status == 'waitlist' %}
+            <div class="next-steps">
+                <h3>📋 Lista de Espera</h3>
+                <p>El evento está actualmente lleno, pero has sido agregado a la lista de espera. Te notificaremos inmediatamente si se libera un cupo.</p>
+            </div>
+            {% endif %}
+
+            <div class="next-steps">
+                <h3>📅 Próximos Pasos</h3>
+                <ul>
+                    <li>Recibirás una notificación cuando tu inscripción sea aprobada</li>
+                    <li>Te enviaremos un recordatorio 24 horas antes del evento</li>
+                    {% if registration.event.event_type == 'online' and registration.event.event_link %}
+                    <li>Recibirás el enlace de acceso al evento online</li>
+                    {% endif %}
+                    {% if registration.has_payment and registration.payment.status == 'pending' %}
+                    <li>Tu inscripción será confirmada una vez verificado el pago</li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            {% if registration.notes %}
+            <div class="event-details">
+                <div class="detail-label">Información adicional que compartiste:</div>
+                <div class="detail-value" style="margin-top: 8px; font-style: italic;">{{ registration.notes }}</div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="footer">
+            <p>Gracias por tu interés en nuestros eventos.</p>
+            <div class="contact-info">
+                <p>Si tienes alguna pregunta, no dudes en contactarnos:</p>
+                <p>📧 info@fernandodasilva.com</p>
+            </div>
+        </div>
+    </div>
 </body>
 </html> 

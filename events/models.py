@@ -165,13 +165,27 @@ class Event(models.Model):
     @property
     def is_full(self):
         """Verifica si el evento está lleno."""
-        return self.registrations.filter(status='accepted').count() >= self.max_capacity
+        # Contar inscripciones aceptadas y pendientes (excluyendo rechazadas y waitlist)
+        active_registrations = self.registrations.filter(
+            status__in=['accepted', 'pending']
+        ).count()
+        return active_registrations >= self.max_capacity
 
     @property
     def available_spots(self):
         """Retorna el número de cupos disponibles."""
-        registered = self.registrations.filter(status='accepted').count()
-        return max(0, self.max_capacity - registered)
+        # Contar inscripciones aceptadas y pendientes (excluyendo rechazadas y waitlist)
+        active_registrations = self.registrations.filter(
+            status__in=['accepted', 'pending']
+        ).count()
+        return max(0, self.max_capacity - active_registrations)
+
+    @property
+    def active_registrations_count(self):
+        """Retorna el número total de inscripciones activas (aceptadas + pendientes)."""
+        return self.registrations.filter(
+            status__in=['accepted', 'pending']
+        ).count()
 
     @property
     def is_finished(self):

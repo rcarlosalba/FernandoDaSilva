@@ -26,22 +26,22 @@ def send_email_notification(email_type, recipient_email, context=None, request=N
     # Email configurations
     email_configs = {
         'welcome_subscriber': {
-            'subject': 'Bienvenido a Fernando da Silva - Completa tu perfil',
+            'subject': 'Bienvenido a Fernando Da Silva - Completa tu perfil',
             'template': 'accounts/emails/welcome_subscriber.html',
             'requires_signed_url': True,
         },
         'welcome_member': {
-            'subject': 'Bienvenido como miembro - Fernando da Silva',
+            'subject': 'Bienvenido como miembro - Fernando Da Silva',
             'template': 'accounts/emails/welcome_member.html',
             'requires_signed_url': False,
         },
         'account_deactivation': {
-            'subject': 'Cuenta desactivada - Fernando da Silva',
+            'subject': 'Cuenta desactivada - Fernando Da Silva',
             'template': 'accounts/emails/account_deactivation.html',
             'requires_signed_url': False,
         },
         'password_reset': {
-            'subject': 'Recuperación de contraseña - Fernando da Silva',
+            'subject': 'Recuperación de contraseña - Fernando Da Silva',
             'template': 'accounts/emails/password_reset.html',
             'requires_signed_url': True,
         }
@@ -67,7 +67,7 @@ def send_email_notification(email_type, recipient_email, context=None, request=N
 
     # Add common context
     context.update({
-        'site_name': 'Fernando da Silva',
+        'site_name': 'Fernando Da Silva',
         'recipient_email': recipient_email,
     })
 
