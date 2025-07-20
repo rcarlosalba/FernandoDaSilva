@@ -106,9 +106,9 @@
                             Encuestas
                         </a>
                         
-                        <a href="#" class="text-gray-400 cursor-not-allowed group flex items-center px-2 py-2 text-sm font-medium rounded-md">
-                            <i class="fas fa-graduation-cap mr-3 h-5 w-5 text-gray-400"></i>
-                            Programas <span class="text-xs text-gray-400 ml-1">(Próximamente)</span>
+                        <a href="{% url 'dashboard:program_list' %}" class="{% if 'program' in request.resolver_match.url_name %}bg-primary-100 text-primary-900{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %} group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-graduation-cap mr-3 h-5 w-5 text-primary-500"></i>
+                            Programas
                         </a>
                         
                         <a href="{% url 'newsletter:list' %}" class="{% if 'newsletter' in request.resolver_match.url_name %}bg-primary-100 text-primary-900{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %} group flex items-center px-2 py-2 text-sm font-medium rounded-md">
@@ -205,6 +205,11 @@
                 <a href="{% url 'dashboard:survey_list' %}" class="{% if 'survey' in request.resolver_match.url_name %}bg-primary-100 text-primary-900{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %} group flex items-center px-2 py-2 text-sm font-medium rounded-md ml-6">
                     <i class="fas fa-clipboard-list mr-3 h-5 w-5 text-primary-500"></i>
                     Encuestas
+                </a>
+                
+                <a href="{% url 'dashboard:program_list' %}" class="{% if 'program' in request.resolver_match.url_name %}bg-primary-100 text-primary-900{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %} group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                    <i class="fas fa-graduation-cap mr-3 h-5 w-5 text-primary-500"></i>
+                    Programas
                 </a>
             </div>
         </nav>

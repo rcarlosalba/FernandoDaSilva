@@ -70,6 +70,47 @@ from events.views import (
     survey_export,
     send_surveys,
 )
+from .views import (
+    # Program management views
+    ProgramListView,
+    ProgramDetailView,
+    ProgramCreateView,
+    ProgramUpdateView,
+    ProgramDeleteView,
+    # Module management views
+    ModuleListView,
+    ModuleDetailView,
+    ModuleCreateView,
+    ModuleUpdateView,
+    ModuleDeleteView,
+    # Session management views
+    SessionListView,
+    SessionDetailView,
+    SessionCreateView,
+    SessionUpdateView,
+    SessionDeleteView,
+    # Material management views
+    MaterialCreateView,
+    MaterialUpdateView,
+    MaterialDeleteView,
+    # Assignment management views (Manager only)
+    AssignmentListView,
+    AssignmentCreateView,
+    AssignmentDetailView,
+    AssignmentUpdateView,
+    AssignmentDeleteView,
+    # Final feedback management views
+    FinalFeedbackListView,
+    FinalFeedbackDetailView,
+    FinalFeedbackCreateView,
+    FinalFeedbackUpdateView,
+    FinalFeedbackDeleteView,
+    FinalFeedbackDuplicateView,
+    # Feedback question management views
+    FeedbackQuestionCreateView,
+    FeedbackQuestionUpdateView,
+    FeedbackQuestionDeleteView,
+)
 
 app_name = "dashboard"
 
@@ -184,4 +225,78 @@ urlpatterns = [
          survey_export, name="survey_export"),
     path("eventos/<int:event_pk>/enviar-encuestas/",
          send_surveys, name="send_surveys"),
+
+    # Program management URLs
+    path("programas/", ProgramListView.as_view(), name="program_list"),
+    path("programas/crear/", ProgramCreateView.as_view(), name="program_create"),
+    path("programas/<int:pk>/", ProgramDetailView.as_view(), name="program_detail"),
+    path("programas/<int:pk>/editar/",
+         ProgramUpdateView.as_view(), name="program_update"),
+    path("programas/<int:pk>/eliminar/",
+         ProgramDeleteView.as_view(), name="program_delete"),
+
+    # Module management URLs
+    path("programas/<int:program_pk>/modulos/",
+         ModuleListView.as_view(), name="module_list"),
+    path("programas/<int:program_pk>/modulos/crear/",
+         ModuleCreateView.as_view(), name="module_create"),
+    path("programas/<int:program_pk>/modulos/<int:pk>/",
+         ModuleDetailView.as_view(), name="module_detail"),
+    path("programas/<int:program_pk>/modulos/<int:pk>/editar/",
+         ModuleUpdateView.as_view(), name="module_update"),
+    path("programas/<int:program_pk>/modulos/<int:pk>/eliminar/",
+         ModuleDeleteView.as_view(), name="module_delete"),
+
+    # Session management URLs
+    path("modulos/<int:module_pk>/sesiones/",
+         SessionListView.as_view(), name="session_list"),
+    path("modulos/<int:module_pk>/sesiones/crear/",
+         SessionCreateView.as_view(), name="session_create"),
+    path("modulos/<int:module_pk>/sesiones/<int:pk>/",
+         SessionDetailView.as_view(), name="session_detail"),
+    path("modulos/<int:module_pk>/sesiones/<int:pk>/editar/",
+         SessionUpdateView.as_view(), name="session_update"),
+    path("modulos/<int:module_pk>/sesiones/<int:pk>/eliminar/",
+         SessionDeleteView.as_view(), name="session_delete"),
+
+    # Material management URLs
+    path("sesiones/<int:session_pk>/materiales/crear/",
+         MaterialCreateView.as_view(), name="material_create"),
+    path("sesiones/<int:session_pk>/materiales/<int:pk>/editar/",
+         MaterialUpdateView.as_view(), name="material_update"),
+    path("sesiones/<int:session_pk>/materiales/<int:pk>/eliminar/",
+         MaterialDeleteView.as_view(), name="material_delete"),
+
+    # Assignment management URLs (Manager only)
+    path("asignaciones/", AssignmentListView.as_view(), name="assignment_list"),
+    path("asignaciones/crear/", AssignmentCreateView.as_view(),
+         name="assignment_create"),
+    path("asignaciones/<int:pk>/", AssignmentDetailView.as_view(),
+         name="assignment_detail"),
+    path("asignaciones/<int:pk>/editar/",
+         AssignmentUpdateView.as_view(), name="assignment_update"),
+    path("asignaciones/<int:pk>/eliminar/",
+         AssignmentDeleteView.as_view(), name="assignment_delete"),
+
+    # Final feedback management URLs
+    path("evaluaciones-finales/", FinalFeedbackListView.as_view(),
+         name="final_feedback_list"),
+    path("evaluaciones-finales/crear/",
+         FinalFeedbackCreateView.as_view(), name="final_feedback_create"),
+    path("evaluaciones-finales/<int:pk>/",
+         FinalFeedbackDetailView.as_view(), name="final_feedback_detail"),
+    path("evaluaciones-finales/<int:pk>/editar/",
+         FinalFeedbackUpdateView.as_view(), name="final_feedback_update"),
+    path("evaluaciones-finales/<int:pk>/eliminar/",
+         FinalFeedbackDeleteView.as_view(), name="final_feedback_delete"),
+    path("evaluaciones-finales/<int:pk>/duplicar/",
+         FinalFeedbackDuplicateView.as_view(), name="final_feedback_duplicate"),
+
+    # Feedback question management URLs
+    path("evaluaciones-finales/<int:feedback_pk>/preguntas/crear/",
+         FeedbackQuestionCreateView.as_view(), name="feedback_question_create"),
+    path("evaluaciones-finales/<int:feedback_pk>/preguntas/<int:pk>/editar/",
+         FeedbackQuestionUpdateView.as_view(), name="feedback_question_update"),
+    path("evaluaciones-finales/<int:feedback_pk>/preguntas/<int:pk>/eliminar/",
+         FeedbackQuestionDeleteView.as_view(), name="feedback_question_delete"),
 ]

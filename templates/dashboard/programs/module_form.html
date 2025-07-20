@@ -1,0 +1,156 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Messages -->
+    {% include 'common/messages.html' %}
+    
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">
+                    {% if form.instance.pk %}
+                        Editar Módulo
+                    {% else %}
+                        Crear Nuevo Módulo
+                    {% endif %}
+                </h1>
+                <p class="mt-2 text-sm text-gray-600">
+                    {% if form.instance.pk %}
+                        Modifica la información del módulo "{{ form.instance.title }}"
+                    {% else %}
+                        Define la información del nuevo módulo para el programa "{{ program.title }}"
+                    {% endif %}
+                </p>
+                <div class="mt-2 flex items-center text-sm text-gray-500">
+                    <i class="fas fa-graduation-cap mr-2"></i>
+                    <span>Programa: {{ program.title }}</span>
+                </div>
+            </div>
+            <div>
+                <a href="{% url 'dashboard:program_detail' pk=program.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Volver al Programa
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white shadow rounded-lg">
+        <form method="post" class="space-y-6 p-6">
+            {% csrf_token %}
+            
+            <!-- Título -->
+            <div>
+                <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.title.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.title }}
+                </div>
+                {% if form.title.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.title.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Ejemplo: "Módulo 1: Introducción al Autoconocimiento"
+                </p>
+            </div>
+
+            <!-- Descripción -->
+            <div>
+                <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.description.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.description }}
+                </div>
+                {% if form.description.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.description.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Describe brevemente el contenido y objetivos de este módulo.
+                </p>
+            </div>
+
+            <!-- Orden -->
+            <div>
+                <label for="{{ form.order.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.order.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.order }}
+                </div>
+                {% if form.order.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.order.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Define el orden de aparición del módulo en el programa. Los módulos se mostrarán en orden ascendente.
+                </p>
+            </div>
+
+            <!-- Mensaje de Felicitación -->
+            <div>
+                <label for="{{ form.congratulation_message.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.congratulation_message.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.congratulation_message }}
+                </div>
+                {% if form.congratulation_message.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.congratulation_message.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Este mensaje se mostrará al estudiante cuando complete todas las sesiones de este módulo. Puedes incluir palabras de motivación y reconocimiento.
+                </p>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                <a href="{% url 'dashboard:program_detail' pk=program.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    Cancelar
+                </a>
+                <button type="submit" 
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-save mr-2"></i>
+                    {% if form.instance.pk %}
+                        Guardar Cambios
+                    {% else %}
+                        Crear Módulo
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Información adicional -->
+    <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-info-circle text-blue-400"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">Información sobre módulos</h3>
+                <div class="mt-2 text-sm text-blue-700">
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Un módulo se marca como completado automáticamente cuando el estudiante termina todas sus sesiones.</li>
+                        <li>Después de crear el módulo, podrás agregar sesiones con el contenido específico.</li>
+                        <li>El mensaje de felicitación aparecerá como una ventana emergente al completar el módulo.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

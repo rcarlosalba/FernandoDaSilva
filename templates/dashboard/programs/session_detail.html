@@ -1,0 +1,282 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Messages -->
+    {% include 'common/messages.html' %}
+    
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <div class="flex items-center mb-2 text-sm text-gray-500">
+                    <a href="{% url 'dashboard:program_detail' pk=session.module.program.pk %}" 
+                       class="hover:text-gray-700">
+                        {{ session.module.program.title }}
+                    </a>
+                    <span class="mx-2">/</span>
+                    <a href="{% url 'dashboard:module_detail' program_pk=session.module.program.pk pk=session.module.pk %}" 
+                       class="hover:text-gray-700">
+                        {{ session.module.title }}
+                    </a>
+                    <span class="mx-2">/</span>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900">{{ session.title }}</h1>
+                <div class="mt-2 flex items-center text-sm text-gray-500">
+                    <i class="fas fa-sort-numeric-up mr-2"></i>
+                    <span>Orden: {{ session.order }}</span>
+                    <span class="mx-2">•</span>
+                    <i class="fas fa-layer-group mr-2"></i>
+                    <span>{{ session.materials.count }} materiales</span>
+                </div>
+            </div>
+            <div class="mt-4 sm:mt-0 flex space-x-3">
+                <a href="{% url 'dashboard:session_update' module_pk=session.module.pk pk=session.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-edit mr-2"></i>
+                    Editar Sesión
+                </a>
+                <a href="{% url 'dashboard:module_detail' program_pk=session.module.program.pk pk=session.module.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Volver
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-layer-group text-2xl text-blue-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Total Materiales</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ session.materials.count }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-video text-2xl text-red-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Videos</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ session.video_materials.count }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-volume-up text-2xl text-green-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Audios</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ session.audio_materials.count }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-file-alt text-2xl text-purple-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Lecturas</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ session.reading_materials.count }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Materials Section -->
+    <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-medium text-gray-900">Materiales de la Sesión</h2>
+                <a href="{% url 'dashboard:material_create' session_pk=session.pk %}" 
+                   class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-plus mr-2"></i>
+                    Agregar Material
+                </a>
+            </div>
+        </div>
+
+        {% if session.materials.all %}
+            <div class="divide-y divide-gray-200">
+                {% for material in session.materials.all %}
+                <div class="px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                {% if material.material_type == 'VIDEO' %}
+                                    <div class="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
+                                        <i class="fas fa-video text-red-600"></i>
+                                    </div>
+                                {% elif material.material_type == 'AUDIO' %}
+                                    <div class="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-volume-up text-green-600"></i>
+                                    </div>
+                                {% elif material.material_type == 'READING' %}
+                                    <div class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                                        <i class="fas fa-file-alt text-purple-600"></i>
+                                    </div>
+                                {% elif material.material_type == 'FILE' %}
+                                    <div class="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
+                                        <i class="fas fa-download text-orange-600"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">{{ material.title }}</h3>
+                                <div class="flex items-center mt-1 text-sm text-gray-500">
+                                    <span class="capitalize">{{ material.get_material_type_display }}</span>
+                                    {% if material.material_type == 'VIDEO' or material.material_type == 'AUDIO' %}
+                                        <span class="mx-2">•</span>
+                                        <span class="text-xs bg-gray-100 px-2 py-1 rounded">URL Externa</span>
+                                    {% elif material.material_type == 'FILE' %}
+                                        <span class="mx-2">•</span>
+                                        <span class="text-xs bg-gray-100 px-2 py-1 rounded">{{ material.file.size|filesizeformat }}</span>
+                                    {% endif %}
+                                </div>
+                                {% if material.description %}
+                                    <p class="mt-2 text-sm text-gray-600">{{ material.description|truncatewords:20 }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <a href="{% url 'dashboard:material_update' session_pk=session.pk pk=material.pk %}" 
+                               class="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                                Editar
+                            </a>
+                            <button data-delete-url="{% url 'dashboard:material_delete' session_pk=session.pk pk=material.pk %}"
+                                    data-delete-title="Eliminar Material"
+                                    data-delete-message="¿Estás seguro de que deseas eliminar el material '{{ material.title }}'?"
+                                    class="text-red-600 hover:text-red-900 text-sm font-medium">
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-12">
+                <i class="fas fa-layer-group text-4xl text-gray-300 mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No hay materiales agregados</h3>
+                <p class="text-gray-500 mb-6">Comienza agregando el primer material a la sesión.</p>
+                <a href="{% url 'dashboard:material_create' session_pk=session.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-plus mr-2"></i>
+                    Agregar Primer Material
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Session Info -->
+        <div class="bg-white shadow rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Información de la Sesión</h3>
+            </div>
+            <div class="p-6">
+                <dl class="space-y-4">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Título</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ session.title }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Orden en el Módulo</dt>
+                        <dd class="mt-1 text-sm text-gray-900">{{ session.order }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Módulo</dt>
+                        <dd class="mt-1 text-sm text-gray-900">
+                            <a href="{% url 'dashboard:module_detail' program_pk=session.module.program.pk pk=session.module.pk %}" 
+                               class="text-primary-600 hover:text-primary-900">
+                                {{ session.module.title }}
+                            </a>
+                        </dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Programa</dt>
+                        <dd class="mt-1 text-sm text-gray-900">
+                            <a href="{% url 'dashboard:program_detail' pk=session.module.program.pk %}" 
+                               class="text-primary-600 hover:text-primary-900">
+                                {{ session.module.program.title }}
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Material Types Guide -->
+        <div class="bg-white shadow rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Tipos de Materiales</h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4 text-sm">
+                    <div class="flex items-center">
+                        <i class="fas fa-video text-red-500 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">Video</p>
+                            <p class="text-gray-600">URL de YouTube, Vimeo u otra plataforma</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-volume-up text-green-500 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">Audio</p>
+                            <p class="text-gray-600">URL de archivo de audio o podcast</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-file-alt text-purple-500 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">Lectura</p>
+                            <p class="text-gray-600">Contenido de texto enriquecido</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-download text-orange-500 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">Archivo</p>
+                            <p class="text-gray-600">PDF, presentación, imagen, etc.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de eliminación -->
+{% include 'common/modal_delete.html' %}
+{% endblock %} 

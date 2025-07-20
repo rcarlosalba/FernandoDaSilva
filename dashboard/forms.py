@@ -11,6 +11,10 @@ from constants.form_styles import (
     MULTIPLE_SELECT,
 )
 from blog.models import Post, Category, Tag
+from programs.models import (
+    Program, Module, Session, Material, Assignment,
+    FinalFeedback, FeedbackQuestion
+)
 
 User = get_user_model()
 
@@ -112,6 +116,169 @@ class CategoryForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': BASE_INPUT}),
             'slug': forms.TextInput(attrs={'class': BASE_INPUT}),
             'description': forms.Textarea(attrs={'class': BASE_TEXTAREA, 'rows': 3}),
+        }
+
+
+# Program Management Forms
+
+class ProgramForm(forms.ModelForm):
+    """Formulario para crear y editar programas."""
+
+    class Meta:
+        model = Program
+        fields = ['title', 'description', 'cover_image']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': BASE_INPUT}),
+            'description': forms.Textarea(attrs={'class': BASE_TEXTAREA, 'rows': 4}),
+            'cover_image': forms.FileInput(attrs={'class': FILE_INPUT}),
+        }
+        labels = {
+            'title': 'Título del Programa',
+            'description': 'Descripción',
+            'cover_image': 'Imagen de Portada',
+        }
+
+
+class ModuleForm(forms.ModelForm):
+    """Formulario para crear y editar módulos."""
+
+    class Meta:
+        model = Module
+        fields = ['title', 'description', 'order', 'congratulation_message']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': BASE_INPUT}),
+            'description': forms.Textarea(attrs={'class': BASE_TEXTAREA, 'rows': 3}),
+            'order': forms.NumberInput(attrs={'class': BASE_INPUT}),
+            'congratulation_message': forms.Textarea(attrs={'class': BASE_TEXTAREA, 'rows': 3}),
+        }
+        labels = {
+            'title': 'Título del Módulo',
+            'description': 'Descripción',
+            'order': 'Orden de Aparición',
+            'congratulation_message': 'Mensaje de Felicitación',
+        }
+
+
+class SessionForm(forms.ModelForm):
+    """Formulario para crear y editar sesiones."""
+
+    class Meta:
+        model = Session
+        fields = ['title', 'order']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': BASE_INPUT}),
+            'order': forms.NumberInput(attrs={'class': BASE_INPUT}),
+        }
+        labels = {
+            'title': 'Título de la Sesión',
+            'order': 'Orden de Aparición',
+        }
+
+
+class MaterialForm(forms.ModelForm):
+    """Formulario para crear y editar materiales."""
+
+    class Meta:
+        model = Material
+        fields = ['type', 'title', 'video_url',
+                  'audio_url', 'reading_content', 'file']
+        widgets = {
+            'type': forms.Select(attrs={'class': BASE_SELECT}),
+            'title': forms.TextInput(attrs={'class': BASE_INPUT}),
+            'video_url': forms.URLInput(attrs={'class': BASE_INPUT}),
+            'audio_url': forms.URLInput(attrs={'class': BASE_INPUT}),
+            'reading_content': forms.Textarea(attrs={'class': BASE_TEXTAREA, 'rows': 6}),
+            'file': forms.FileInput(attrs={'class': FILE_INPUT}),
+        }
+        labels = {
+            'type': 'Tipo de Material',
+            'title': 'Título del Material',
+            'video_url': 'URL del Video',
+            'audio_url': 'URL del Audio',
+            'reading_content': 'Contenido de Lectura',
+            'file': 'Archivo',
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        material_type = cleaned_data.get('type')
+
+        # Validar que al menos un campo de contenido esté proporcionado según el tipo
+        if material_type == 'video' and not cleaned_data.get('video_url'):
+            raise forms.ValidationError(
+                'La URL del video es requerida para materiales de video.')
+        elif material_type == 'audio' and not cleaned_data.get('audio_url'):
+            raise forms.ValidationError(
+                'La URL del audio es requerida para materiales de audio.')
+        elif material_type == 'reading' and not cleaned_data.get('reading_content'):
+            raise forms.ValidationError(
+                'El contenido de lectura es requerido para materiales de lectura.')
+        elif material_type == 'file' and not cleaned_data.get('file'):
+            raise forms.ValidationError(
+                'El archivo es requerido para materiales de archivo.')
+
+        return cleaned_data
+
+
+class AssignmentForm(forms.ModelForm):
+    """Formulario para crear y editar asignaciones."""
+
+    class Meta:
+        model = Assignment
+        fields = ['student', 'program', 'status']
+        widgets = {
+            'student': forms.Select(attrs={'class': BASE_SELECT}),
+            'program': forms.Select(attrs={'class': BASE_SELECT}),
+            'status': forms.Select(attrs={'class': BASE_SELECT}),
+        }
+        labels = {
+            'student': 'Estudiante',
+            'program': 'Programa',
+            'status': 'Estado',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Filtrar solo estudiantes
+        self.fields['student'].queryset = User.objects.filter(
+            role=UserRoles.STUDENT)
+
+
+class FinalFeedbackForm(forms.ModelForm):
+    """Formulario para crear y editar evaluaciones finales."""
+
+    class Meta:
+        model = FinalFeedback
+        fields = ['program', 'title', 'description']
+        widgets = {
+            'program': forms.Select(attrs={'class': BASE_SELECT}),
+            'title': forms.TextInput(attrs={'class': BASE_INPUT}),
+            'description': forms.Textarea(attrs={'class': BASE_TEXTAREA, 'rows': 4}),
+        }
+        labels = {
+            'program': 'Programa',
+            'title': 'Título de la Evaluación',
+            'description': 'Descripción',
+        }
+
+
+class FeedbackQuestionForm(forms.ModelForm):
+    """Formulario para crear y editar preguntas de evaluación."""
+
+    class Meta:
+        model = FeedbackQuestion
+        fields = ['question', 'type', 'required', 'order']
+        widgets = {
+            'question': forms.TextInput(attrs={'class': BASE_INPUT}),
+            'type': forms.Select(attrs={'class': BASE_SELECT}),
+            'required': forms.CheckboxInput(attrs={'class': 'h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500'}),
+            'order': forms.NumberInput(attrs={'class': BASE_INPUT}),
+        }
+        labels = {
+            'question': 'Pregunta',
+            'type': 'Tipo de Pregunta',
+            'required': 'Obligatoria',
+            'order': 'Orden',
         }
 
 

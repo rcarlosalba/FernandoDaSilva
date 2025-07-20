@@ -1,0 +1,209 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Messages -->
+    {% include 'common/messages.html' %}
+    
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Evaluaciones Finales</h1>
+                <p class="mt-2 text-sm text-gray-600">
+                    Gestiona las evaluaciones de feedback para los programas
+                </p>
+            </div>
+            <div class="mt-4 sm:mt-0">
+                <a href="{% url 'dashboard:final_feedback_create' %}" 
+                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-plus mr-2"></i>
+                    Crear Evaluación
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-clipboard-list text-2xl text-primary-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Total Evaluaciones</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ total_feedbacks }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-question-circle text-2xl text-blue-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Total Preguntas</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ total_questions }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-users text-2xl text-green-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Respuestas Totales</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ total_responses }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedbacks List -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        {% if final_feedbacks %}
+            <ul class="divide-y divide-gray-200">
+                {% for feedback in final_feedbacks %}
+                <li>
+                    <div class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="h-12 w-12 rounded-lg bg-primary-100 flex items-center justify-center mr-4">
+                                    <i class="fas fa-clipboard-list text-primary-600"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-medium text-gray-900">
+                                        <a href="{% url 'dashboard:final_feedback_detail' pk=feedback.pk %}" class="hover:text-primary-600">
+                                            {{ feedback.title }}
+                                        </a>
+                                    </h3>
+                                    <p class="text-sm text-gray-500 mt-1">
+                                        {{ feedback.description|truncatewords:20 }}
+                                    </p>
+                                    <div class="flex items-center mt-2 text-sm text-gray-500">
+                                        <i class="fas fa-question-circle mr-1"></i>
+                                        <span>{{ feedback.questions.count }} preguntas</span>
+                                        {% if feedback.program %}
+                                            <span class="mx-2">•</span>
+                                            <i class="fas fa-graduation-cap mr-1"></i>
+                                            <span>{{ feedback.program.title }}</span>
+                                        {% endif %}
+                                        <span class="mx-2">•</span>
+                                        <i class="fas fa-users mr-1"></i>
+                                        <span>{{ feedback.responses.count }} respuestas</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <a href="{% url 'dashboard:final_feedback_detail' pk=feedback.pk %}" 
+                                   class="text-primary-600 hover:text-primary-900 text-sm font-medium">
+                                    Ver Detalles
+                                </a>
+                                <a href="{% url 'dashboard:final_feedback_update' pk=feedback.pk %}" 
+                                   class="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                                    Editar
+                                </a>
+                                {% if feedback.responses.count == 0 %}
+                                    <button data-delete-url="{% url 'dashboard:final_feedback_delete' pk=feedback.pk %}"
+                                            data-delete-title="Eliminar Evaluación"
+                                            data-delete-message="¿Estás seguro de que deseas eliminar la evaluación '{{ feedback.title }}'? Esta acción no se puede deshacer."
+                                            class="text-red-600 hover:text-red-900 text-sm font-medium">
+                                        Eliminar
+                                    </button>
+                                {% else %}
+                                    <span class="text-gray-400 text-sm font-medium cursor-not-allowed" title="No se puede eliminar porque tiene respuestas">
+                                        Eliminar
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="text-center py-12">
+                <i class="fas fa-clipboard-list text-4xl text-gray-300 mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No hay evaluaciones creadas</h3>
+                <p class="text-gray-500 mb-6">Comienza creando tu primera evaluación de feedback para los programas.</p>
+                <a href="{% url 'dashboard:final_feedback_create' %}" 
+                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-plus mr-2"></i>
+                    Crear Primera Evaluación
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 mt-6">
+        <div class="flex-1 flex justify-between sm:hidden">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    Anterior
+                </a>
+            {% endif %}
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    Siguiente
+                </a>
+            {% endif %}
+        </div>
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm text-gray-700">
+                    Mostrando <span class="font-medium">{{ page_obj.start_index }}</span> a <span class="font-medium">{{ page_obj.end_index }}</span> de <span class="font-medium">{{ page_obj.paginator.count }}</span> resultados
+                </p>
+            </div>
+            <div>
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-primary-50 text-sm font-medium text-primary-600">
+                                {{ num }}
+                            </span>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <a href="?page={{ num }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                {{ num }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal de eliminación -->
+{% include 'common/modal_delete.html' %}
+{% endblock %} 

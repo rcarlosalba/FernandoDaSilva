@@ -167,3 +167,26 @@ SURVEY_RESPONSE_STATUS_CHOICES = [
     ('completed', 'Completada'),
     ('expired', 'Expirada'),
 ]
+
+# Programs - Assignment Status
+ASSIGNMENT_STATUS_CHOICES = [
+    ('active', 'Activo'),
+    ('completed', 'Completado'),
+    ('paused', 'Pausado'),
+]
+
+# Programs - Material Types
+MATERIAL_TYPE_CHOICES = [
+    ('video', 'Video'),
+    ('audio', 'Audio'),
+    ('reading', 'Lectura'),
+    ('file', 'Archivo Descargable'),
+]
+
+# Programs - Feedback Question Types
+FEEDBACK_QUESTION_TYPE_CHOICES = [
+    ('text', 'Texto libre'),
+    ('scale', 'Escala (1-5)'),
+    ('multiple_choice', 'Opciones múltiples'),
+    ('rating', 'Calificación (1-10)'),
+]

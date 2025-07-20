@@ -1,0 +1,348 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Messages -->
+    {% include 'common/messages.html' %}
+    
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Asignaciones de Estudiantes</h1>
+                <p class="mt-2 text-sm text-gray-600">
+                    Gestiona las asignaciones de estudiantes a programas y monitorea su progreso
+                </p>
+            </div>
+            <div class="mt-4 sm:mt-0">
+                <a href="{% url 'dashboard:assignment_create' %}" 
+                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-plus mr-2"></i>
+                    Nueva Asignación
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-users text-2xl text-primary-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Total Asignaciones</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ total_assignments }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-play-circle text-2xl text-green-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Activas</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ active_assignments }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-check-circle text-2xl text-blue-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Completadas</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ completed_assignments }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-pause-circle text-2xl text-yellow-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Pausadas</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ paused_assignments }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white shadow rounded-lg mb-6">
+        <div class="px-4 py-5 sm:p-6">
+            <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Filter by Program -->
+                <div>
+                    <label for="program" class="block text-sm font-medium text-gray-700 mb-1">Programa</label>
+                    <select name="program" id="program" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                        <option value="">Todos los programas</option>
+                        {% for program in programs %}
+                            <option value="{{ program.pk }}" {% if selected_program == program.pk %}selected{% endif %}>
+                                {{ program.title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Filter by Status -->
+                <div>
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                    <select name="status" id="status" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                        <option value="">Todos los estados</option>
+                        <option value="active" {% if selected_status == 'active' %}selected{% endif %}>Activo</option>
+                        <option value="completed" {% if selected_status == 'completed' %}selected{% endif %}>Completado</option>
+                        <option value="paused" {% if selected_status == 'paused' %}selected{% endif %}>Pausado</option>
+                    </select>
+                </div>
+
+                <!-- Filter by Progress -->
+                <div>
+                    <label for="progress" class="block text-sm font-medium text-gray-700 mb-1">Progreso</label>
+                    <select name="progress" id="progress" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                        <option value="">Cualquier progreso</option>
+                        <option value="0-25" {% if selected_progress == '0-25' %}selected{% endif %}>0-25%</option>
+                        <option value="26-50" {% if selected_progress == '26-50' %}selected{% endif %}>26-50%</option>
+                        <option value="51-75" {% if selected_progress == '51-75' %}selected{% endif %}>51-75%</option>
+                        <option value="76-99" {% if selected_progress == '76-99' %}selected{% endif %}>76-99%</option>
+                        <option value="100" {% if selected_progress == '100' %}selected{% endif %}>100%</option>
+                    </select>
+                </div>
+
+                <!-- Search by Student -->
+                <div>
+                    <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Buscar Estudiante</label>
+                    <input type="text" name="search" id="search" value="{{ search_query }}" 
+                           placeholder="Nombre o email del estudiante"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500">
+                </div>
+
+                <!-- Filter Buttons -->
+                <div class="md:col-span-4 flex justify-between items-end">
+                    <button type="submit" 
+                            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        <i class="fas fa-search mr-2"></i>
+                        Filtrar
+                    </button>
+                    {% if has_filters %}
+                        <a href="{% url 'dashboard:assignment_list' %}" 
+                           class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                            <i class="fas fa-times mr-2"></i>
+                            Limpiar Filtros
+                        </a>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assignments List -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+        {% if assignments %}
+            <ul class="divide-y divide-gray-200">
+                {% for assignment in assignments %}
+                <li>
+                    <div class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <!-- Student Avatar -->
+                                <div class="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                                    <i class="fas fa-user text-gray-400"></i>
+                                </div>
+                                
+                                <div class="flex-1">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <h3 class="text-lg font-medium text-gray-900">
+                                                <a href="{% url 'dashboard:assignment_detail' pk=assignment.pk %}" class="hover:text-primary-600">
+                                                    {{ assignment.student.get_full_name }}
+                                                </a>
+                                            </h3>
+                                            <p class="text-sm text-gray-500 mt-1">
+                                                <a href="{% url 'dashboard:program_detail' pk=assignment.program.pk %}" class="hover:text-primary-600">
+                                                    {{ assignment.program.title }}
+                                                </a>
+                                            </p>
+                                        </div>
+                                        
+                                        <!-- Status Badge -->
+                                        <div class="ml-4">
+                                            {% if assignment.status == 'active' %}
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    <i class="fas fa-play-circle mr-1"></i>
+                                                    Activo
+                                                </span>
+                                            {% elif assignment.status == 'completed' %}
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                    <i class="fas fa-check-circle mr-1"></i>
+                                                    Completado
+                                                </span>
+                                            {% elif assignment.status == 'paused' %}
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                    <i class="fas fa-pause-circle mr-1"></i>
+                                                    Pausado
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Progress Bar -->
+                                    <div class="mt-3">
+                                        <div class="flex items-center justify-between text-sm text-gray-600 mb-1">
+                                            <span>Progreso</span>
+                                            <span>{{ assignment.progress_percentage }}%</span>
+                                        </div>
+                                        <div class="w-full bg-gray-200 rounded-full h-2">
+                                            <div class="bg-primary-600 h-2 rounded-full transition-all duration-300" 
+                                                 style="width: {{ assignment.progress_percentage }}%"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Additional Info -->
+                                    <div class="flex items-center mt-2 text-sm text-gray-500">
+                                        <i class="fas fa-calendar-alt mr-1"></i>
+                                        <span>Asignado: {{ assignment.assigned_at|date:"d/m/Y" }}</span>
+                                        {% if assignment.completed_at %}
+                                            <span class="mx-2">•</span>
+                                            <i class="fas fa-check mr-1"></i>
+                                            <span>Completado: {{ assignment.completed_at|date:"d/m/Y" }}</span>
+                                        {% endif %}
+                                        <span class="mx-2">•</span>
+                                        <i class="fas fa-envelope mr-1"></i>
+                                        <span>{{ assignment.student.email }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex items-center space-x-2">
+                                <a href="{% url 'dashboard:assignment_detail' pk=assignment.pk %}" 
+                                   class="text-primary-600 hover:text-primary-900 text-sm font-medium">
+                                    Ver Detalles
+                                </a>
+                                <a href="{% url 'dashboard:assignment_update' pk=assignment.pk %}" 
+                                   class="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                                    Editar
+                                </a>
+                                <button data-delete-url="{% url 'dashboard:assignment_delete' pk=assignment.pk %}"
+                                        data-delete-title="Eliminar Asignación"
+                                        data-delete-message="¿Estás seguro de que deseas eliminar la asignación de '{{ assignment.student.get_full_name }}' al programa '{{ assignment.program.title }}'? Esta acción no se puede deshacer."
+                                        class="text-red-600 hover:text-red-900 text-sm font-medium">
+                                    Eliminar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="text-center py-12">
+                <i class="fas fa-users text-4xl text-gray-300 mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">
+                    {% if has_filters %}
+                        No se encontraron asignaciones con los filtros aplicados
+                    {% else %}
+                        No hay asignaciones de estudiantes
+                    {% endif %}
+                </h3>
+                <p class="text-gray-500 mb-6">
+                    {% if has_filters %}
+                        Intenta ajustar los filtros de búsqueda o crear una nueva asignación.
+                    {% else %}
+                        Comienza asignando estudiantes a los programas disponibles.
+                    {% endif %}
+                </p>
+                <a href="{% url 'dashboard:assignment_create' %}" 
+                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-plus mr-2"></i>
+                    Crear Primera Asignación
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 mt-6">
+        <div class="flex-1 flex justify-between sm:hidden">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}" 
+                   class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    Anterior
+                </a>
+            {% endif %}
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}" 
+                   class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    Siguiente
+                </a>
+            {% endif %}
+        </div>
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm text-gray-700">
+                    Mostrando <span class="font-medium">{{ page_obj.start_index }}</span> a <span class="font-medium">{{ page_obj.end_index }}</span> de <span class="font-medium">{{ page_obj.paginator.count }}</span> resultados
+                </p>
+            </div>
+            <div>
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}" 
+                           class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-primary-50 text-sm font-medium text-primary-600">
+                                {{ num }}
+                            </span>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <a href="?page={{ num }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}" 
+                               class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                {{ num }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if request.GET %}&{{ request.GET.urlencode }}{% endif %}" 
+                           class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal de eliminación -->
+{% include 'common/modal_delete.html' %}
+{% endblock %} 
