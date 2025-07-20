@@ -26,6 +26,7 @@ urlpatterns = [
     path("recursos/", include("blog.urls")),
     path("eventos/", include("events.urls")),
     path("newsletter/", include("newsletter.urls")),
+    path("programas/", include("programs.urls")),
     path('', include('public.urls')),
 ]
 

@@ -100,6 +100,20 @@ class CustomLoginView(LoginView):
     form_class = LoginForm
     template_name = 'accounts/login.html'
 
+    def get_success_url(self):
+        """
+        Redirect users based on their role after successful login.
+        """
+        user = self.request.user
+
+        if user.role == UserRoles.MANAGER:
+            return reverse_lazy('dashboard:index')
+        elif user.role == UserRoles.STUDENT:
+            return reverse_lazy('programs:index')
+        else:
+            # SUBSCRIBER, MEMBER, ASSISTANT -> public:index
+            return reverse_lazy('public:index')
+
     def form_valid(self, form):
         """
         Log the user in and show a success message.
