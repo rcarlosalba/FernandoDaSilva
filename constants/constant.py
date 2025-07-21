@@ -97,6 +97,35 @@ def manager_required_class(view_class):
     return view_class
 
 
+def student_assigned_to_program_required(view_func):
+    """
+    Decorator that checks if the user is authenticated, has student role, and is assigned to the requested program.
+    Redirects to home page if not allowed.
+    Expects the view to receive 'programa_pk' as a kwarg or 'sesion_pk' to infer the program.
+    """
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('accounts:login')
+        if request.user.role != UserRoles.STUDENT:
+            return redirect('public:index')
+        from programs.models import Assignment, Session
+        programa_pk = kwargs.get('programa_pk')
+        if not programa_pk and 'sesion_pk' in kwargs:
+            try:
+                session = Session.objects.select_related(
+                    'module__program').get(pk=kwargs['sesion_pk'])
+                programa_pk = session.module.program.pk
+            except Session.DoesNotExist:
+                return redirect('public:index')
+        qs = Assignment.objects.filter(
+            student=request.user, program_id=programa_pk, status__in=['active', 'Activo'])
+        if not qs.exists():
+            return redirect('public:index')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
 # Newsletter Status
 NEWSLETTER_STATUS_CHOICES = [
     ('draft', 'Borrador'),

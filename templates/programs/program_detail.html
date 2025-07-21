@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ program.title }} - Programa{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-primary-50 to-background-cream py-10">
+    <div class="container mx-auto px-4 max-w-4xl">
+        <a href="{% url 'programs:index' %}" class="inline-flex items-center text-primary-500 hover:text-primary-700 font-medium mb-6">
+            <i class="fas fa-arrow-left mr-2"></i> Volver a mis programas
+        </a>
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8 flex flex-col md:flex-row gap-8">
+            {% if program.cover_image %}
+                <img src="{{ program.cover_image.url }}" alt="{{ program.title }}" class="w-full md:w-64 h-48 object-cover rounded-lg mb-4 md:mb-0">
+            {% else %}
+                <div class="w-full md:w-64 h-48 flex items-center justify-center bg-primary-100 rounded-lg mb-4 md:mb-0">
+                    <i class="fas fa-book-open text-5xl text-primary-400"></i>
+                </div>
+            {% endif %}
+            <div class="flex-1 flex flex-col justify-center">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ program.title }}</h1>
+                <p class="text-gray-700 text-lg mb-2">{{ program.description }}</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
+                <i class="fas fa-layer-group text-primary-500"></i>
+                Módulos del Programa
+            </h2>
+            {% if modules %}
+                <div class="space-y-6">
+                    {% for module in modules %}
+                        <div class="border border-gray-200 rounded-xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-primary-50/30">
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                                    <span class="inline-block bg-primary-200 text-primary-800 rounded px-2 py-0.5 text-xs font-bold mr-2">Módulo {{ module.order }}</span>
+                                    {{ module.title }}
+                                </h3>
+                                <p class="text-gray-700 text-sm mb-2">{{ module.description|default:'Sin descripción' }}</p>
+                                <div class="flex items-center text-xs text-gray-500 gap-2">
+                                    <i class="fas fa-play-circle"></i>
+                                    {{ module.sessions.count }} sesiones
+                                </div>
+                            </div>
+                            {% with first_session=module.sessions.first %}
+                                {% if first_session %}
+                                    <a href="{% url 'programs:session_detail' first_session.pk %}" class="inline-flex items-center px-4 py-2 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-600 transition-colors duration-200">
+                                        <i class="fas fa-arrow-right mr-2"></i>
+                                        Continuar módulo
+                                    </a>
+                                {% else %}
+                                    <span class="inline-flex items-center px-4 py-2 bg-gray-300 text-white font-semibold rounded-lg cursor-not-allowed">
+                                        <i class="fas fa-ban mr-2"></i>
+                                        Sin sesiones
+                                    </span>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-book text-4xl text-primary-300 mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">Aún no hay módulos disponibles</h3>
+                    <p class="text-gray-500 mb-6">Cuando se agregue el primer módulo, aparecerá aquí para que puedas comenzar tu aprendizaje.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

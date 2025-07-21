@@ -963,6 +963,12 @@ class AssignmentCreateView(CreateView):
     form_class = AssignmentForm
 
     def form_valid(self, form):
+        # Cambiar el rol del usuario asignado a 'student' si no lo es
+        student = form.cleaned_data['student']
+        from constants.constant import UserRoles
+        if student.role != UserRoles.STUDENT:
+            student.role = UserRoles.STUDENT
+            student.save()
         messages.success(self.request, 'Asignación creada exitosamente.')
         return super().form_valid(form)
 

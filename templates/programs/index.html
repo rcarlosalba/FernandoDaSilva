@@ -1,72 +1,61 @@
 {% extends 'base.html' %}
 
-{% block title %}Programas - Fernando Da Silva{% endblock %}
+{% block title %}Mis Programas - Fernando Da Silva{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-primary-50 to-background-cream">
-    <!-- Hero Section -->
-    <div class="container mx-auto px-4 py-16">
-        <div class="text-center">
-            <div class="mb-8">
-                <i class="fas fa-graduation-cap text-6xl text-primary-500 mb-6"></i>
-                <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                    Programas de Formación
-                </h1>
-                <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-                    Nuestros programas especializados están en desarrollo para brindarte la mejor experiencia de aprendizaje.
-                </p>
-            </div>
+<div class="min-h-screen bg-gradient-to-br from-primary-50 to-background-cream py-10">
+    <div class="container mx-auto px-4">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center flex items-center justify-center gap-3">
+            <i class="fas fa-graduation-cap text-primary-500"></i>
+            Mis Programas Asignados
+        </h1>
 
-            <!-- Construction Message -->
-            <div class="bg-white rounded-2xl shadow-lg p-8 max-w-2xl mx-auto">
-                <div class="flex items-center justify-center mb-6">
-                    <i class="fas fa-tools text-4xl text-primary-500 mr-4"></i>
-                    <h2 class="text-2xl font-semibold text-gray-900">En Construcción</h2>
-                </div>
-                
-                <p class="text-gray-600 mb-6 leading-relaxed">
-                    Estamos trabajando arduamente para crear programas de formación de alta calidad que te ayuden a alcanzar tus objetivos profesionales. 
-                    Muy pronto tendrás acceso a contenido exclusivo y metodologías probadas.
-                </p>
-
-                <div class="bg-primary-50 rounded-lg p-6 mb-6">
-                    <h3 class="text-lg font-semibold text-primary-900 mb-3">¿Qué puedes esperar?</h3>
-                    <ul class="text-left space-y-2 text-gray-700">
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-primary-500 mt-1 mr-3 flex-shrink-0"></i>
-                            <span>Programas estructurados con metodologías probadas</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-primary-500 mt-1 mr-3 flex-shrink-0"></i>
-                            <span>Contenido exclusivo y actualizado</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-primary-500 mt-1 mr-3 flex-shrink-0"></i>
-                            <span>Seguimiento personalizado y soporte continuo</span>
-                        </li>
-                        <li class="flex items-start">
-                            <i class="fas fa-check-circle text-primary-500 mt-1 mr-3 flex-shrink-0"></i>
-                            <span>Certificaciones reconocidas</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Call to Action -->
-                <div class="space-y-4">
-                    <a href="{% url 'public:index' %}" class="inline-flex items-center px-6 py-3 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-600 transition-colors duration-300">
-                        <i class="fas fa-home mr-2"></i>
-                        Volver al Inicio
-                    </a>
-                    
-                    <div class="text-sm text-gray-500">
-                        <p>¿Quieres ser notificado cuando estén disponibles?</p>
-                        <a href="{% url 'newsletter:resubscribe' 'temp' %}" class="text-primary-500 hover:text-primary-600 font-medium">
-                            Suscríbete a nuestro newsletter
+        {% if program_assignments %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for pa in program_assignments %}
+                    {% with program=pa.program assignment=pa.assignment %}
+                    <div class="bg-white rounded-2xl shadow-lg p-6 flex flex-col">
+                        <div class="mb-4">
+                            {% if program.cover_image %}
+                                <img src="{{ program.cover_image.url }}" alt="{{ program.title }}" class="w-full h-40 object-cover rounded-lg mb-3">
+                            {% else %}
+                                <div class="w-full h-40 flex items-center justify-center bg-primary-100 rounded-lg mb-3">
+                                    <i class="fas fa-book-open text-4xl text-primary-400"></i>
+                                </div>
+                            {% endif %}
+                            <h2 class="text-xl font-semibold text-gray-900 mb-1">{{ program.title }}</h2>
+                            <p class="text-gray-600 text-sm mb-2 line-clamp-2">{{ program.description|truncatechars:100 }}</p>
+                        </div>
+                        <div class="mb-4">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs text-gray-500 font-medium">Progreso</span>
+                                <span class="text-xs text-primary-600 font-semibold">
+                                    {{ assignment.progress|default:'0' }}%
+                                </span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-primary-500 h-2.5 rounded-full" style="width: {{ assignment.progress|default:'0' }}%"></div>
+                            </div>
+                        </div>
+                        <a href="{% url 'programs:program_detail' program.pk %}" class="mt-auto inline-flex items-center px-4 py-2 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-600 transition-colors duration-200">
+                            <i class="fas fa-arrow-right mr-2"></i>
+                            Continuar donde lo dejé
                         </a>
                     </div>
-                </div>
+                    {% endwith %}
+                {% endfor %}
             </div>
-        </div>
+        {% else %}
+            <div class="bg-white rounded-2xl shadow-lg p-8 max-w-xl mx-auto text-center">
+                <i class="fas fa-info-circle text-4xl text-primary-400 mb-4"></i>
+                <h2 class="text-2xl font-semibold text-gray-900 mb-2">Aún no tienes programas asignados</h2>
+                <p class="text-gray-600 mb-4">Cuando un programa te sea asignado, aparecerá aquí para que puedas comenzar tu viaje de aprendizaje.</p>
+                <a href="{% url 'public:index' %}" class="inline-flex items-center px-6 py-3 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-600 transition-colors duration-300">
+                    <i class="fas fa-home mr-2"></i>
+                    Volver al Inicio
+                </a>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %} 

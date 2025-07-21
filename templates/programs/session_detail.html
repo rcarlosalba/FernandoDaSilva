@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ session.title }} - Sesión{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-primary-50 to-background-cream py-10">
+    <div class="container mx-auto px-4 max-w-6xl">
+        <a href="{% url 'programs:program_detail' session.module.program.pk %}" class="inline-flex items-center text-primary-500 hover:text-primary-700 font-medium mb-6">
+            <i class="fas fa-arrow-left mr-2"></i> Volver al programa
+        </a>
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                <i class="fas fa-chalkboard-teacher text-primary-500"></i>
+                {{ session.title }}
+            </h1>
+            <p class="text-gray-700 text-lg mb-4">Módulo: {{ session.module.title }}</p>
+        </div>
+        <!-- Layout responsivo: 60% contenido / 40% comentarios en desktop, apilado en móvil -->
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Contenido principal (60%) -->
+            <div class="w-full lg:w-3/5 bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-book-open text-primary-400"></i>
+                    Contenido de la Sesión
+                </h2>
+                <div class="space-y-6">
+                    {% for material in session.materials.all %}
+                        {% if material.type == 'video' %}
+                            {% include 'programs/components/video_material.html' %}
+                        {% elif material.type == 'audio' %}
+                            {% include 'programs/components/audio_material.html' %}
+                        {% elif material.type == 'reading' %}
+                            {% include 'programs/components/reading_material.html' %}
+                        {% elif material.type == 'file' %}
+                            {% include 'programs/components/file_material.html' %}
+                        {% endif %}
+                    {% empty %}
+                        <div class="bg-primary-50 rounded-lg p-6 text-center text-primary-700">
+                            <i class="fas fa-photo-video text-2xl mb-2"></i>
+                            <p class="mb-2">Aquí aparecerán los materiales de la sesión (video, audio, lectura, archivos descargables).</p>
+                            <span class="text-xs text-primary-400">(Próximamente)</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Comentarios (40%) -->
+            <div class="w-full lg:w-2/5 bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-comments text-primary-400"></i>
+                    Comentarios y Reflexiones
+                </h2>
+                <!-- Placeholder de comentarios -->
+                <div class="bg-primary-50 rounded-lg p-6 text-center text-primary-700">
+                    <i class="fas fa-comment-dots text-2xl mb-2"></i>
+                    <p class="mb-2">Aquí podrás leer y escribir comentarios sobre esta sesión.</p>
+                    <span class="text-xs text-primary-400">(Próximamente)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

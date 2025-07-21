@@ -56,7 +56,7 @@
                                 aria-orientation="vertical"
                                 aria-labelledby="profile-dropdown-button"
                             >
-                                <a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150" role="menuitem">
+                                <a href="{% url "programs:index" %}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150" role="menuitem">
                                     <i class="fas fa-graduation-cap mr-3 text-primary-400"></i>Mis Programas
                                 </a>
                                 <a href="{% url 'accounts:profile_edit' %}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150" role="menuitem">

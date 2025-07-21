@@ -105,6 +105,22 @@ class Session(models.Model):
     def __str__(self):
         return f"{self.module.title} - {self.title}"
 
+    @property
+    def video_materials(self):
+        return self.materials.filter(type='video')
+
+    @property
+    def audio_materials(self):
+        return self.materials.filter(type='audio')
+
+    @property
+    def reading_materials(self):
+        return self.materials.filter(type='reading')
+
+    @property
+    def file_materials(self):
+        return self.materials.filter(type='file')
+
 
 class Material(models.Model):
     """
