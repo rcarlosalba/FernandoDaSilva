@@ -4,16 +4,17 @@ from django.contrib import messages
 from django.db.models import Q, Count
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 from django.views import View
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.http import JsonResponse
 from django.db import models
-
-from constants.constant import UserRoles, manager_required_class
+from django.views.decorators.http import require_http_methods, require_POST
+from django.utils.decorators import method_decorator
+from constants.constant import UserRoles, manager_required_class, manager_required
 from .forms import UserEditForm, ProfileEditForm, UserFilterForm, BlogPostForm, CategoryForm, TagForm
-from blog.models import Post, Category, Tag, Comment
+from blog.models import Post, Category, Tag, Comment as BlogComment
 from programs.models import (
     Program, Module, Session, Material, Assignment,
-    FinalFeedback, FeedbackQuestion, FeedbackResponse
+    FinalFeedback, FeedbackQuestion, FeedbackResponse, Comment
 )
 from programs.forms import (
     ProgramForm, ModuleForm, SessionForm, MaterialForm,
@@ -48,10 +49,10 @@ class DashboardIndexView(View):
             'draft_posts': Post.objects.filter(status='draft').count(),
             'total_categories': Category.objects.count(),
             'total_tags': Tag.objects.count(),
-            'total_comments': Comment.objects.count(),
-            'pending_comments': Comment.objects.filter(status='pending').count(),
-            'approved_comments': Comment.objects.filter(status='approved').count(),
-            'spam_comments': Comment.objects.filter(status='spam').count(),
+            'total_comments': BlogComment.objects.count(),
+            'pending_comments': BlogComment.objects.filter(status='pending').count(),
+            'approved_comments': BlogComment.objects.filter(status='approved').count(),
+            'spam_comments': BlogComment.objects.filter(status='spam').count(),
             'total_views': Post.objects.aggregate(total_views=Count('view_count'))['total_views'] or 0,
         }
 
@@ -65,7 +66,7 @@ class DashboardIndexView(View):
             'author', 'category').order_by('-created_at')[:5]
 
         # Get recent comments (last 5)
-        recent_comments = Comment.objects.select_related(
+        recent_comments = BlogComment.objects.select_related(
             'author', 'post').order_by('-created_at')[:5]
 
         # Get top categories by post count
@@ -450,21 +451,21 @@ class TagDeleteView(DeleteView):
 class CommentModerationView(ListView):
     """List all comments for moderation."""
 
-    model = Comment
+    model = BlogComment
     template_name = 'dashboard/blog/comment_moderation.html'
     context_object_name = 'comments'
     paginate_by = 20
 
     def get_queryset(self):
-        return Comment.objects.select_related('author', 'post').order_by('-created_at')
+        return BlogComment.objects.select_related('author', 'post').order_by('-created_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['pending_comments'] = Comment.objects.filter(
+        context['pending_comments'] = BlogComment.objects.filter(
             status='pending').count()
-        context['approved_comments'] = Comment.objects.filter(
+        context['approved_comments'] = BlogComment.objects.filter(
             status='approved').count()
-        context['spam_comments'] = Comment.objects.filter(
+        context['spam_comments'] = BlogComment.objects.filter(
             status='spam').count()
         return context
 
@@ -474,7 +475,7 @@ class CommentApproveView(View):
     """Approve a comment."""
 
     def post(self, request, pk):
-        comment = get_object_or_404(Comment, pk=pk)
+        comment = get_object_or_404(BlogComment, pk=pk)
         comment.status = 'approved'
         comment.save()
         messages.success(request, 'Comentario aprobado exitosamente.')
@@ -486,7 +487,7 @@ class CommentRejectView(View):
     """Reject a comment (mark as spam)."""
 
     def post(self, request, pk):
-        comment = get_object_or_404(Comment, pk=pk)
+        comment = get_object_or_404(BlogComment, pk=pk)
         comment.status = 'spam'
         comment.save()
         messages.success(request, 'Comentario marcado como spam.')
@@ -497,7 +498,7 @@ class CommentRejectView(View):
 class CommentDeleteView(DeleteView):
     """Delete a comment."""
 
-    model = Comment
+    model = BlogComment
     success_url = reverse_lazy('dashboard:comment_moderation')
 
     def delete(self, request, *args, **kwargs):
@@ -1200,3 +1201,79 @@ class FeedbackQuestionDeleteView(DeleteView):
         messages.success(
             request, f'Pregunta "{question_text}" eliminada exitosamente.')
         return redirect('dashboard:final_feedback_detail', pk=feedback_pk)
+
+
+@require_http_methods(["POST", "DELETE"])
+@manager_required
+def delete_program_comment(request, pk):
+    # Permitir POST con _method=DELETE por compatibilidad con formularios
+    if request.method == "POST" and request.POST.get("_method") != "DELETE":
+        return JsonResponse({'success': False, 'error': 'Método no permitido.'}, status=405)
+    try:
+        comment = BlogComment.objects.get(pk=pk)
+        comment.delete()
+        return JsonResponse({'success': True})
+    except BlogComment.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Comentario no encontrado.'}, status=404)
+
+
+@manager_required_class
+class ProgramCommentDeleteView(View):
+    """Elimina un comentario de programa y redirige a la moderación de comentarios de la sesión."""
+
+    def post(self, request, pk):
+        comment = get_object_or_404(Comment, pk=pk)
+        session = comment.session
+        module = session.module
+        program = module.program
+        comment.delete()
+        messages.success(request, 'Comentario eliminado correctamente.')
+        return redirect(reverse('dashboard:session_comment_moderation', kwargs={
+            'program_pk': program.pk,
+            'module_pk': module.pk,
+            'session_pk': session.pk
+        }))
+
+
+@manager_required_class
+class SessionCommentModerationView(View):
+    """Lista y modera los comentarios de una sesión de programa en el dashboard."""
+
+    def get(self, request, program_pk, module_pk, session_pk):
+        session = get_object_or_404(
+            Session, pk=session_pk, module_id=module_pk)
+        module = session.module
+        program = module.program
+        root_comments = session.comments.filter(parent__isnull=True).select_related(
+            'author').prefetch_related('replies')
+        return render(request, 'dashboard/programs/comment_moderation.html', {
+            'session': session,
+            'module': module,
+            'program': program,
+            'root_comments': root_comments,
+            'active_menu': 'program_comments',
+        })
+
+
+@manager_required_class
+class SessionCommentReplyView(View):
+    """Permite a managers responder a un comentario de sesión desde el dashboard."""
+
+    def post(self, request, program_pk, module_pk, session_pk, parent_comment_id):
+        session = get_object_or_404(
+            Session, pk=session_pk, module_id=module_pk)
+        parent_comment = get_object_or_404(
+            Comment, pk=parent_comment_id, session=session)
+        content = request.POST.get('content', '').strip()
+        if not content:
+            messages.error(
+                request, 'El contenido de la respuesta no puede estar vacío.')
+            return redirect('dashboard:session_comment_moderation', program_pk=session.module.program.pk, module_pk=module_pk, session_pk=session_pk)
+        Comment.objects.create(
+            session=session,
+            author=request.user,
+            parent=parent_comment,
+            content=content
+        )
+        messages.success(request, 'Respuesta publicada correctamente.')
+        return redirect('dashboard:session_comment_moderation', program_pk=session.module.program.pk, module_pk=module_pk, session_pk=session_pk)

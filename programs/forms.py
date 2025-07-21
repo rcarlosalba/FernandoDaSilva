@@ -7,7 +7,7 @@ from .models import (
     Program, Module, Session, Material, Assignment,
     Comment, FinalFeedback, FeedbackQuestion, FeedbackResponse
 )
-from constants.form_styles import FORM_STYLES
+from constants.form_styles import FORM_STYLES, BASE_TEXTAREA
 
 
 class ProgramForm(forms.ModelForm):
@@ -106,8 +106,15 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['content', 'parent']
         widgets = {
-            'content': forms.Textarea(attrs={'class': FORM_STYLES['textarea']}),
+            'content': forms.Textarea(attrs={
+                'class': BASE_TEXTAREA + ' resize-none',
+                'rows': 3,
+                'placeholder': 'Escribe tu comentario...'
+            }),
             'parent': forms.HiddenInput(),
+        }
+        labels = {
+            'content': 'Comentario',
         }
 
     def clean_parent(self):

@@ -111,6 +111,10 @@ from .views import (
     FeedbackQuestionUpdateView,
     FeedbackQuestionDeleteView,
 )
+from .views import delete_program_comment
+from .views import SessionCommentModerationView
+from .views import SessionCommentReplyView
+from .views import ProgramCommentDeleteView
 
 app_name = "dashboard"
 
@@ -299,4 +303,13 @@ urlpatterns = [
          FeedbackQuestionUpdateView.as_view(), name="feedback_question_update"),
     path("evaluaciones-finales/<int:feedback_pk>/preguntas/<int:pk>/eliminar/",
          FeedbackQuestionDeleteView.as_view(), name="feedback_question_delete"),
+]
+
+urlpatterns += [
+    path('comentarios-programa/<int:pk>/eliminar/',
+         ProgramCommentDeleteView.as_view(), name='program_comment_delete'),
+    path('programs/<int:program_pk>/modules/<int:module_pk>/sessions/<int:session_pk>/comments/',
+         SessionCommentModerationView.as_view(), name='session_comment_moderation'),
+    path('programs/<int:program_pk>/modules/<int:module_pk>/sessions/<int:session_pk>/comments/<int:parent_comment_id>/reply/',
+         SessionCommentReplyView.as_view(), name='session_comment_reply'),
 ]

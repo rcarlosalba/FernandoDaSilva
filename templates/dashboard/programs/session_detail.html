@@ -223,6 +223,15 @@
                             </a>
                         </dd>
                     </div>
+                    <!-- Moderar comentarios -->
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Moderar comentarios</dt>
+                        <dd class="mt-1 text-sm text-gray-900">
+                            <a href="{% url 'dashboard:session_comment_moderation' program_pk=session.module.program.pk module_pk=session.module.pk session_pk=session.pk %}" 
+                               class="text-primary-600 hover:text-primary-900">
+                                Ver comentarios</a>
+                        </dd>
+                    </div>
                     <div>
                         <dt class="text-sm font-medium text-gray-500">Programa</dt>
                         <dd class="mt-1 text-sm text-gray-900">

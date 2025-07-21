@@ -1,262 +1,127 @@
 {% extends 'dashboard/base.html' %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto">
-    <!-- Messages -->
-    {% include 'common/messages.html' %}
-    
-    <!-- Header -->
-    <div class="mb-8">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900">Moderación de Comentarios</h1>
-                <p class="mt-2 text-sm text-gray-600">
-                    Gestiona los comentarios de los estudiantes en las sesiones de los programas
-                </p>
-            </div>
-            <div class="mt-4 sm:mt-0">
-                <a href="{% url 'dashboard:program_list' %}" 
-                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Volver a Programas
-                </a>
-            </div>
-        </div>
-    </div>
+<div class="max-w-4xl mx-auto py-8">
+    <!-- Breadcrumbs -->
+    <nav class="mb-6 text-sm text-gray-500">
+        <a href="{% url 'dashboard:program_detail' pk=program.pk %}" class="hover:text-gray-700">{{ program.title }}</a>
+        <span class="mx-2">/</span>
+        <a href="{% url 'dashboard:module_detail' program_pk=program.pk pk=module.pk %}" class="hover:text-gray-700">{{ module.title }}</a>
+        <span class="mx-2">/</span>
+        <a href="{% url 'dashboard:session_detail' module_pk=module.pk pk=session.pk %}" class="hover:text-gray-700">{{ session.title }}</a>
+        <span class="mx-2">/</span>
+        <span class="text-primary-600 font-semibold">Moderar comentarios</span>
+    </nav>
 
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-comments text-2xl text-primary-600"></i>
-                    </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Total Comentarios</dt>
-                            <dd class="text-lg font-medium text-gray-900">{{ comments.count }}</dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <h1 class="text-2xl font-bold text-gray-900 mb-4">Moderar comentarios de la sesión</h1>
+    <p class="mb-8 text-gray-600">Aquí puedes ver, responder o eliminar los comentarios de los estudiantes en esta sesión.</p>
 
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-clock text-2xl text-yellow-600"></i>
-                    </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Pendientes</dt>
-                            <dd class="text-lg font-medium text-gray-900">{{ pending_comments }}</dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-check-circle text-2xl text-green-600"></i>
-                    </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Aprobados</dt>
-                            <dd class="text-lg font-medium text-gray-900">{{ approved_comments }}</dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white overflow-hidden shadow rounded-lg">
-            <div class="p-5">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <i class="fas fa-ban text-2xl text-red-600"></i>
-                    </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-500 truncate">Rechazados</dt>
-                            <dd class="text-lg font-medium text-gray-900">{{ rejected_comments }}</dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Comments List -->
-    <div class="bg-white shadow overflow-hidden sm:rounded-md">
-        {% if comments %}
-            <ul class="divide-y divide-gray-200">
-                {% for comment in comments %}
-                <li>
-                    <div class="px-4 py-4 sm:px-6">
-                        <div class="flex items-start justify-between">
-                            <div class="flex-1">
-                                <!-- Comment Header -->
-                                <div class="flex items-center space-x-3 mb-2">
-                                    <div class="flex items-center">
-                                        <img class="h-8 w-8 rounded-full object-cover" 
-                                             src="{{ comment.student.profile.avatar.url|default:'/static/images/default-avatar.png' }}" 
-                                             alt="{{ comment.student.get_full_name }}">
-                                        <div class="ml-2">
-                                            <p class="text-sm font-medium text-gray-900">{{ comment.student.get_full_name }}</p>
-                                            <p class="text-xs text-gray-500">{{ comment.created_at|date:"d/m/Y H:i" }}</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Status Badge -->
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                        {% if comment.status == 'pending' %}bg-yellow-100 text-yellow-800
-                                        {% elif comment.status == 'approved' %}bg-green-100 text-green-800
-                                        {% elif comment.status == 'rejected' %}bg-red-100 text-red-800
-                                        {% endif %}">
-                                        {% if comment.status == 'pending' %}
-                                            <i class="fas fa-clock mr-1"></i>Pendiente
-                                        {% elif comment.status == 'approved' %}
-                                            <i class="fas fa-check mr-1"></i>Aprobado
-                                        {% elif comment.status == 'rejected' %}
-                                            <i class="fas fa-ban mr-1"></i>Rechazado
-                                        {% endif %}
-                                    </span>
-                                </div>
-
-                                <!-- Session Info -->
-                                <div class="mb-3">
-                                    <p class="text-sm text-gray-600">
-                                        <i class="fas fa-play-circle mr-1"></i>
-                                        <span class="font-medium">{{ comment.session.title }}</span>
-                                        <span class="mx-2">•</span>
-                                        <span>{{ comment.session.module.title }}</span>
-                                        <span class="mx-2">•</span>
-                                        <span>{{ comment.session.module.program.title }}</span>
-                                    </p>
-                                </div>
-
-                                <!-- Comment Content -->
-                                <div class="bg-gray-50 rounded-lg p-3 mb-3">
-                                    <p class="text-sm text-gray-800">{{ comment.content|linebreaks }}</p>
-                                </div>
-
-                                <!-- Parent Comment (if reply) -->
-                                {% if comment.parent %}
-                                    <div class="ml-4 border-l-2 border-gray-200 pl-3 mb-3">
-                                        <p class="text-xs text-gray-500 mb-1">Respondiendo a:</p>
-                                        <div class="bg-blue-50 rounded p-2">
-                                            <p class="text-xs text-gray-700">{{ comment.parent.content|truncatechars:100 }}</p>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Action Buttons -->
-                            <div class="flex items-center space-x-2 ml-4">
-                                {% if comment.status == 'pending' %}
-                                    <form method="post" action="{% url 'dashboard:comment_approve' pk=comment.pk %}" class="inline">
-                                        {% csrf_token %}
-                                        <button type="submit" 
-                                                class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                                            <i class="fas fa-check mr-1"></i>
-                                            Aprobar
-                                        </button>
-                                    </form>
-                                    <form method="post" action="{% url 'dashboard:comment_reject' pk=comment.pk %}" class="inline">
-                                        {% csrf_token %}
-                                        <button type="submit" 
-                                                class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                            <i class="fas fa-ban mr-1"></i>
-                                            Rechazar
-                                        </button>
-                                    </form>
-                                {% endif %}
-                                
-                                <button data-delete-url="{% url 'dashboard:comment_delete' pk=comment.pk %}"
-                                        data-delete-title="Eliminar Comentario"
-                                        data-delete-message="¿Estás seguro de que deseas eliminar este comentario? Esta acción no se puede deshacer."
-                                        class="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                    <i class="fas fa-trash mr-1"></i>
-                                    Eliminar
-                                </button>
-                            </div>
+    {% if root_comments %}
+        <div class="space-y-6">
+            {% for comment in root_comments %}
+                <div class="bg-white shadow rounded-lg p-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="font-semibold text-gray-800">{{ comment.author.get_full_name }}</span>
+                            <span class="ml-2 text-xs text-gray-400">{{ comment.created_at|date:'d M Y H:i' }}</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="text-primary-600 hover:underline reply-btn" data-comment-id="{{ comment.id }}">Responder</button>
+                            <button 
+                                class="text-red-600 hover:text-red-900 text-sm font-medium"
+                                data-delete-url="{% url 'dashboard:program_comment_delete' comment.id %}"
+                                data-delete-title="Eliminar comentario"
+                                data-delete-message="¿Estás seguro de que deseas eliminar el comentario '{{ comment.content|truncatewords:8 }}'?"
+                            >
+                                Eliminar
+                            </button>
                         </div>
                     </div>
-                </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <div class="text-center py-12">
-                <i class="fas fa-comments text-4xl text-gray-300 mb-4"></i>
-                <h3 class="text-lg font-medium text-gray-900 mb-2">No hay comentarios para moderar</h3>
-                <p class="text-gray-500 mb-6">Todos los comentarios han sido procesados o no hay comentarios en el sistema.</p>
-                <a href="{% url 'dashboard:program_list' %}" 
-                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                    <i class="fas fa-arrow-left mr-2"></i>
-                    Volver a Programas
-                </a>
-            </div>
-        {% endif %}
-    </div>
-
-    <!-- Pagination -->
-    {% if is_paginated %}
-    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 mt-6">
-        <div class="flex-1 flex justify-between sm:hidden">
-            {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                    Anterior
-                </a>
-            {% endif %}
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                    Siguiente
-                </a>
-            {% endif %}
-        </div>
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-                <p class="text-sm text-gray-700">
-                    Mostrando <span class="font-medium">{{ page_obj.start_index }}</span> a <span class="font-medium">{{ page_obj.end_index }}</span> de <span class="font-medium">{{ page_obj.paginator.count }}</span> resultados
-                </p>
-            </div>
-            <div>
-                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                    {% if page_obj.has_previous %}
-                        <a href="?page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                            <i class="fas fa-chevron-left"></i>
-                        </a>
+                    <div class="mt-2 text-gray-700">{{ comment.content }}</div>
+                    {% if comment.replies.all %}
+                        <div class="mt-4 ml-6 border-l-2 border-gray-100 pl-4 space-y-4">
+                            {% for reply in comment.replies.all %}
+                                <div class="bg-gray-50 rounded p-3">
+                                    <div class="flex items-center justify-between">
+                                        <div>
+                                            <span class="font-semibold text-gray-700">{{ reply.author.get_full_name }}</span>
+                                            <span class="ml-2 text-xs text-gray-400">{{ reply.created_at|date:'d M Y H:i' }}</span>
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <button class="text-primary-600 hover:underline reply-btn" data-comment-id="{{ reply.id }}">Responder</button>
+                                            <button 
+                                                class="text-red-600 hover:text-red-900 text-sm font-medium"
+                                                data-delete-url="{% url 'dashboard:program_comment_delete' reply.id %}"
+                                                data-delete-title="Eliminar comentario"
+                                                data-delete-message="¿Estás seguro de que deseas eliminar el comentario '{{ reply.content|truncatewords:8 }}'?"
+                                            >
+                                                Eliminar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 text-gray-700">{{ reply.content }}</div>
+                                    <div class="reply-form-container mt-4" id="reply-form-{{ reply.id }}"></div>
+                                </div>
+                            {% endfor %}
+                        </div>
                     {% endif %}
-                    
-                    {% for num in page_obj.paginator.page_range %}
-                        {% if page_obj.number == num %}
-                            <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-primary-50 text-sm font-medium text-primary-600">
-                                {{ num }}
-                            </span>
-                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                            <a href="?page={{ num }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                                {{ num }}
-                            </a>
-                        {% endif %}
-                    {% endfor %}
-                    
-                    {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                            <i class="fas fa-chevron-right"></i>
-                        </a>
-                    {% endif %}
-                </nav>
-            </div>
+                    <!-- Formulario de respuesta -->
+                    <div class="reply-form-container mt-4" id="reply-form-{{ comment.id }}"></div>
+                </div>
+            {% endfor %}
         </div>
-    </div>
+    {% else %}
+        <div class="text-center py-12">
+            <i class="fas fa-comments text-4xl text-gray-300 mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No hay comentarios en esta sesión</h3>
+            <p class="text-gray-500">Aún no se han publicado comentarios.</p>
+        </div>
     {% endif %}
-</div>
 
-<!-- Modal de eliminación -->
-{% include 'common/modal_delete.html' %}
+    <!-- Modal de eliminación (a implementar) -->
+    <div id="delete-modal-placeholder"></div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let openForm = null;
+        document.querySelectorAll('.reply-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const commentId = this.getAttribute('data-comment-id');
+                // Cerrar cualquier formulario abierto
+                if (openForm) {
+                    openForm.innerHTML = '';
+                }
+                // Construir el formulario
+                const formContainer = document.getElementById('reply-form-' + commentId);
+                formContainer.innerHTML = `
+                    <form method="POST" action="${replyUrl(commentId)}" class="space-y-2">
+                        {% csrf_token %}
+                        <textarea name="content" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-brand-primary transition-colors duration-200 resize-vertical min-h-[80px]" placeholder="Escribe tu respuesta..." required></textarea>
+                        <div class="flex space-x-2">
+                            <button type="submit" class="px-6 py-2 bg-primary-600 text-white font-medium rounded-md shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2 transition-colors duration-200">Publicar respuesta</button>
+                            <button type="button" class="cancel-reply px-6 py-2 bg-gray-100 text-gray-700 font-medium rounded-md shadow-sm border border-gray-300 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200">Cancelar</button>
+                        </div>
+                    </form>
+                `;
+                openForm = formContainer;
+                // Cancelar
+                formContainer.querySelector('.cancel-reply').addEventListener('click', function() {
+                    formContainer.innerHTML = '';
+                    openForm = null;
+                });
+            });
+        });
+        function replyUrl(commentId) {
+            // Construye la URL usando los datos del template
+            const programPk = {{ program.pk }};
+            const modulePk = {{ module.pk }};
+            const sessionPk = {{ session.pk }};
+            return `/dashboard/programs/${programPk}/modules/${modulePk}/sessions/${sessionPk}/comments/${commentId}/reply/`;
+        }
+    });
+</script>
 {% endblock %} 
+{% include 'common/modal_delete.html' %} 
