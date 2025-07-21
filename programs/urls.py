@@ -10,6 +10,10 @@ urlpatterns = [
          views.program_detail, name='program_detail'),
     path('programas/sesion/<int:sesion_pk>/',
          views.session_detail, name='session_detail'),
+    path('completar-sesion/<int:sesion_pk>/',
+         views.complete_session, name='complete_session'),
+    path('programas/<int:programa_pk>/evaluacion-final/',
+         views.final_feedback, name='final_feedback'),
 ]
 
 urlpatterns += [

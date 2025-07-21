@@ -99,10 +99,10 @@ def manager_required_class(view_class):
 
 def student_assigned_to_program_required(view_func):
     """
-    Decorator that checks if the user is authenticated, has student role, and is assigned to the requested program.
-    Redirects to home page if not allowed.
-    Expects the view to receive 'programa_pk' as a kwarg or 'sesion_pk' to infer the program.
+    Decorator que verifica si el usuario es estudiante y está asignado al programa (activo o completado).
     """
+    from functools import wraps
+
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -119,7 +119,7 @@ def student_assigned_to_program_required(view_func):
             except Session.DoesNotExist:
                 return redirect('public:index')
         qs = Assignment.objects.filter(
-            student=request.user, program_id=programa_pk, status__in=['active', 'Activo'])
+            student=request.user, program_id=programa_pk, status__in=['active', 'completed', 'Activo'])
         if not qs.exists():
             return redirect('public:index')
         return view_func(request, *args, **kwargs)

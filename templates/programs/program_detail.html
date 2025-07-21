@@ -66,6 +66,13 @@
                 </div>
             {% endif %}
         </div>
+        {% if assignment.progress_percentage == 100 and program.final_feedback %}
+          <div class="flex justify-center mt-8">
+            <a href="{% url 'programs:final_feedback' program.pk %}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-2xl shadow-lg text-xl transition duration-150">
+              ¡Completa la Evaluación Final y ayúdanos a mejorar!
+            </a>
+          </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %} 

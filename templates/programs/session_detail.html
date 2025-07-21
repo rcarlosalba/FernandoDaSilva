@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}{{ session.title }} - Sesión{% endblock %}
 {% include 'common/messages.html' %}
 
@@ -10,11 +10,18 @@
             <i class="fas fa-arrow-left mr-2"></i> Volver al programa
         </a>
         <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
-                <i class="fas fa-chalkboard-teacher text-primary-500"></i>
-                {{ session.title }}
-            </h1>
-            <p class="text-gray-700 text-lg mb-4">Módulo: {{ session.module.title }}</p>
+            <div class="flex flex-col">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <i class="fas fa-chalkboard-teacher text-primary-500"></i>
+                    {{ session.title }}
+                </h1>
+                <p class="text-gray-700 text-lg mb-4">Módulo: {{ session.module.title }}</p>
+            </div>
+            <div class="flex justify-end mt-4">
+                {% if can_comment %}
+                <button id="complete-session-btn" class="bg-primary-600 text-white px-4 py-2 rounded mt-4">Marcar como completada</button>
+                {% endif %}
+            </div>
         </div>
         <!-- Layout responsivo: 60% contenido / 40% comentarios en desktop, apilado en móvil -->
         <div class="flex flex-col lg:flex-row gap-8">
@@ -83,8 +90,49 @@
 </div>
 <!-- Modal de eliminación -->
 {% include 'common/modal_delete.html' %}
+<!-- Modal de éxito -->
+{% include 'common/modal_success.html' %}
 {% endblock %}
 
 {% block extra_js %}
 <!-- Los scripts globales ya están incluidos vía scripts.html -->
+  <script src="{% static 'js/modal-success.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const btn = document.getElementById('complete-session-btn');
+      if (btn) {
+        btn.addEventListener('click', function() {
+          fetch("{% url 'programs:complete_session' session.pk %}", {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}',
+              'Accept': 'application/json',
+            },
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              let redirectUrl = null;
+              if (data.progress === 100) {
+                redirectUrl = "{% url 'programs:final_feedback' session.module.program.pk %}";
+              }
+              if (data.congratulation) {
+                showModalSuccess(data.congratulation, redirectUrl);
+              }
+              // Actualizar barra de progreso si existe
+              const progressBar = document.getElementById('program-progress-bar');
+              if (progressBar) {
+                progressBar.style.width = data.progress + '%';
+                progressBar.innerText = data.progress + '%';
+              }
+              btn.disabled = true;
+              btn.innerText = 'Completada';
+            } else {
+              alert(data.error || 'Error al marcar la sesión.');
+            }
+          });
+        });
+      }
+    });
+  </script>
 {% endblock %} 
