@@ -115,6 +115,14 @@
                             <i class="fas fa-envelope mr-3 h-5 w-5 text-primary-500"></i>
                             Newsletter
                         </a>
+                        <a href="{% url 'public:index' %}" target="_blank" rel="noopener noreferrer" class="text-gray-600 hover:text-gray-900 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-eye mr-3 h-5 w-5 text-primary-500"></i>
+                            Ver como lo ven los usuarios
+                        </a>
+                        <a href="{% url 'accounts:logout' %}" class="text-gray-600 hover:text-gray-900 hover:bg-gray-50 group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-sign-out-alt mr-3 h-5 w-5 text-primary-500"></i>
+                            Cerrar sesión
+                        </a>
                     </div>
                 </nav>
             </div>
