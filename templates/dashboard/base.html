@@ -16,7 +16,7 @@
             <div class="flex justify-between items-center h-16">
                 <!-- Logo and title -->
                 <div class="flex items-center">
-                    <a href="{% url 'dashboard:index' %}" class="flex items-center">
+                    <a href="{% url 'dashboard:dashboard' %}" class="flex items-center">
                         <h1 class="text-2xl font-bold text-primary-600">Dashboard</h1>
                     </a>
                 </div>
@@ -51,7 +51,7 @@
                 </div>
                 <nav class="mt-5 flex-1 px-2 bg-white space-y-1">
                     <!-- Dashboard home -->
-                    <a href="{% url 'dashboard:index' %}" class="{% if request.resolver_match.url_name == 'index' %}bg-primary-100 text-primary-900{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %} group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                    <a href="{% url 'dashboard:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}bg-primary-100 text-primary-900{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %} group flex items-center px-2 py-2 text-sm font-medium rounded-md">
                         <i class="fas fa-tachometer-alt mr-3 h-5 w-5 text-primary-500"></i>
                         Dashboard
                     </a>
@@ -111,7 +111,7 @@
                             Programas
                         </a>
                         
-                        <a href="{% url 'newsletter:list' %}" class="{% if 'newsletter' in request.resolver_match.url_name %}bg-primary-100 text-primary-900{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %} group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                        <a href="{% url 'dashboard:list_newsletter' %}" class="{% if 'newsletter' in request.resolver_match.url_name %}bg-primary-100 text-primary-900{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %} group flex items-center px-2 py-2 text-sm font-medium rounded-md">
                             <i class="fas fa-envelope mr-3 h-5 w-5 text-primary-500"></i>
                             Newsletter
                         </a>
@@ -153,7 +153,7 @@
         </div>
         <nav class="mt-5 px-2 space-y-1">
             <!-- Same navigation items as desktop -->
-            <a href="{% url 'dashboard:index' %}" class="{% if request.resolver_match.url_name == 'index' %}bg-primary-100 text-primary-900{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %} group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+            <a href="{% url 'dashboard:dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}bg-primary-100 text-primary-900{% else %}text-gray-600 hover:bg-gray-50 hover:text-gray-900{% endif %} group flex items-center px-2 py-2 text-sm font-medium rounded-md">
                 <i class="fas fa-tachometer-alt mr-3 h-5 w-5 text-primary-500"></i>
                 Dashboard
             </a>
