@@ -4,7 +4,7 @@ from dashboard.views.event_views import (
     category_list, category_create, category_detail, category_update, category_delete,
     payment_method_list, payment_method_create, payment_method_detail, payment_method_update, payment_method_delete,
     registration_list, registration_detail, registration_approve, registration_reject,
-    payment_verify, event_statistics, survey_list, survey_create, survey_detail, survey_update, survey_delete, survey_duplicate, survey_questions, question_options, survey_results, survey_export, send_surveys,
+    event_statistics, survey_list, survey_create, survey_detail, survey_update, survey_delete, survey_duplicate, survey_questions, question_options, survey_results, survey_export, send_surveys,
 )
 
 urlpatterns = [
@@ -38,7 +38,6 @@ urlpatterns = [
          registration_approve, name="registration_approve"),
     path("inscripciones/<int:pk>/rechazar/",
          registration_reject, name="registration_reject"),
-    path("pagos/<int:pk>/verificar/", payment_verify, name="payment_verify"),
     path("estadisticas-eventos/", event_statistics, name="statistics"),
     path("encuestas/", survey_list, name="survey_list"),
     path("encuestas/crear/", survey_create, name="survey_create"),

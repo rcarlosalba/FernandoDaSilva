@@ -310,7 +310,6 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Teléfono</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pago</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
                                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
                             </tr>
@@ -344,25 +343,6 @@
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                                             <i class="fas fa-times-circle mr-1"></i>Rechazada
                                         </span>
-                                    {% endif %}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    {% if registration.has_payment %}
-                                        {% if registration.payment.status == 'verified' %}
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                                <i class="fas fa-check mr-1"></i>Verificado
-                                            </span>
-                                        {% elif registration.payment.status == 'pending' %}
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                <i class="fas fa-clock mr-1"></i>Pendiente
-                                            </span>
-                                        {% else %}
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                                <i class="fas fa-times mr-1"></i>Rechazado
-                                            </span>
-                                        {% endif %}
-                                    {% else %}
-                                        <span class="text-sm text-gray-400">Sin pago</span>
                                     {% endif %}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">

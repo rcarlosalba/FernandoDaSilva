@@ -180,9 +180,6 @@
                     {% if registration.event.event_type == 'online' and registration.event.event_link %}
                     <li>Recibirás el enlace de acceso al evento online</li>
                     {% endif %}
-                    {% if registration.has_payment and registration.payment.status == 'pending' %}
-                    <li>Tu inscripción será confirmada una vez verificado el pago</li>
-                    {% endif %}
                 </ul>
             </div>
 

@@ -1,16 +1,10 @@
-import csv
-import io
-from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q, Count
-from django.http import HttpResponse
-from django.utils import timezone
-from constants.constant import manager_required
-from .models import Event, Category, PaymentMethod, Registration, Payment, Survey, SurveyQuestion, SurveyQuestionOption, SurveyResponse
-from .forms import CategoryForm, PaymentMethodForm, RegistrationForm, PaymentForm, SurveyForm, SurveyQuestionForm, SurveyQuestionOptionForm, SurveyQuestionFormSet, SurveyQuestionOptionFormSet, EventSurveyForm, SurveyResponseForm
-from .utils import send_registration_confirmation_email, send_registration_approved_email, send_registration_rejected_email, create_survey_responses_for_event, send_survey_invitation_email
+from .models import Event, Category, PaymentMethod, Registration, Payment, SurveyResponse
+from .forms import RegistrationForm, SurveyResponseForm
+from .utils import send_registration_confirmation_email
 
 # ===== VISTAS PÚBLICAS =====
 

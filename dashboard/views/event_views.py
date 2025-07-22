@@ -504,36 +504,6 @@ def registration_reject(request, pk):
     return redirect('dashboard:registration_detail', pk=registration.pk)
 
 
-@manager_required
-def payment_verify(request, pk):
-    """
-    Verificar pago.
-    """
-    payment = get_object_or_404(Payment, pk=pk)
-
-    if payment.status == 'pending':
-        # Verificar si la inscripción estaba pendiente antes
-        was_pending = payment.registration.status == 'pending'
-
-        payment.verify_payment(request.user)
-
-        # Si la inscripción estaba pendiente y ahora está aceptada, enviar email
-        if was_pending and payment.registration.status == 'accepted':
-            try:
-                send_registration_approved_email(payment.registration)
-            except Exception as e:
-                # Log error pero no fallar la verificación
-                print(
-                    f"Error sending approval email after payment verification: {e}")
-
-        messages.success(
-            request, f'Pago de {payment.registration.full_name} verificado.')
-    else:
-        messages.error(request, 'Solo se pueden verificar pagos pendientes.')
-
-    return redirect('dashboard:registration_detail', pk=payment.registration.pk)
-
-
 # ===== VISTAS DE ESTADÍSTICAS =====
 
 @manager_required

@@ -228,15 +228,6 @@
                     <li>Prepara tu mente para aprender y participar</li>
                 </ul>
             </div>
-
-            {% if registration.has_payment and registration.payment.status == 'pending' %}
-            <div class="event-details" style="border-left: 4px solid #e53e3e;">
-                <div class="detail-label" style="color: #e53e3e;">⚠️ Pago Pendiente</div>
-                <div class="detail-value" style="margin-top: 8px;">
-                    Tu inscripción está pendiente de la verificación del pago. Por favor, contacta con nosotros si ya realizaste el pago.
-                </div>
-            </div>
-            {% endif %}
         </div>
 
         <div class="footer">

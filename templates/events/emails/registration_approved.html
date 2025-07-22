@@ -199,14 +199,6 @@
                 </ul>
             </div>
 
-            {% if registration.has_payment and registration.payment.status == 'verified' %}
-            <div class="event-details">
-                <div class="detail-label">💳 Pago Verificado</div>
-                <div class="detail-value" style="margin-top: 8px;">
-                    Tu pago de ${{ registration.payment.amount }} ha sido verificado correctamente.
-                </div>
-            </div>
-            {% endif %}
         </div>
 
         <div class="footer">
