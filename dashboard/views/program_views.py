@@ -26,13 +26,27 @@ class ProgramListView(ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return Program.objects.prefetch_related('modules').order_by('-created_at')
+        # Prefetch módulos y sesiones para eficiencia
+        return Program.objects.prefetch_related('modules__sessions').order_by('-created_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Totales
         context['total_programs'] = Program.objects.count()
         context['total_modules'] = Module.objects.count()
         context['total_sessions'] = Session.objects.count()
+        context['total_materials'] = Material.objects.count()
+        context['total_assignments'] = Assignment.objects.count()
+        context['total_feedbacks'] = FinalFeedback.objects.count()
+        context['total_questions'] = FeedbackQuestion.objects.count()
+        context['total_comments'] = Comment.objects.count()
+        # Actividad reciente
+        context['recent_programs'] = Program.objects.order_by(
+            '-created_at')[:5]
+        context['recent_assignments'] = Assignment.objects.select_related(
+            'student', 'program').order_by('-assigned_at')[:5]
+        context['recent_comments'] = Comment.objects.select_related(
+            'author', 'session').order_by('-created_at')[:5]
         return context
 
 

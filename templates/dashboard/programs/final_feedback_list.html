@@ -111,24 +111,22 @@
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2">
-                                <a href="{% url 'dashboard:final_feedback_detail' pk=feedback.pk %}" 
-                                   class="text-primary-600 hover:text-primary-900 text-sm font-medium">
-                                    Ver Detalles
+                                <a href="{% url 'dashboard:final_feedback_detail' pk=feedback.pk %}" class="group" title="Ver Detalles">
+                                    <i class="fas fa-eye text-primary-600 group-hover:text-primary-800 transition-transform duration-150 group-hover:scale-110"></i>
                                 </a>
-                                <a href="{% url 'dashboard:final_feedback_update' pk=feedback.pk %}" 
-                                   class="text-gray-600 hover:text-gray-900 text-sm font-medium">
-                                    Editar
+                                <a href="{% url 'dashboard:final_feedback_update' pk=feedback.pk %}" class="group" title="Editar">
+                                    <i class="fas fa-edit text-blue-600 group-hover:text-blue-800 transition-transform duration-150 group-hover:scale-110"></i>
                                 </a>
                                 {% if feedback.responses.count == 0 %}
                                     <button data-delete-url="{% url 'dashboard:final_feedback_delete' pk=feedback.pk %}"
                                             data-delete-title="Eliminar Evaluación"
                                             data-delete-message="¿Estás seguro de que deseas eliminar la evaluación '{{ feedback.title }}'? Esta acción no se puede deshacer."
-                                            class="text-red-600 hover:text-red-900 text-sm font-medium">
-                                        Eliminar
+                                            class="group" title="Eliminar">
+                                        <i class="fas fa-trash-alt text-red-600 group-hover:text-red-800 transition-transform duration-150 group-hover:scale-110"></i>
                                     </button>
                                 {% else %}
                                     <span class="text-gray-400 text-sm font-medium cursor-not-allowed" title="No se puede eliminar porque tiene respuestas">
-                                        Eliminar
+                                        <i class="fas fa-trash-alt"></i>
                                     </span>
                                 {% endif %}
                             </div>
