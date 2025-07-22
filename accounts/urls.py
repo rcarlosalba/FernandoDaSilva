@@ -1,6 +1,7 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
+from .forms import CustomPasswordChangeForm
 from .views import (
     AccountDeleteView,
     CompleteProfileView,
@@ -47,6 +48,7 @@ urlpatterns = [
         "perfil/cambiar-contrasena/",
         auth_views.PasswordChangeView.as_view(
             template_name="accounts/password/password_change_form.html",
+            form_class=CustomPasswordChangeForm,
             success_url="/cuentas/perfil/cambiar-contrasena/hecho/",
         ),
         name="password_change",

@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.core.exceptions import ValidationError
 
 from constants.form_styles import BASE_INPUT, PASSWORD_INPUT, SEARCH_INPUT, BASE_TEXTAREA, FILE_INPUT
@@ -132,3 +132,16 @@ class ProfileEditForm(forms.ModelForm):
                 "accept": "image/jpeg,image/jpg,image/png"
             }),
         }
+
+
+class CustomPasswordChangeForm(PasswordChangeForm):
+    """
+    Formulario de cambio de contraseña con estilos Tailwind.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': BASE_INPUT
+            })

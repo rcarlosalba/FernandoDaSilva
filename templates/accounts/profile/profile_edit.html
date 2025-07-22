@@ -217,7 +217,7 @@
                     </div>
                     
                     <div class="flex space-x-3">
-                        <a href="#" 
+                        <a href="{% url 'accounts:password_change' %}" 
                            class="text-small text-primary-500 hover:text-primary-600 transition-colors duration-300">
                             Cambiar Contraseña
                         </a>
@@ -225,9 +225,11 @@
                         <a href="#" 
                             data-delete-url="{% url 'accounts:account_delete' %}"
                             data-delete-title="Eliminar Cuenta"
-                            data-delete-message="¿Estás seguro de que deseas eliminar tu cuenta?"
+                            data-delete-message="¿Estás seguro de que deseas eliminar tu cuenta? Perderás acceso a todos tus contenidos, el Programa CAMINO y tu historial de sesiones."
+                            data-delete-warning="Esta acción eliminará permanentemente tu cuenta y todos los datos asociados. No podrás recuperar esta información."
                             data-delete-confirmation="true"
                             data-delete-confirm-word="ELIMINAR CUENTA"
+                            data-delete-button-text="Eliminar Mi Cuenta"
                             class="text-small text-danger hover:text-red-700 transition-colors duration-300">
                                 Eliminar Cuenta
                         </a>
