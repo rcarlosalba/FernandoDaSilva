@@ -30,16 +30,20 @@
                             <div class="flex items-center justify-between mb-1">
                                 <span class="text-xs text-gray-500 font-medium">Progreso</span>
                                 <span class="text-xs text-primary-600 font-semibold">
-                                    {{ assignment.progress|default:'0' }}%
+                                    {{ assignment.progress_percentage|default:'0' }}%
                                 </span>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                <div class="bg-primary-500 h-2.5 rounded-full" style="width: {{ assignment.progress|default:'0' }}%"></div>
+                                <div class="bg-primary-500 h-2.5 rounded-full" style="width: {{ assignment.progress_percentage|default:'0' }}%"></div>
                             </div>
                         </div>
                         <a href="{% url 'programs:program_detail' program.pk %}" class="mt-auto inline-flex items-center px-4 py-2 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-600 transition-colors duration-200">
                             <i class="fas fa-arrow-right mr-2"></i>
-                            Continuar donde lo dejé
+                            {% if assignment.progress_percentage == 100 %}
+                                Repasar el Programa
+                            {% else %}
+                                Continuar donde lo dejé
+                            {% endif %}
                         </a>
                     </div>
                     {% endwith %}

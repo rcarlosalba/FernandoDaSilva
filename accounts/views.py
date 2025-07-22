@@ -107,7 +107,7 @@ class CustomLoginView(LoginView):
         user = self.request.user
 
         if user.role == UserRoles.MANAGER:
-            return reverse_lazy('dashboard:index')
+            return reverse_lazy('dashboard:dashboard')
         elif user.role == UserRoles.STUDENT:
             return reverse_lazy('programs:index')
         else:
