@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'public.apps.PublicConfig',
     'accounts.apps.AccountsConfig',
     'blog.apps.BlogConfig',
-    'courses.apps.CoursesConfig',
     'dashboard.apps.DashboardConfig',
     'newsletter.apps.NewsletterConfig',
     'events.apps.EventsConfig',
