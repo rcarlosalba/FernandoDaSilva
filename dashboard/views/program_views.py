@@ -469,8 +469,17 @@ class AssignmentCreateView(CreateView):
         if student.role != UserRoles.STUDENT:
             student.role = UserRoles.STUDENT
             student.save()
-        messages.success(self.request, 'Asignación creada exitosamente.')
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        # Enviar correo de bienvenida
+        from programs.utils import send_welcome_assignment_email
+        email_sent = send_welcome_assignment_email(
+            self.object, manager_email=self.request.user.email)
+        if not email_sent:
+            messages.warning(
+                self.request, 'La asignación fue creada, pero hubo un error al enviar el correo de bienvenida al estudiante.')
+        else:
+            messages.success(self.request, 'Asignación creada exitosamente.')
+        return response
 
     def get_success_url(self):
         return reverse_lazy('dashboard:assignment_detail', kwargs={'pk': self.object.pk})
