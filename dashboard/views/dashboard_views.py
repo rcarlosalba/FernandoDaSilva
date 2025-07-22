@@ -4,6 +4,9 @@ from django.db.models import Q, Count
 from django.views import View
 from constants.constant import UserRoles, manager_required_class
 from blog.models import Post, Category, Tag, Comment as BlogComment
+from events.models import Event, Registration
+from programs.models import Program, Module, Session, Assignment, Material, FinalFeedback, Comment as ProgramComment
+from newsletter.models import Newsletter, Subscriber
 
 User = get_user_model()
 
@@ -40,37 +43,44 @@ class DashboardIndexView(View):
             'total_views': Post.objects.aggregate(total_views=Count('view_count'))['total_views'] or 0,
         }
 
-        # Get recent users (last 5, excluding managers)
-        recent_users = User.objects.exclude(
-            Q(id=request.user.id) | Q(role=UserRoles.MANAGER)
-        ).order_by('-date_joined')[:5]
+        # Get event statistics
+        total_events = Event.objects.count()
+        published_events = Event.objects.filter(status='published').count()
+        draft_events = Event.objects.filter(status='draft').count()
+        upcoming_events = Event.objects.filter(start_date__gt=request.now if hasattr(
+            request, 'now') else None).count() if hasattr(request, 'now') else Event.objects.count()
+        total_registrations = Registration.objects.count()
+        event_stats = {
+            'total_events': total_events,
+            'published_events': published_events,
+            'draft_events': draft_events,
+            'upcoming_events': upcoming_events,
+            'total_registrations': total_registrations,
+        }
 
-        # Get recent posts (last 5)
-        recent_posts = Post.objects.select_related(
-            'author', 'category').order_by('-created_at')[:5]
+        # Get program statistics
+        program_stats = {
+            'total_programs': Program.objects.count(),
+            'total_modules': Module.objects.count(),
+            'total_sessions': Session.objects.count(),
+            'total_assignments': Assignment.objects.count(),
+            'total_materials': Material.objects.count(),
+            'total_feedbacks': FinalFeedback.objects.count(),
+            'total_comments': ProgramComment.objects.count(),
+        }
 
-        # Get recent comments (last 5)
-        recent_comments = BlogComment.objects.select_related(
-            'author', 'post').order_by('-created_at')[:5]
-
-        # Get top categories by post count
-        top_categories = Category.objects.annotate(
-            post_count=Count('posts')
-        ).order_by('-post_count')[:5]
-
-        # Get top tags by post count
-        top_tags = Tag.objects.annotate(
-            post_count=Count('posts')
-        ).order_by('-post_count')[:5]
+        # Get newsletter statistics
+        newsletter_stats = {
+            'total_newsletters': Newsletter.objects.count(),
+            'total_subscribers': Subscriber.objects.filter(is_subscribed=True).count(),
+        }
 
         context = {
             'user_stats': user_stats,
             'blog_stats': blog_stats,
-            'recent_users': recent_users,
-            'recent_posts': recent_posts,
-            'recent_comments': recent_comments,
-            'top_categories': top_categories,
-            'top_tags': top_tags,
+            'event_stats': event_stats,
+            'program_stats': program_stats,
+            'newsletter_stats': newsletter_stats,
         }
 
         return render(request, 'dashboard/index.html', context)

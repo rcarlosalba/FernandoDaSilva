@@ -1,196 +1,114 @@
 {% extends 'dashboard/base.html' %}
 
 {% block content %}
-<div class="max-w-6xl mx-auto px-4">
-    <!-- Page header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p class="text-gray-600 mt-2">Resumen general del sitio</p>
-    </div>
-
-    <!-- Key Metrics -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <!-- Users -->
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Usuarios</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ user_stats.total_users }}</p>
-                </div>
-                <div class="h-12 w-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-users text-blue-600 text-xl"></i>
-                </div>
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+        <!-- Usuarios -->
+        <div class="bg-white rounded-xl shadow p-6 border border-neutral-100 flex flex-col items-center group transition-transform duration-150 hover:scale-105">
+            <div class="h-14 w-14 bg-primary-50 rounded-full flex items-center justify-center mb-3">
+                <i class="fas fa-users text-primary-600 text-2xl group-hover:text-primary-800 transition-colors duration-150"></i>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold text-neutral-900">{{ user_stats.total_users }}</div>
+                <div class="text-sm text-neutral-500 mb-2">Usuarios registrados</div>
+                <a href="{% url 'dashboard:user_list' %}" class="inline-flex items-center text-primary-600 group-hover:text-primary-800 font-medium transition-colors duration-150">
+                    Ver usuarios <i class="fas fa-arrow-right ml-2"></i>
+                </a>
             </div>
         </div>
-
-        <!-- Posts -->
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Artículos</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ blog_stats.total_posts }}</p>
-                </div>
-                <div class="h-12 w-12 bg-green-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-file-alt text-green-600 text-xl"></i>
-                </div>
+        <!-- Blog -->
+        <div class="bg-white rounded-xl shadow p-6 border border-neutral-100 flex flex-col items-center group transition-transform duration-150 hover:scale-105">
+            <div class="h-14 w-14 bg-accent-blue/10 rounded-full flex items-center justify-center mb-3">
+                <i class="fas fa-blog text-accent-blue text-2xl group-hover:text-primary-600 transition-colors duration-150"></i>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold text-neutral-900">{{ blog_stats.total_posts }}</div>
+                <div class="text-sm text-neutral-500 mb-2">Artículos publicados</div>
+                <a href="{% url 'dashboard:blog_post_list' %}" class="inline-flex items-center text-accent-blue group-hover:text-primary-600 font-medium transition-colors duration-150">
+                    Ver blog <i class="fas fa-arrow-right ml-2"></i>
+                </a>
             </div>
         </div>
-
-        <!-- Comments -->
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Comentarios</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ blog_stats.total_comments }}</p>
-                </div>
-                <div class="h-12 w-12 bg-purple-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-comments text-purple-600 text-xl"></i>
-                </div>
+        <!-- Eventos -->
+        <div class="bg-white rounded-xl shadow p-6 border border-neutral-100 flex flex-col items-center group transition-transform duration-150 hover:scale-105">
+            <div class="h-14 w-14 bg-success/10 rounded-full flex items-center justify-center mb-3">
+                <i class="fas fa-calendar-alt text-success text-2xl group-hover:text-primary-600 transition-colors duration-150"></i>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold text-neutral-900">{{ event_stats.total_events }}</div>
+                <div class="text-sm text-neutral-500 mb-2">Eventos creados</div>
+                <a href="{% url 'dashboard:event_list' %}" class="inline-flex items-center text-success group-hover:text-primary-600 font-medium transition-colors duration-150">
+                    Ver eventos <i class="fas fa-arrow-right ml-2"></i>
+                </a>
             </div>
         </div>
-
-        <!-- Views -->
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Vistas</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ blog_stats.total_views }}</p>
-                </div>
-                <div class="h-12 w-12 bg-orange-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-eye text-orange-600 text-xl"></i>
-                </div>
+        <!-- Programas -->
+        <div class="bg-white rounded-xl shadow p-6 border border-neutral-100 flex flex-col items-center group transition-transform duration-150 hover:scale-105">
+            <div class="h-14 w-14 bg-secondary-50 rounded-full flex items-center justify-center mb-3">
+                <i class="fas fa-graduation-cap text-secondary-600 text-2xl group-hover:text-primary-600 transition-colors duration-150"></i>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold text-neutral-900">{{ program_stats.total_programs }}</div>
+                <div class="text-sm text-neutral-500 mb-2">Programas activos</div>
+                <a href="{% url 'dashboard:program_list' %}" class="inline-flex items-center text-secondary-600 group-hover:text-primary-600 font-medium transition-colors duration-150">
+                    Ver programas <i class="fas fa-arrow-right ml-2"></i>
+                </a>
             </div>
         </div>
-    </div>
-
-    <!-- Content Overview -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <!-- Recent Activity -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div class="p-6 border-b border-gray-100">
-                <h2 class="text-lg font-semibold text-gray-900">Actividad Reciente</h2>
+        <!-- Newsletter -->
+        <div class="bg-white rounded-xl shadow p-6 border border-neutral-100 flex flex-col items-center group transition-transform duration-150 hover:scale-105">
+            <div class="h-14 w-14 bg-warning/10 rounded-full flex items-center justify-center mb-3">
+                <i class="fas fa-envelope-open-text text-warning text-2xl group-hover:text-primary-600 transition-colors duration-150"></i>
             </div>
-            <div class="p-6">
-                {% if recent_posts %}
-                    <div class="space-y-4">
-                        {% for post in recent_posts|slice:":3" %}
-                            <div class="flex items-center space-x-3">
-                                <div class="h-8 w-8 bg-blue-50 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-file-alt text-blue-600 text-sm"></i>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 truncate">{{ post.title }}</p>
-                                    <p class="text-xs text-gray-500">{{ post.created_at|date:"d/m/Y" }}</p>
-                                </div>
-                                <a href="{% url 'dashboard:blog_post_detail' post.pk %}" class="text-blue-600 hover:text-blue-800">
-                                    <i class="fas fa-chevron-right text-sm"></i>
-                                </a>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    <p class="text-gray-500 text-sm">No hay artículos recientes</p>
-                {% endif %}
+            <div class="text-center">
+                <div class="text-2xl font-bold text-neutral-900">{{ newsletter_stats.total_newsletters }}</div>
+                <div class="text-sm text-neutral-500 mb-2">Newsletters enviados</div>
+                <a href="{% url 'dashboard:list_newsletter' %}" class="inline-flex items-center text-warning group-hover:text-primary-600 font-medium transition-colors duration-150">
+                    Ver newsletters <i class="fas fa-arrow-right ml-2"></i>
+                </a>
             </div>
         </div>
-
-        <!-- User Stats -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div class="p-6 border-b border-gray-100">
-                <h2 class="text-lg font-semibold text-gray-900">Usuarios</h2>
+        <!-- Suscriptores Newsletter -->
+        <div class="bg-white rounded-xl shadow p-6 border border-neutral-100 flex flex-col items-center group transition-transform duration-150 hover:scale-105">
+            <div class="h-14 w-14 bg-primary-50 rounded-full flex items-center justify-center mb-3">
+                <i class="fas fa-user-plus text-primary-600 text-2xl group-hover:text-primary-800 transition-colors duration-150"></i>
             </div>
-            <div class="p-6">
-                <div class="space-y-4">
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Activos</span>
-                        <span class="text-sm font-medium text-gray-900">{{ user_stats.active_users }}</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Suscriptores</span>
-                        <span class="text-sm font-medium text-gray-900">{{ user_stats.subscribers }}</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Miembros</span>
-                        <span class="text-sm font-medium text-gray-900">{{ user_stats.members }}</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-600">Estudiantes</span>
-                        <span class="text-sm font-medium text-gray-900">{{ user_stats.students }}</span>
-                    </div>
-                </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold text-neutral-900">{{ newsletter_stats.total_subscribers }}</div>
+                <div class="text-sm text-neutral-500 mb-2">Suscriptores activos</div>
+                <a href="{% url 'dashboard:list_newsletter' %}" class="inline-flex items-center text-primary-600 group-hover:text-primary-800 font-medium transition-colors duration-150">
+                    Ver suscriptores <i class="fas fa-arrow-right ml-2"></i>
+                </a>
             </div>
         </div>
     </div>
-
-    <!-- Blog Status -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <!-- Published Posts -->
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="flex items-center space-x-3">
-                <div class="h-10 w-10 bg-green-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-check-circle text-green-600"></i>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Publicados</p>
-                    <p class="text-xl font-bold text-gray-900">{{ blog_stats.published_posts }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Draft Posts -->
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="flex items-center space-x-3">
-                <div class="h-10 w-10 bg-yellow-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-edit text-yellow-600"></i>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Borradores</p>
-                    <p class="text-xl font-bold text-gray-900">{{ blog_stats.draft_posts }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pending Comments -->
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="flex items-center space-x-3">
-                <div class="h-10 w-10 bg-orange-50 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-clock text-orange-600"></i>
-                </div>
-                <div>
-                    <p class="text-sm font-medium text-gray-600">Pendientes</p>
-                    <p class="text-xl font-bold text-gray-900">{{ blog_stats.pending_comments }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-        <div class="p-6 border-b border-gray-100">
-            <h2 class="text-lg font-semibold text-gray-900">Acciones Rápidas</h2>
-        </div>
-        <div class="p-6">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <a href="{% url 'dashboard:user_list' %}" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <i class="fas fa-users-cog text-gray-600 mr-3"></i>
-                    <span class="text-sm font-medium text-gray-700">Usuarios</span>
-                </a>
-                
-                <a href="{% url 'dashboard:blog_post_list' %}" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <i class="fas fa-blog text-gray-600 mr-3"></i>
-                    <span class="text-sm font-medium text-gray-700">Blog</span>
-                </a>
-                
-                <a href="{% url 'dashboard:comment_moderation' %}" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <i class="fas fa-comments text-gray-600 mr-3"></i>
-                    <span class="text-sm font-medium text-gray-700">Comentarios</span>
-                </a>
-                
-                <a href="{% url 'public:index' %}" target="_blank" class="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <i class="fas fa-external-link-alt text-gray-600 mr-3"></i>
-                    <span class="text-sm font-medium text-gray-700">Sitio</span>
-                </a>
-            </div>
+    <div class="mt-10">
+        <h2 class="text-xl font-semibold text-neutral-800 mb-4 font-montserrat">Accesos rápidos</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <a href="{% url 'dashboard:user_list' %}" class="flex flex-col items-center p-4 bg-primary-50 rounded-lg group hover:bg-primary-100 transition-colors">
+                <i class="fas fa-users-cog text-primary-600 text-2xl mb-2 group-hover:text-primary-800 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm font-medium text-primary-700">Usuarios</span>
+            </a>
+            <a href="{% url 'dashboard:blog_post_list' %}" class="flex flex-col items-center p-4 bg-accent-blue/10 rounded-lg group hover:bg-primary-50 transition-colors">
+                <i class="fas fa-blog text-accent-blue text-2xl mb-2 group-hover:text-primary-600 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm font-medium text-accent-blue">Blog</span>
+            </a>
+            <a href="{% url 'dashboard:event_list' %}" class="flex flex-col items-center p-4 bg-success/10 rounded-lg group hover:bg-primary-50 transition-colors">
+                <i class="fas fa-calendar-alt text-success text-2xl mb-2 group-hover:text-primary-600 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm font-medium text-success">Eventos</span>
+            </a>
+            <a href="{% url 'dashboard:program_list' %}" class="flex flex-col items-center p-4 bg-secondary-50 rounded-lg group hover:bg-primary-50 transition-colors">
+                <i class="fas fa-graduation-cap text-secondary-600 text-2xl mb-2 group-hover:text-primary-600 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm font-medium text-secondary-700">Programas</span>
+            </a>
+            <a href="{% url 'dashboard:list_newsletter' %}" class="flex flex-col items-center p-4 bg-warning/10 rounded-lg group hover:bg-primary-50 transition-colors">
+                <i class="fas fa-envelope-open-text text-warning text-2xl mb-2 group-hover:text-primary-600 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm font-medium text-warning">Newsletter</span>
+            </a>
+            <a href="{% url 'public:index' %}" target="_blank" class="flex flex-col items-center p-4 bg-neutral-50 rounded-lg group hover:bg-primary-50 transition-colors">
+                <i class="fas fa-external-link-alt text-neutral-500 text-2xl mb-2 group-hover:text-primary-600 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm font-medium text-neutral-700">Sitio público</span>
+            </a>
         </div>
     </div>
 </div>
