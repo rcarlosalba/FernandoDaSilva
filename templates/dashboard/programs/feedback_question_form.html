@@ -1,0 +1,153 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Messages -->
+    {% include 'common/messages.html' %}
+    
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">
+                    {% if form.instance.pk %}
+                        Editar Pregunta
+                    {% else %}
+                        Crear Nueva Pregunta
+                    {% endif %}
+                </h1>
+                <p class="mt-2 text-sm text-gray-600">
+                    {% if form.instance.pk %}
+                        Modifica la pregunta de la evaluación "{{ feedback.title }}"
+                    {% else %}
+                        Agrega una nueva pregunta a la evaluación "{{ feedback.title }}"
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'dashboard:final_feedback_detail' pk=feedback.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Volver
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white shadow rounded-lg">
+        <form method="post" class="space-y-6 p-6">
+            {% csrf_token %}
+            
+            <!-- Pregunta -->
+            <div>
+                <label for="{{ form.question.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.question.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.question }}
+                </div>
+                {% if form.question.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.question.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Escribe la pregunta de manera clara y específica para obtener el feedback más útil.
+                </p>
+            </div>
+
+            <!-- Tipo de pregunta -->
+            <div>
+                <label for="{{ form.type.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.type.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.type }}
+                </div>
+                {% if form.type.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.type.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Selecciona el tipo de respuesta que esperas de los estudiantes.
+                </p>
+            </div>
+
+            <!-- Orden -->
+            <div>
+                <label for="{{ form.order.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.order.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.order }}
+                </div>
+                {% if form.order.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.order.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Define el orden en que aparecerá esta pregunta en la evaluación.
+                </p>
+            </div>
+
+            <!-- Obligatoria -->
+            <div class="flex items-center">
+                {{ form.required }}
+                <label for="{{ form.required.id_for_label }}" class="ml-2 block text-sm text-gray-700">
+                    {{ form.required.label }}
+                </label>
+            </div>
+            {% if form.required.errors %}
+                <div class="mt-2 text-sm text-red-600">
+                    {{ form.required.errors }}
+                </div>
+            {% endif %}
+            <p class="mt-2 text-sm text-gray-500">
+                Si está marcada, los estudiantes deberán responder esta pregunta para completar la evaluación.
+            </p>
+
+            <!-- Botones de acción -->
+            <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                <a href="{% url 'dashboard:final_feedback_detail' pk=feedback.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    Cancelar
+                </a>
+                <button type="submit" 
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-save mr-2"></i>
+                    {% if form.instance.pk %}
+                        Guardar Cambios
+                    {% else %}
+                        Crear Pregunta
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Información adicional -->
+    <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-info-circle text-blue-400"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">
+                    Tipos de preguntas disponibles
+                </h3>
+                <div class="mt-2 text-sm text-blue-700">
+                    <ul class="list-disc list-inside space-y-1">
+                        <li><strong>Texto libre:</strong> Permite respuestas abiertas y detalladas</li>
+                        <li><strong>Escala (1-5):</strong> Respuestas numéricas en una escala del 1 al 5</li>
+                        <li><strong>Opciones múltiples:</strong> Selección entre opciones predefinidas</li>
+                        <li><strong>Calificación (1-10):</strong> Respuestas numéricas en una escala del 1 al 10</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

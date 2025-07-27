@@ -1,0 +1,176 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Detalles del Artículo</h1>
+            <p class="text-gray-600">Información completa del artículo</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'dashboard:blog_post_update' post.pk %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                <i class="fas fa-edit mr-2"></i>Editar
+            </a>
+            <button type="button" 
+                    data-delete-url="{% url 'dashboard:blog_post_delete' post.pk %}"
+                    data-delete-title="Eliminar Artículo"
+                    data-delete-message="¿Estás seguro de que deseas eliminar el artículo '{{ post.title|escapejs }}'?"
+                    data-delete-warning="Esta acción es permanente y no se puede revertir."
+                    data-delete-confirmation="false"
+                    data-delete-button-text="Eliminar Artículo"
+                    class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                <i class="fas fa-trash mr-2"></i>Eliminar
+            </button>
+        </div>
+    </div>
+
+    <!-- Post details -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main content -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-bold text-gray-900">{{ post.title }}</h2>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                            {% if post.status == 'published' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                            {% if post.status == 'published' %}
+                                <i class="fas fa-check-circle mr-1"></i>Publicado
+                            {% else %}
+                                <i class="fas fa-edit mr-1"></i>Borrador
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    {% if post.featured_image %}
+                        <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="w-full h-64 object-cover rounded-lg mb-4">
+                    {% endif %}
+                    
+                    <div class="prose max-w-none">
+                        {{ post.body|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Basic info -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Información Básica</h3>
+                <dl class="space-y-3">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Autor</dt>
+                        <dd class="text-sm text-gray-900">{{ post.author.email }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Categoría</dt>
+                        <dd class="text-sm text-gray-900">{{ post.category.name }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Fecha de creación</dt>
+                        <dd class="text-sm text-gray-900">{{ post.created_at|date:"d/m/Y H:i" }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Última actualización</dt>
+                        <dd class="text-sm text-gray-900">{{ post.updated_at|date:"d/m/Y H:i" }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Tiempo de lectura</dt>
+                        <dd class="text-sm text-gray-900">{{ post.reading_time }} minutos</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Vistas</dt>
+                        <dd class="text-sm text-gray-900">{{ post.view_count }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <!-- Tags -->
+            {% if post.tags.all %}
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Etiquetas</h3>
+                <div class="flex flex-wrap gap-2">
+                    {% for tag in post.tags.all %}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            #{{ tag.name }}
+                        </span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- SEO info -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">SEO</h3>
+                <dl class="space-y-3">
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Meta título</dt>
+                        <dd class="text-sm text-gray-900">{{ post.get_meta_title|default:"Sin definir" }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Meta descripción</dt>
+                        <dd class="text-sm text-gray-900">{{ post.get_meta_description|default:"Sin definir"|truncatechars:100 }}</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Slug</dt>
+                        <dd class="text-sm text-gray-900">{{ post.slug }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <!-- Introduction -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Introducción</h3>
+                <p class="text-sm text-gray-700">{{ post.introduction }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments section -->
+    <div class="mt-8">
+        <div class="bg-white rounded-lg shadow-sm p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Comentarios ({{ post.comments.count }})</h3>
+                <a href="{% url 'dashboard:comment_moderation' %}" class="text-primary-600 hover:text-primary-900 text-sm">
+                    Gestionar comentarios <i class="fas fa-external-link-alt ml-1"></i>
+                </a>
+            </div>
+            
+            {% if post.comments.all %}
+                <div class="space-y-4">
+                    {% for comment in post.comments.all %}
+                        <div class="border-l-4 border-gray-200 pl-4 py-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-sm font-medium text-gray-900">{{ comment.author.email }}</span>
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium
+                                        {% if comment.status == 'approved' %}bg-green-100 text-green-800
+                                        {% elif comment.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                        {% else %}bg-red-100 text-red-800{% endif %}">
+                                        {% if comment.status == 'approved' %}Aprobado
+                                        {% elif comment.status == 'pending' %}Pendiente
+                                        {% else %}Spam{% endif %}
+                                    </span>
+                                </div>
+                                <span class="text-xs text-gray-500">{{ comment.created_at|date:"d/m/Y H:i" }}</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mt-1">{{ comment.content }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 text-sm">No hay comentarios para este artículo.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Back to list -->
+    <div class="mt-6">
+        <a href="{% url 'dashboard:blog_post_list' %}" class="inline-flex items-center text-primary-600 hover:text-primary-900">
+            <i class="fas fa-arrow-left mr-2"></i>Volver a la lista
+        </a>
+    </div>
+</div>
+{% endblock %}

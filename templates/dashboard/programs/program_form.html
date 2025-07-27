@@ -1,0 +1,122 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Messages -->
+    {% include 'common/messages.html' %}
+    
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">
+                    {% if form.instance.pk %}
+                        Editar Programa
+                    {% else %}
+                        Crear Nuevo Programa
+                    {% endif %}
+                </h1>
+                <p class="mt-2 text-sm text-gray-600">
+                    {% if form.instance.pk %}
+                        Modifica la información del programa "{{ form.instance.title }}"
+                    {% else %}
+                        Define la información básica del nuevo programa de e-learning
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'dashboard:program_list' %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Volver
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white shadow rounded-lg">
+        <form method="post" enctype="multipart/form-data" class="space-y-6 p-6">
+            {% csrf_token %}
+            
+            <!-- Título -->
+            <div>
+                <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.title.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.title }}
+                </div>
+                {% if form.title.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.title.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Descripción -->
+            <div>
+                <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.description.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.description }}
+                </div>
+                {% if form.description.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.description.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Proporciona una descripción clara y atractiva del programa para los estudiantes.
+                </p>
+            </div>
+
+            <!-- Imagen de portada -->
+            <div>
+                <label for="{{ form.cover_image.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.cover_image.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.cover_image }}
+                </div>
+                {% if form.cover_image.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.cover_image.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Recomendamos una imagen de 800x600 píxeles en formato JPG o PNG.
+                </p>
+                
+                <!-- Mostrar imagen actual si existe -->
+                {% if form.instance.cover_image %}
+                    <div class="mt-4">
+                        <p class="text-sm font-medium text-gray-700 mb-2">Imagen actual:</p>
+                        <img src="{{ form.instance.cover_image.url }}" 
+                             alt="Portada actual" 
+                             class="h-32 w-auto rounded-lg object-cover">
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                <a href="{% url 'dashboard:program_list' %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    Cancelar
+                </a>
+                <button type="submit" 
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-save mr-2"></i>
+                    {% if form.instance.pk %}
+                        Guardar Cambios
+                    {% else %}
+                        Crear Programa
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,152 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Gestión de Categorías</h1>
+            <p class="text-gray-600">Administra las categorías para clasificar eventos</p>
+        </div>
+        <a href="{% url 'dashboard:event_category_create' %}" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+            <i class="fas fa-plus mr-2"></i>Nueva Categoría
+        </a>
+    </div>
+
+    <!-- Categories table -->
+    <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900">Categorías</h3>
+        </div>
+        
+        {% if categories %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Slug</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Eventos</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for category in categories %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center">
+                                    <div class="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center mr-3">
+                                        <i class="fas fa-folder text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900">{{ category.name }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ category.slug }}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-500">
+                                {{ category.description|truncatechars:50|default:"Sin descripción" }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    {% if category.annotated_event_count is not None %}
+                                        {{ category.annotated_event_count }} eventos
+                                    {% else %}
+                                        {{ category.event_count }} eventos
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ category.created_at|date:"d/m/Y" }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <div class="flex items-center justify-end space-x-2">
+                                    <a href="{% url 'dashboard:event_category_detail' category.pk %}" class="text-primary-600 hover:text-primary-900" title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'dashboard:event_category_update' category.pk %}" class="text-blue-600 hover:text-blue-900" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" 
+                                            data-delete-url="{% url 'dashboard:event_category_delete' category.pk %}"
+                                            data-delete-title="Eliminar Categoría"
+                                            data-delete-message="¿Estás seguro de que deseas eliminar la categoría '{{ category.name|escapejs }}'?"
+                                            data-delete-warning="Esta acción es permanente y no se puede revertir. Los eventos asociados no se eliminarán pero perderán esta categoría."
+                                            data-delete-confirmation="false"
+                                            data-delete-button-text="Eliminar Categoría"
+                                            class="text-red-600 hover:text-red-900" 
+                                            title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if categories.has_other_pages %}
+            <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                <div class="flex-1 flex justify-between sm:hidden">
+                    {% if categories.has_previous %}
+                        <a href="?page={{ categories.previous_page_number }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            Anterior
+                        </a>
+                    {% endif %}
+                    {% if categories.has_next %}
+                        <a href="?page={{ categories.next_page_number }}" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            Siguiente
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Mostrando <span class="font-medium">{{ categories.start_index }}</span> a <span class="font-medium">{{ categories.end_index }}</span> de <span class="font-medium">{{ categories.paginator.count }}</span> resultados
+                        </p>
+                    </div>
+                    <div>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                            {% if categories.has_previous %}
+                                <a href="?page={{ categories.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            {% endif %}
+                            
+                            {% for num in categories.paginator.page_range %}
+                                {% if categories.number == num %}
+                                    <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-primary-50 text-sm font-medium text-primary-600">{{ num }}</span>
+                                {% elif num > categories.number|add:'-3' and num < categories.number|add:'3' %}
+                                    <a href="?page={{ num }}" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">{{ num }}</a>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if categories.has_next %}
+                                <a href="?page={{ categories.next_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            {% endif %}
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-12">
+                <i class="fas fa-folder text-gray-400 text-4xl mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No hay categorías</h3>
+                <p class="text-gray-500 mb-4">Comienza creando tu primera categoría</p>
+                <a href="{% url 'dashboard:event_category_create' %}" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>Crear Categoría
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

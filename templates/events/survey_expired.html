@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Encuesta Expirada - No Disponible{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-red-50 to-pink-100 py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Mensaje principal -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+            <!-- Icono de expiración -->
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-red-100 rounded-full mb-6">
+                <i class="fas fa-clock text-3xl text-red-600"></i>
+            </div>
+
+            <!-- Título y mensaje -->
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">
+                Encuesta Expirada
+            </h1>
+            
+            <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+                Lo sentimos, pero esta encuesta de satisfacción ya no está disponible 
+                para responder. El período de respuesta ha expirado.
+            </p>
+
+            <!-- Información adicional -->
+            <div class="bg-yellow-50 rounded-xl p-6 mb-8">
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-info-circle text-yellow-600 text-xl"></i>
+                    </div>
+                    <div class="text-left">
+                        <h3 class="font-semibold text-gray-900 mb-2">¿Por qué expiran las encuestas?</h3>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li class="flex items-center space-x-2">
+                                <i class="fas fa-check text-yellow-500 text-xs"></i>
+                                <span>Mantenemos la relevancia de los datos</span>
+                            </li>
+                            <li class="flex items-center space-x-2">
+                                <i class="fas fa-check text-yellow-500 text-xs"></i>
+                                <span>Procesamos los resultados de manera oportuna</span>
+                            </li>
+                            <li class="flex items-center space-x-2">
+                                <i class="fas fa-check text-yellow-500 text-xs"></i>
+                                <span>Implementamos mejoras basadas en feedback reciente</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mensaje de agradecimiento -->
+            <div class="bg-blue-50 rounded-xl p-6 mb-8">
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-heart text-blue-600 text-xl"></i>
+                    </div>
+                    <div class="text-left">
+                        <h3 class="font-semibold text-gray-900 mb-2">¡Gracias por tu interés!</h3>
+                        <p class="text-sm text-gray-600">
+                            Aunque no pudiste completar esta encuesta, tu participación en nuestros eventos 
+                            es muy importante para nosotros. Te invitamos a seguir participando en futuros eventos.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="{% url 'events:event_list' %}" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Ver Eventos</span>
+                </a>
+                
+                <a href="{% url 'public:index' %}" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2">
+                    <i class="fas fa-home"></i>
+                    <span>Ir al Inicio</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Información de contacto -->
+        <div class="mt-8 text-center">
+            <p class="text-sm text-gray-500 mb-2">
+                ¿Tienes alguna pregunta sobre nuestros eventos?
+            </p>
+            <div class="flex justify-center space-x-4 text-sm">
+                <a href="mailto:info@fernandodasilva.com" class="text-blue-600 hover:text-blue-700 flex items-center space-x-1">
+                    <i class="fas fa-envelope"></i>
+                    <span>Contactar</span>
+                </a>
+                <span class="text-gray-300">|</span>
+                <a href="{% url 'public:about' %}" class="text-blue-600 hover:text-blue-700 flex items-center space-x-1">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Sobre Nosotros</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animación de entrada suave
+    const mainContent = document.querySelector('.bg-white');
+    mainContent.style.opacity = '0';
+    mainContent.style.transform = 'translateY(20px)';
+    
+    setTimeout(() => {
+        mainContent.style.transition = 'all 0.6s ease-out';
+        mainContent.style.opacity = '1';
+        mainContent.style.transform = 'translateY(0)';
+    }, 100);
+});
+</script>
+{% endblock %} 

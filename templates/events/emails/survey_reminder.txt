@@ -1,0 +1,30 @@
+{{ site_name }} - Recordatorio: Encuesta de Satisfacción
+
+Hola {{ registration.first_name }},
+
+Te enviamos este recordatorio porque aún no hemos recibido tu respuesta a la encuesta de satisfacción del evento "{{ event.title }}".
+
+📝 TU OPINIÓN ES IMPORTANTE
+Tu feedback nos ayuda a mejorar y ofrecer mejores experiencias en futuros eventos. Solo necesitamos unos minutos de tu tiempo.
+
+INFORMACIÓN DEL EVENTO:
+- Título: {{ event.title }}
+- Fecha: {{ event.start_date|date:"d/m/Y H:i" }}
+{% if event.location %}- Ubicación: {{ event.location }}{% endif %}
+
+ENCUESTA:
+{{ survey.title }}
+{{ survey.description }}
+
+Para responder la encuesta, visita el siguiente enlace:
+{{ survey_url }}
+
+🚨 URGENTE: Esta encuesta expira el {{ expires_at|date:"d/m/Y H:i" }}. ¡No pierdas la oportunidad de compartir tu opinión!
+
+Si ya completaste la encuesta, puedes ignorar este mensaje.
+
+¡Gracias por tu tiempo!
+
+---
+Este email fue enviado por {{ site_name }}
+Si tienes alguna pregunta, no dudes en contactarnos. 

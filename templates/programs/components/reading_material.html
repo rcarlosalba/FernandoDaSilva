@@ -1,0 +1,11 @@
+{% if material.reading_content %}
+<div class="w-full rounded-lg overflow-hidden mb-4">
+    <div class="flex items-center gap-2 mb-2">
+        <i class="fas fa-file-alt text-primary-400"></i>
+        <span class="font-semibold text-gray-900">{{ material.title }}</span>
+    </div>
+    <div class="prose max-w-none text-gray-800">
+        {{ material.reading_content|safe }}
+    </div>
+</div>
+{% endif %} 

@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ survey.title }} - Encuesta de Satisfacción{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header de la encuesta -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                    <i class="fas fa-clipboard-list text-2xl text-blue-600"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ survey.title }}</h1>
+                {% if survey.description %}
+                    <p class="text-lg text-gray-600 max-w-2xl mx-auto">{{ survey.description }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Información del evento -->
+            {% if event %}
+            <div class="bg-blue-50 rounded-xl p-6 mb-8">
+                <div class="flex items-start space-x-4">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-calendar-alt text-blue-600 text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ event.title }}</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-clock text-gray-400"></i>
+                                <span>{{ event.start_date|date:"d/m/Y H:i" }}</span>
+                            </div>
+                            {% if event.location %}
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-map-marker-alt text-gray-400"></i>
+                                <span>{{ event.location }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Instrucciones -->
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-info-circle text-yellow-400"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-yellow-800">
+                            <strong>Instrucciones:</strong> Por favor, responde todas las preguntas marcadas con asterisco (*). 
+                            Tus respuestas nos ayudarán a mejorar nuestros eventos futuros.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de la encuesta -->
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <form method="post" class="space-y-8">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                <div class="border-b border-gray-200 pb-8 last:border-b-0">
+                    <div class="mb-4">
+                        <label class="block text-lg font-semibold text-gray-900 mb-2">
+                            {{ field.label }}
+                        </label>
+                        
+                        {% if field.errors %}
+                        <div class="mb-3">
+                            {% for error in field.errors %}
+                            <div class="flex items-center space-x-2 text-red-600 text-sm">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span>{{ error }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Renderizar el campo según su tipo -->
+                        {% if field.field.widget.input_type == 'radio' %}
+                            <!-- Campos de radio (escala y opciones múltiples) -->
+                            <div class="space-y-3">
+                                {% for choice in field %}
+                                <label class="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+                                    {{ choice.tag }}
+                                    <span class="text-gray-900">{{ choice.choice_label }}</span>
+                                </label>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <!-- Campos de texto -->
+                            <div class="relative">
+                                {{ field }}
+                                {% if field.help_text %}
+                                <p class="mt-2 text-sm text-gray-500">{{ field.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- Botones de acción -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-8 border-t border-gray-200">
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Enviar Encuesta</span>
+                    </button>
+                    
+                    <a href="{% url 'events:event_list' %}" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Volver a Eventos</span>
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="mt-8 text-center">
+            <p class="text-sm text-gray-500">
+                <i class="fas fa-shield-alt mr-1"></i>
+                Tus respuestas son confidenciales y solo se usarán para mejorar nuestros servicios.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mejorar la accesibilidad de los campos de radio
+    const radioGroups = document.querySelectorAll('input[type="radio"]');
+    radioGroups.forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Remover clases activas de todos los labels del grupo
+            const name = this.name;
+            const labels = document.querySelectorAll(`input[name="${name}"]`);
+            labels.forEach(label => {
+                label.closest('label').classList.remove('bg-blue-50', 'border-blue-300');
+            });
+            
+            // Agregar clase activa al label seleccionado
+            this.closest('label').classList.add('bg-blue-50', 'border-blue-300');
+        });
+    });
+
+    // Validación del formulario
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const requiredFields = form.querySelectorAll('[required]');
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.classList.add('border-red-500');
+            } else {
+                field.classList.remove('border-red-500');
+            }
+        });
+
+        if (!isValid) {
+            e.preventDefault();
+            alert('Por favor, completa todos los campos requeridos.');
+        }
+    });
+});
+</script>
+{% endblock %} 

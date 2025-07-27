@@ -1,0 +1,35 @@
+<div class="mb-4" data-comment-id="{{ comment.pk }}">
+  <div class="flex items-center justify-between">
+    <div>
+      <span class="font-semibold text-gray-900">{{ comment.author.profile.full_name }}</span>
+      <span class="ml-2 text-xs text-gray-500">{{ comment.created_at|date:"d/m/Y H:i" }}</span>
+    </div>
+    {% if can_delete %}
+      <button type="button"
+              class="text-red-500 hover:text-red-700 text-xs font-medium ml-2"
+              data-delete-url="{% url 'dashboard:program_comment_delete' pk=comment.pk %}"
+              data-delete-title="Eliminar Comentario"
+              data-delete-message="¿Estás seguro de que deseas eliminar este comentario? Esta acción no se puede deshacer."
+              data-comment-id="{{ comment.pk }}">
+        <i class="fas fa-trash-alt mr-1"></i>Eliminar
+      </button>
+    {% endif %}
+  </div>
+  <div class="mt-2 text-gray-800 text-sm whitespace-pre-line">{{ comment.content }}</div>
+  <div class="mt-2 flex items-center gap-2">
+    {% if can_reply %}
+      <button type="button" class="text-primary-600 hover:underline text-xs font-medium" x-data x-on:click="$dispatch('reply', {parent: {{ comment.pk }}})">
+        <i class="fas fa-reply mr-1"></i>Responder
+      </button>
+    {% endif %}
+  </div>
+  <div class="mt-2" id="reply-form-{{ comment.pk }}"></div>
+  {# Renderizar respuestas (anidado, solo un nivel más) #}
+  {% if comment.replies.all %}
+    <div class="ml-6 mt-3 border-l-2 border-primary-100 pl-4 replies">
+      {% for reply in comment.replies.all %}
+        {% include 'programs/components/comment.html' with comment=reply user=user can_delete=can_delete can_reply=can_reply %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div> 

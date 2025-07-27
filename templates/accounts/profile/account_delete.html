@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Cuenta eliminada - Fernando Da Silva{% endblock %}
+{% block description %}Tu cuenta ha sido eliminada correctamente.{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-background-light to-background-cream py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full bg-white rounded-lg shadow-xl border border-neutral-200 p-8 text-center">
+        <div class="flex flex-col items-center mb-6">
+            <div class="bg-danger rounded-full p-4 mb-3">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+            </div>
+            <h1 class="title-main text-danger mb-2">Cuenta eliminada</h1>
+            <p class="text-body text-neutral-700">Tu cuenta ha sido eliminada (inactivada) correctamente.<br>Sentimos verte partir, pero siempre serás bienvenido de regreso.</p>
+        </div>
+        <a href="{% url 'public:index' %}" class="btn-primary bg-primary-400 hover:bg-primary-500 text-white rounded-lg transition-colors duration-300 mt-4 inline-block">Volver al inicio</a>
+    </div>
+</div>
+{% endblock %} 

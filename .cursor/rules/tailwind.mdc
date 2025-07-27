@@ -1,0 +1,107 @@
+---
+description: Reglas y buenas prácticas para el uso de Tailwind CSS en un proyecto Django. Se enfoca en la filosofía "utility-first", la organización del código, el rendimiento y la integración específica para el estilizado de formularios de Django.
+globs: "**/*.html, **/*.js, **/*.py"
+---
+
+# Reglas de Estilizado con Tailwind CSS
+
+**Objetivo principal:** Utilizar Tailwind CSS de manera eficiente y mantenible para crear interfaces de usuario limpias y consistentes. Priorizamos la filosofía "utility-first" y mantenemos una estricta separación entre la estructura (HTML) y la lógica de estilos.
+
+## 1. Filosofía y Principios Fundamentales
+
+1.  **Utility-First como Norma:** La base del estilizado es aplicar directamente las clases de utilidad de Tailwind en el HTML. Se debe evitar escribir CSS personalizado siempre que sea posible.
+2.  **Mobile-First Obligatorio:** El diseño debe crearse pensando primero en las pantallas pequeñas. Las clases responsivas de Tailwind (e.g., `sm:`, `md:`, `lg:`) se utilizarán para adaptar el diseño a pantallas más grandes.
+3.  **❌ Prohibición de Estilos en Línea (Regla Crítica):** Está **estrictamente prohibido** el uso del atributo `style="..."` en el HTML. Toda la lógica de estilizado debe manejarse a través de clases de Tailwind o, en casos excepcionales, clases personalizadas definidas en `base.css`.
+
+## 2. Configuración y Estructura de Archivos
+
+La organización de los archivos de estilo es clave para la mantenibilidad.
+
+-   **Directorio Fuente:** Todo el código fuente de Tailwind (`tailwind.config.js`, `postcss.config.js`) reside en la carpeta `tailwind/` en la raíz del proyecto.
+-   **Archivo de Entrada Principal:** El único archivo CSS que se escribe manualmente es `tailwind/base.css`. Este archivo importa las directivas de Tailwind y es el **único lugar** donde se puede escribir CSS personalizado (ver sección de `@apply`).
+-   **Proceso de Compilación:** Se utiliza un runner (como Gulp o el CLI de Tailwind) para procesar `tailwind/base.css`.
+-   **Archivo de Salida:** El proceso de compilación genera un único archivo minificado en `static/css/styles.min.css`. Este es el **único** archivo CSS que se debe enlazar en los templates de Django.
+-   **Configuración de `tailwind.config.js`:**
+    -   **`content` (antes `purge`):** Es **obligatorio** configurar esta propiedad correctamente para que apunte a todos los archivos que contienen clases de Tailwind (`.html`, `.js`, `.py`), asegurando que en producción se eliminen todos los estilos no utilizados.
+        ```javascript
+        // tailwind.config.js
+        module.exports = {
+          content: [
+            './templates/**/*.html',
+            './static/js/**/*.js',
+            './apps/**/*.py', // Importante para los estilos de formularios
+            './constants/**/*.py', // Importante para los estilos de formularios
+          ],
+          // ... theme, plugins
+        }
+        ```
+    -   **`theme.extend`:** Todas las personalizaciones (colores, espaciado, fuentes) deben hacerse dentro de `theme.extend` para no sobreescribir los valores por defecto de Tailwind, sino ampliarlos.
+
+## 3. Patrones de Uso y Buenas Prácticas
+
+1.  **Componentes con `@apply` (Uso Moderado):**
+    -   Cuando un conjunto de utilidades se repite constantemente para formar un componente visual (e.g., un botón, una tarjeta, una alerta), se puede crear una clase de componente en `tailwind/base.css` usando `@apply`.
+    -   ❌ **ANTI-PATRÓN:** Abusar de `@apply` para todo, recreando esencialmente CSS tradicional.
+    -   ✅ **BUENA PRÁCTICA:** Usarlo con moderación para abstraer componentes semánticos y reutilizables.
+        ```css
+        /* tailwind/base.css (USO CORRECTO) */
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+
+        @layer components {
+          .btn-primary {
+            @apply py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500;
+          }
+          .card {
+            @apply bg-white rounded-lg shadow-md p-6;
+          }
+        }
+        ```
+2.  **Evitar Valores "Mágicos" o Arbitrarios:**
+    -   Evita el uso de valores arbitrarios con corchetes (e.g., `w-[23px]`, `top-[117px]`). Esto dificulta la consistencia y el mantenimiento.
+    -   ✅ **SIEMPRE** prefiere usar los valores definidos en el `theme` de tu `tailwind.config.js`. Si necesitas un valor específico, añádelo al `theme` para que sea reutilizable.
+
+## 4. Integración con Django: Estilizado de Formularios
+
+Este es nuestro patrón específico para aplicar estilos de Tailwind a los widgets de formularios de Django de manera limpia y reutilizable.
+
+1.  **Ubicación de los Estilos:** Todos los strings de clases de Tailwind para formularios se definen como constantes de Python en `constants/form_styles.py`.
+2.  **Propósito:**
+    -   **Mantener los templates limpios:** Evita la necesidad de usar filtros o lógica compleja en el template para añadir clases a los campos del formulario.
+    -   **DRY (Don't Repeat Yourself):** Define un estilo (e.g., para un input de texto) una vez y reutilízalo en todos los formularios del proyecto.
+    -   **Mantenimiento Centralizado:** Si necesitas cambiar el estilo de todos los inputs, solo lo modificas en un único archivo Python.
+3.  **Implementación:**
+    -   **Paso 1: Definir las constantes de estilo.**
+        ```python
+        # constants/form_styles.py
+        TEXT_INPUT = "mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm shadow-sm placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
+        CHECKBOX_INPUT = "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+        SUBMIT_BUTTON = "py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700"
+        ```
+    -   **Paso 2: Aplicar las constantes a los widgets del formulario.**
+        ```python
+        # apps/accounts/forms.py
+        from django import forms
+        from constants import form_styles # Importamos nuestras constantes
+
+        class LoginForm(forms.Form):
+            username = forms.CharField(
+                widget=forms.TextInput(attrs={'class': form_styles.TEXT_INPUT, 'placeholder': 'Username'})
+            )
+            password = forms.CharField(
+                widget=forms.PasswordInput(attrs={'class': form_styles.TEXT_INPUT, 'placeholder': 'Password'})
+            )
+        ```
+
+---
+
+### ✅ Checklist de Verificación para el LLM (Antes de Generar Respuesta)
+
+Antes de finalizar tu respuesta de código con estilos, verifica:
+
+1.  **No Estilos en Línea:** ¿He evitado por completo el uso de `style="..."`?
+2.  **Utility-First:** ¿He priorizado el uso de clases de utilidad de Tailwind directamente en el HTML?
+3.  **Uso de `@apply`:** Si he propuesto CSS personalizado, ¿está justificado como un componente reutilizable y ubicado en `base.css`?
+4.  **Estilos de Formularios:** Si se trata de un formulario de Django, ¿he utilizado el patrón de constantes desde `constants/form_styles.py` para aplicar las clases?
+5.  **No Valores Mágicos:** ¿He evitado valores arbitrarios (`w-[123px]`) a favor de las opciones del `theme`?

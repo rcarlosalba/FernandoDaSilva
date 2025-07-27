@@ -1,0 +1,193 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Messages -->
+    {% include 'common/messages.html' %}
+    
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center mb-2 text-sm text-gray-500">
+                    <a href="{% url 'dashboard:program_detail' pk=module.program.pk %}" 
+                       class="hover:text-gray-700">
+                        {{ module.program.title }}
+                    </a>
+                    <span class="mx-2">/</span>
+                    <a href="{% url 'dashboard:module_detail' program_pk=module.program.pk pk=module.pk %}" 
+                       class="hover:text-gray-700">
+                        {{ module.title }}
+                    </a>
+                    <span class="mx-2">/</span>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900">
+                    {% if form.instance.pk %}
+                        Editar Sesión
+                    {% else %}
+                        Crear Nueva Sesión
+                    {% endif %}
+                </h1>
+                <p class="mt-2 text-sm text-gray-600">
+                    {% if form.instance.pk %}
+                        Modifica la información de la sesión "{{ form.instance.title }}"
+                    {% else %}
+                        Define la información de la nueva sesión para el módulo "{{ module.title }}"
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'dashboard:module_detail' program_pk=module.program.pk pk=module.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Volver al Módulo
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white shadow rounded-lg">
+        <form method="post" class="space-y-6 p-6">
+            {% csrf_token %}
+            
+            <!-- Título -->
+            <div>
+                <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.title.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.title }}
+                </div>
+                {% if form.title.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.title.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Ejemplo: "Introducción al Eneagrama" o "Técnicas de Respiración"
+                </p>
+            </div>
+
+            <!-- Orden -->
+            <div>
+                <label for="{{ form.order.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.order.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.order }}
+                </div>
+                {% if form.order.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.order.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Define el orden de aparición de la sesión dentro del módulo. Las sesiones se mostrarán en orden ascendente.
+                </p>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                <a href="{% url 'dashboard:module_detail' program_pk=module.program.pk pk=module.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    Cancelar
+                </a>
+                <button type="submit" 
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-save mr-2"></i>
+                    {% if form.instance.pk %}
+                        Guardar Cambios
+                    {% else %}
+                        Crear Sesión
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Information Cards -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Session Info -->
+        <div class="bg-white shadow rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Información sobre Sesiones</h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4 text-sm text-gray-600">
+                    <div class="flex items-start">
+                        <i class="fas fa-info-circle text-blue-500 mt-0.5 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">¿Qué es una sesión?</p>
+                            <p>Una sesión es la unidad de aprendizaje donde el estudiante interactúa con el contenido específico.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">Progreso del estudiante</p>
+                            <p>El estudiante marca manualmente cuando completa una sesión, lo que actualiza su progreso.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-plus-circle text-purple-500 mt-0.5 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">Materiales</p>
+                            <p>Después de crear la sesión, podrás agregar videos, audios, lecturas y archivos descargables.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Next Steps -->
+        <div class="bg-white shadow rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Próximos Pasos</h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-center text-gray-600">
+                        <div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-medium mr-3">1</div>
+                        <span>Crear la sesión con título y orden</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-medium mr-3">2</div>
+                        <span>Agregar materiales de contenido (video, audio, lectura)</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-medium mr-3">3</div>
+                        <span>Subir archivos descargables si es necesario</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-medium mr-3">4</div>
+                        <span>Revisar y publicar la sesión</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Module Info -->
+    <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-book text-blue-400"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">Módulo Actual</h3>
+                <div class="mt-2 text-sm text-blue-700">
+                    <p><strong>{{ module.title }}</strong></p>
+                    <p class="mt-1">{{ module.description }}</p>
+                    <p class="mt-2 text-xs">
+                        <i class="fas fa-sort-numeric-up mr-1"></i>
+                        Orden: {{ module.order }} | 
+                        <i class="fas fa-play-circle mr-1"></i>
+                        Sesiones: {{ module.sessions.count }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

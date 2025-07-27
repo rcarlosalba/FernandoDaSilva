@@ -1,0 +1,219 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">
+            {% if object %}Editar Artículo{% else %}Nuevo Artículo{% endif %}
+        </h1>
+        <p class="text-gray-600">
+            {% if object %}Modifica la información del artículo{% else %}Crea un nuevo artículo para el blog{% endif %}
+        </p>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Title and Slug -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Título *
+                    </label>
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.title.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.slug.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Slug
+                    </label>
+                    {{ form.slug }}
+                    {% if form.slug.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.slug.errors.0 }}</p>
+                    {% endif %}
+                    <p class="mt-1 text-sm text-gray-500">Dejar vacío para generar automáticamente</p>
+                </div>
+            </div>
+
+            <!-- Introduction -->
+            <div>
+                <label for="{{ form.introduction.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Introducción *
+                </label>
+                {{ form.introduction }}
+                {% if form.introduction.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.introduction.errors.0 }}</p>
+                {% endif %}
+                <p class="mt-1 text-sm text-gray-500">Máximo 160 caracteres para SEO</p>
+            </div>
+
+            <!-- Category and Status -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="{{ form.category.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Categoría *
+                    </label>
+                    {{ form.category }}
+                    {% if form.category.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.category.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <div>
+                    <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                        Estado *
+                    </label>
+                    {{ form.status }}
+                    {% if form.status.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.status.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Featured Image -->
+            <div>
+                <label for="{{ form.featured_image.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Imagen destacada
+                </label>
+                {{ form.featured_image }}
+                {% if form.featured_image.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.featured_image.errors.0 }}</p>
+                {% endif %}
+                {% if object and object.featured_image %}
+                    <div class="mt-2">
+                        <img src="{{ object.featured_image.url }}" alt="Imagen actual" class="h-32 w-32 object-cover rounded-lg">
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Tags -->
+            <div>
+                <label for="{{ form.tags.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                    Etiquetas
+                </label>
+                {{ form.tags }}
+                {% if form.tags.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.tags.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Body with Quill Editor -->
+            <div>
+                <label for="quill-editor" class="block text-sm font-medium text-gray-700 mb-2">
+                    Contenido *
+                </label>
+                <div id="quill-editor" class="mb-4">
+                    {% if object %}
+                        {{ object.body|safe }}
+                    {% endif %}
+                </div>
+                <!-- Hidden textarea to store Quill content -->
+                <textarea name="{{ form.body.name }}" id="{{ form.body.id_for_label }}" class="hidden">
+                    {% if object %}{{ object.body }}{% endif %}
+                </textarea>
+                {% if form.body.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ form.body.errors.0 }}</p>
+                {% endif %}
+            </div>
+
+            <!-- SEO Fields -->
+            <div class="border-t pt-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">SEO</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="{{ form.meta_title.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            Meta título
+                        </label>
+                        {{ form.meta_title }}
+                        {% if form.meta_title.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.meta_title.errors.0 }}</p>
+                        {% endif %}
+                        <p class="mt-1 text-sm text-gray-500">Dejar vacío para usar el título</p>
+                    </div>
+                    
+                    <div>
+                        <label for="{{ form.meta_description.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            Meta descripción
+                        </label>
+                        {{ form.meta_description }}
+                        {% if form.meta_description.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ form.meta_description.errors.0 }}</p>
+                        {% endif %}
+                        <p class="mt-1 text-sm text-gray-500">Dejar vacío para usar la introducción</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form actions -->
+            <div class="flex justify-end space-x-3 pt-6 border-t">
+                <a href="{% url 'dashboard:blog_post_list' %}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors">
+                    Cancelar
+                </a>
+                <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                    {% if object %}
+                        <i class="fas fa-save mr-2"></i>Guardar Cambios
+                    {% else %}
+                        <i class="fas fa-plus mr-2"></i>Crear Artículo
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Quill.js CSS -->
+<link href="{% static 'css/quill.snow.css' %}" rel="stylesheet">
+
+<!-- Quill.js JavaScript -->
+<script src="{% static 'js/quill.min.js' %}"></script>
+
+<script>
+    // Initialize Quill editor
+    const quill = new Quill('#quill-editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'align': [] }],
+                ['link', 'image'],
+                ['clean']
+            ]
+        },
+        placeholder: 'Escribe el contenido del artículo aquí...'
+    });
+
+    // Auto-generate slug from title
+    document.getElementById('{{ form.title.id_for_label }}').addEventListener('input', function() {
+        const title = this.value;
+        const slugField = document.getElementById('{{ form.slug.id_for_label }}');
+        
+        if (slugField.value === '') {
+            const slug = title
+                .toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-')
+                .trim('-');
+            slugField.value = slug;
+        }
+    });
+
+    // Update hidden textarea with Quill content before form submission
+    document.querySelector('form').addEventListener('submit', function() {
+        const quillContent = quill.root.innerHTML;
+        document.getElementById('{{ form.body.id_for_label }}').value = quillContent;
+    });
+</script>
+{% endblock %} 

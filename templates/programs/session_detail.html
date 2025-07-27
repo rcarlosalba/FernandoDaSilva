@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ session.title }} - Sesión{% endblock %}
+{% include 'common/messages.html' %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-primary-50 to-background-cream py-10">
+    <div class="container mx-auto px-4 max-w-6xl">
+        <a href="{% url 'programs:program_detail' session.module.program.pk %}" class="inline-flex items-center text-primary-500 hover:text-primary-700 font-medium mb-6">
+            <i class="fas fa-arrow-left mr-2"></i> Volver al programa
+        </a>
+        <div class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+            <div class="flex flex-col">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                    <i class="fas fa-chalkboard-teacher text-primary-500"></i>
+                    {{ session.title }}
+                </h1>
+                <p class="text-gray-700 text-lg mb-4">Módulo: {{ session.module.title }}</p>
+            </div>
+            <div class="flex justify-end mt-4">
+                {% if can_comment %}
+                <button id="complete-session-btn" class="bg-primary-600 text-white px-4 py-2 rounded mt-4">Marcar como completada</button>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Layout responsivo: 60% contenido / 40% comentarios en desktop, apilado en móvil -->
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Contenido principal (60%) -->
+            <div class="w-full lg:w-3/5 bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-book-open text-primary-400"></i>
+                    Contenido de la Sesión
+                </h2>
+                <div class="space-y-6">
+                    {% for material in session.materials.all %}
+                        {% if material.type == 'video' %}
+                            {% include 'programs/components/video_material.html' %}
+                        {% elif material.type == 'audio' %}
+                            {% include 'programs/components/audio_material.html' %}
+                        {% elif material.type == 'reading' %}
+                            {% include 'programs/components/reading_material.html' %}
+                        {% elif material.type == 'file' %}
+                            {% include 'programs/components/file_material.html' %}
+                        {% endif %}
+                    {% empty %}
+                        <div class="bg-primary-50 rounded-lg p-6 text-center text-primary-700">
+                            <i class="fas fa-photo-video text-2xl mb-2"></i>
+                            <p class="mb-2">Aquí aparecerán los materiales de la sesión (video, audio, lectura, archivos descargables).</p>
+                            <span class="text-xs text-primary-400">(Próximamente)</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <!-- Comentarios (40%) -->
+            <div class="w-full lg:w-2/5 bg-white rounded-2xl shadow-lg p-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <i class="fas fa-comments text-primary-400"></i>
+                    Comentarios y Reflexiones
+                </h2>
+                <div x-data="commentSection()" x-init="init()">
+                  <!-- Contenedor para el formulario de comentario raíz -->
+                  <div id="root-comment-form"></div>
+                  <!-- Lista de comentarios -->
+                  <div id="comments-list">
+                    {% for comment in root_comments %}
+                      {% include 'programs/components/comment.html' with comment=comment user=user can_delete=can_delete can_reply=can_reply %}
+                    {% empty %}
+                      <div class="bg-primary-50 rounded-lg p-6 text-center text-primary-700">
+                        <i class="fas fa-comment-dots text-2xl mb-2"></i>
+                        <p class="mb-2">Sé el primero en comentar sobre esta sesión.</p>
+                      </div>
+                    {% endfor %}
+                  </div>
+                  <!-- Formulario de comentario (oculto por defecto, se mueve con JS) -->
+                  {% if can_comment %}
+                  <form id="comment-form" x-ref="form" @submit.prevent="submitComment" class="mb-6 hidden" action="{% url 'programs:session_add_comment' sesion_pk=session.pk %}">
+                    {% csrf_token %}
+                    <textarea x-model="content" name="content" rows="3" class="w-full rounded-lg border border-primary-200 focus:ring-2 focus:ring-primary-400 focus:border-primary-400 p-3 text-sm resize-none mb-2" placeholder="Escribe tu comentario..." required></textarea>
+                    <input type="hidden" name="parent" x-model="parent">
+                    <div class="flex justify-end gap-2">
+                      <button type="button" class="px-4 py-2 rounded-lg text-sm font-semibold bg-gray-200 text-gray-700 hover:bg-gray-300 transition" @click="cancelReply">Cancelar</button>
+                      <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary-700 transition">Comentar</button>
+                    </div>
+                  </form>
+                  {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal de eliminación -->
+{% include 'common/modal_delete.html' %}
+<!-- Modal de éxito -->
+{% include 'common/modal_success.html' %}
+{% endblock %}
+
+{% block extra_js %}
+<!-- Los scripts globales ya están incluidos vía scripts.html -->
+  <script src="{% static 'js/modal-success.js' %}"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const btn = document.getElementById('complete-session-btn');
+      if (btn) {
+        btn.addEventListener('click', function() {
+          fetch("{% url 'programs:complete_session' session.pk %}", {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}',
+              'Accept': 'application/json',
+            },
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              let redirectUrl = null;
+              if (data.progress === 100) {
+                redirectUrl = "{% url 'programs:final_feedback' session.module.program.pk %}";
+              }
+              if (data.congratulation) {
+                showModalSuccess(data.congratulation, redirectUrl);
+              }
+              // Actualizar barra de progreso si existe
+              const progressBar = document.getElementById('program-progress-bar');
+              if (progressBar) {
+                progressBar.style.width = data.progress + '%';
+                progressBar.innerText = data.progress + '%';
+              }
+              btn.disabled = true;
+              btn.innerText = 'Completada';
+            } else {
+              alert(data.error || 'Error al marcar la sesión.');
+            }
+          });
+        });
+      }
+    });
+  </script>
+{% endblock %} 

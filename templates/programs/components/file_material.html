@@ -1,0 +1,12 @@
+{% if material.file %}
+<div class="w-full rounded-lg overflow-hidden mb-4">
+    <div class="flex items-center gap-2 mb-2">
+        <i class="fas fa-paperclip text-primary-400"></i>
+        <span class="font-semibold text-gray-900">{{ material.title }}</span>
+    </div>
+    <a href="{{ material.file.url }}" download class="inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 font-medium rounded hover:bg-primary-200 transition-colors duration-200">
+        <i class="fas fa-download mr-2"></i>
+        Descargar archivo
+    </a>
+</div>
+{% endif %} 

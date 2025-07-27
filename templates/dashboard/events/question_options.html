@@ -1,0 +1,259 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Gestionar Opciones</h1>
+            <p class="text-gray-600">{{ question.text }}</p>
+            <p class="text-sm text-gray-500">{{ survey.title }}</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'dashboard:survey_questions' survey.pk %}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <form method="post" id="options-form">
+            {% csrf_token %}
+            {{ formset.management_form }}
+            
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Opciones de la Pregunta</h3>
+                <p class="text-sm text-gray-600 mb-4">Agrega, edita o elimina las opciones de respuesta. Puedes arrastrar para reordenar.</p>
+            </div>
+
+            <div id="options-container" class="space-y-4">
+                {% for form in formset %}
+                <div class="option-item border border-gray-200 rounded-lg p-4 bg-gray-50" data-form-index="{{ forloop.counter0 }}">
+                    <div class="flex items-start justify-between mb-4">
+                        <h4 class="text-sm font-medium text-gray-700">Opción {{ forloop.counter }}</h4>
+                        <div class="flex items-center space-x-2">
+                            <button type="button" class="move-up text-gray-400 hover:text-gray-600" title="Mover arriba">
+                                <i class="fas fa-chevron-up"></i>
+                            </button>
+                            <button type="button" class="move-down text-gray-400 hover:text-gray-600" title="Mover abajo">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <button type="button" class="remove-option text-red-400 hover:text-red-600" title="Eliminar opción">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Option text -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Opción *
+                            </label>
+                            {{ form.text }}
+                            {% if form.text.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.text.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Order -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Orden *
+                            </label>
+                            {{ form.order }}
+                            {% if form.order.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.order.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Hidden fields -->
+                    {{ form.id }}
+                    <div style="display: none;">
+                        {{ form.DELETE }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Add option button -->
+            <div class="mt-6">
+                <button type="button" id="add-option" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>Agregar Opción
+                </button>
+            </div>
+
+            <!-- Form actions -->
+            <div class="flex justify-end space-x-3 pt-6 border-t mt-6">
+                <a href="{% url 'dashboard:survey_questions' survey.pk %}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors">
+                    Cancelar
+                </a>
+                <button type="submit" class="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                    <i class="fas fa-save mr-2"></i>Guardar Opciones
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Help section -->
+    <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-info-circle text-blue-400"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">Información Importante</h3>
+                <div class="mt-2 text-sm text-blue-700">
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>Las preguntas de opciones múltiples deben tener al menos 2 opciones</li>
+                        <li>El orden determina el orden de aparición de las opciones</li>
+                        <li>Puedes reordenar las opciones usando los botones de flecha</li>
+                        <li>Las opciones eliminadas no se mostrarán a los participantes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('options-container');
+    const addButton = document.getElementById('add-option');
+    const totalFormsInput = document.getElementById('id_options-TOTAL_FORMS');
+    let formIndex = {{ formset|length }};
+
+    // Add new option
+    addButton.addEventListener('click', function() {
+        const newForm = document.createElement('div');
+        newForm.className = 'option-item border border-gray-200 rounded-lg p-4 bg-gray-50';
+        newForm.setAttribute('data-form-index', formIndex);
+        
+        newForm.innerHTML = `
+            <div class="flex items-start justify-between mb-4">
+                <h4 class="text-sm font-medium text-gray-700">Opción ${formIndex + 1}</h4>
+                <div class="flex items-center space-x-2">
+                    <button type="button" class="move-up text-gray-400 hover:text-gray-600" title="Mover arriba">
+                        <i class="fas fa-chevron-up"></i>
+                    </button>
+                    <button type="button" class="move-down text-gray-400 hover:text-gray-600" title="Mover abajo">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <button type="button" class="remove-option text-red-400 hover:text-red-600" title="Eliminar opción">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Opción *
+                    </label>
+                    <input type="text" name="options-${formIndex}-text" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500" placeholder="Escribe la opción aquí...">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Orden *
+                    </label>
+                    <input type="number" name="options-${formIndex}-order" value="${formIndex + 1}" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
+                </div>
+            </div>
+
+            <input type="hidden" name="options-${formIndex}-id" value="">
+            <input type="hidden" name="options-${formIndex}-question" value="{{ question.pk }}">
+            <div style="display: none;">
+                <input type="checkbox" name="options-${formIndex}-DELETE" id="options-${formIndex}-DELETE">
+            </div>
+        `;
+        
+        container.appendChild(newForm);
+        formIndex++;
+        totalFormsInput.value = formIndex;
+        
+        // Add event listeners to new form
+        addFormEventListeners(newForm);
+    });
+
+    // Add event listeners to existing forms
+    document.querySelectorAll('.option-item').forEach(addFormEventListeners);
+
+    function addFormEventListeners(formElement) {
+        // Remove option
+        const removeBtn = formElement.querySelector('.remove-option');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+                const deleteCheckbox = formElement.querySelector('input[name*="-DELETE"]');
+                if (deleteCheckbox) {
+                    deleteCheckbox.checked = true;
+                    formElement.style.display = 'none';
+                } else {
+                    formElement.remove();
+                }
+            });
+        }
+
+        // Move up
+        const moveUpBtn = formElement.querySelector('.move-up');
+        if (moveUpBtn) {
+            moveUpBtn.addEventListener('click', function() {
+                const prevElement = formElement.previousElementSibling;
+                if (prevElement && prevElement.classList.contains('option-item')) {
+                    container.insertBefore(formElement, prevElement);
+                    updateOrderNumbers();
+                }
+            });
+        }
+
+        // Move down
+        const moveDownBtn = formElement.querySelector('.move-down');
+        if (moveDownBtn) {
+            moveDownBtn.addEventListener('click', function() {
+                const nextElement = formElement.nextElementSibling;
+                if (nextElement && nextElement.classList.contains('option-item')) {
+                    container.insertBefore(nextElement, formElement);
+                    updateOrderNumbers();
+                }
+            });
+        }
+    }
+
+    function updateOrderNumbers() {
+        const visibleItems = Array.from(container.querySelectorAll('.option-item')).filter(item => 
+            item.style.display !== 'none'
+        );
+        
+        visibleItems.forEach((item, index) => {
+            const title = item.querySelector('h4');
+            if (title) {
+                title.textContent = `Opción ${index + 1}`;
+            }
+            
+            const orderInput = item.querySelector('input[name*="-order"]');
+            if (orderInput) {
+                orderInput.value = index + 1;
+            }
+        });
+    }
+
+    // Form validation
+    const form = document.getElementById('options-form');
+    form.addEventListener('submit', function(e) {
+        const visibleOptions = Array.from(container.querySelectorAll('.option-item')).filter(item => 
+            item.style.display !== 'none'
+        );
+        
+        if (visibleOptions.length < 2) {
+            e.preventDefault();
+            alert('Las preguntas de opciones múltiples deben tener al menos 2 opciones.');
+            return false;
+        }
+    });
+});
+</script>
+{% endblock %} 

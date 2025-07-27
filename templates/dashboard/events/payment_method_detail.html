@@ -1,0 +1,225 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Page header -->
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">{{ payment_method.name }}</h1>
+            <p class="text-gray-600">Detalles del método de pago</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'dashboard:payment_method_update' payment_method.pk %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                <i class="fas fa-edit mr-2"></i>Editar
+            </a>
+            <button type="button" 
+                    data-delete-url="{% url 'dashboard:payment_method_delete' payment_method.pk %}"
+                    data-delete-title="Eliminar Método de Pago"
+                    data-delete-message="¿Estás seguro de que deseas eliminar el método de pago '{{ payment_method.name|escapejs }}'?"
+                    data-delete-warning="Esta acción es permanente y no se puede revertir. Los eventos que usen este método perderán esta opción de pago."
+                    data-delete-confirmation="false"
+                    data-delete-button-text="Eliminar Método"
+                    class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                <i class="fas fa-trash mr-2"></i>Eliminar
+            </button>
+        </div>
+    </div>
+
+    <!-- Payment method information -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main info -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex items-center mb-6">
+                    <div class="h-16 w-16 rounded-lg bg-green-100 flex items-center justify-center mr-4">
+                        <i class="fas fa-credit-card text-green-600 text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-gray-900">{{ payment_method.name }}</h2>
+                        <p class="text-gray-500">Método de pago</p>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Tipo</h3>
+                        <div class="mt-1">
+                            {% if payment_method.type == 'transfer' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    <i class="fas fa-university mr-1"></i>Transferencia Bancaria
+                                </span>
+                            {% elif payment_method.type == 'cash' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-money-bill mr-1"></i>Pago en Efectivo
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                    <i class="fas fa-external-link-alt mr-1"></i>Enlace Externo
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Estado</h3>
+                        <div class="mt-1">
+                            {% if payment_method.is_active %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-check-circle mr-1"></i>Activo
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    <i class="fas fa-times-circle mr-1"></i>Inactivo
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Instrucciones/Datos</h3>
+                        <div class="mt-1 p-3 bg-gray-50 rounded-lg">
+                            <p class="text-sm text-gray-900 whitespace-pre-wrap">{{ payment_method.instructions }}</p>
+                        </div>
+                    </div>
+
+                    {% if payment_method.external_link %}
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Enlace Externo</h3>
+                        <div class="mt-1">
+                            <a href="{{ payment_method.external_link }}" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm break-all">
+                                {{ payment_method.external_link }}
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Fecha de Creación</h3>
+                        <p class="mt-1 text-sm text-gray-900">{{ payment_method.created_at|date:"d/m/Y H:i" }}</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider">Última Actualización</h3>
+                        <p class="mt-1 text-sm text-gray-900">{{ payment_method.updated_at|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Estadísticas</h3>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-gray-500">Eventos que lo usan</span>
+                        <span class="text-2xl font-bold text-green-600">{{ events.count }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events using this payment method -->
+    <div class="mt-8">
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Eventos que usan este Método de Pago</h3>
+            </div>
+            
+            {% if events %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Evento</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modalidad</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for event in events %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        {% if event.featured_image %}
+                                            <img class="h-10 w-10 rounded-lg object-cover mr-3" src="{{ event.featured_image.url }}" alt="{{ event.title }}">
+                                        {% else %}
+                                            <div class="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center mr-3">
+                                                <i class="fas fa-calendar text-gray-400"></i>
+                                            </div>
+                                        {% endif %}
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900">{{ event.title }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if event.event_type == 'presential' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                            <i class="fas fa-map-marker-alt mr-1"></i>Presencial
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                            <i class="fas fa-video mr-1"></i>Online
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if event.modality == 'free' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-gift mr-1"></i>Gratis
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                                            <i class="fas fa-dollar-sign mr-1"></i>${{ event.price }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if event.status == 'published' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-check-circle mr-1"></i>Publicado
+                                        </span>
+                                    {% elif event.status == 'draft' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            <i class="fas fa-edit mr-1"></i>Borrador
+                                        </span>
+                                    {% elif event.status == 'finished' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                            <i class="fas fa-flag-checkered mr-1"></i>Finalizado
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            <i class="fas fa-times-circle mr-1"></i>Cancelado
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ event.start_date|date:"d/m/Y H:i" }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="{% url 'dashboard:event_detail' event.pk %}" class="text-primary-600 hover:text-primary-900">
+                                        Ver detalles
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-calendar-times text-gray-400 text-4xl mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No hay eventos usando este método</h3>
+                    <p class="text-gray-500">Los eventos que configuren este método de pago aparecerán aquí</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

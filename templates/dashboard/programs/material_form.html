@@ -1,0 +1,390 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Messages -->
+    {% include 'common/messages.html' %}
+    
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center mb-2 text-sm text-gray-500">
+                    <a href="{% url 'dashboard:program_detail' pk=session.module.program.pk %}" 
+                       class="hover:text-gray-700">
+                        {{ session.module.program.title }}
+                    </a>
+                    <span class="mx-2">/</span>
+                    <a href="{% url 'dashboard:module_detail' program_pk=session.module.program.pk pk=session.module.pk %}" 
+                       class="hover:text-gray-700">
+                        {{ session.module.title }}
+                    </a>
+                    <span class="mx-2">/</span>
+                    <a href="{% url 'dashboard:session_detail' module_pk=session.module.pk pk=session.pk %}" 
+                       class="hover:text-gray-700">
+                        {{ session.title }}
+                    </a>
+                    <span class="mx-2">/</span>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900">
+                    {% if form.instance.pk %}
+                        Editar Material
+                    {% else %}
+                        Crear Nuevo Material
+                    {% endif %}
+                </h1>
+                <p class="mt-2 text-sm text-gray-600">
+                    {% if form.instance.pk %}
+                        Modifica la información del material "{{ form.instance.title }}"
+                    {% else %}
+                        Define el contenido del nuevo material para la sesión "{{ session.title }}"
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'dashboard:session_detail' module_pk=session.module.pk pk=session.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Volver a la Sesión
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white shadow rounded-lg">
+        <form method="post" enctype="multipart/form-data" class="space-y-6 p-6" x-data="materialForm()">
+            {% csrf_token %}
+            
+            <!-- Tipo de Material -->
+            <div>
+                <label for="{{ form.type.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.type.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.type }}
+                </div>
+                {% if form.type.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.type.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Selecciona el tipo de contenido que vas a agregar a esta sesión.
+                </p>
+            </div>
+
+            <!-- Título -->
+            <div>
+                <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.title.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.title }}
+                </div>
+                {% if form.title.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.title.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Un título descriptivo para identificar este material.
+                </p>
+            </div>
+
+            <!-- Campos condicionales basados en el tipo -->
+            
+            <!-- Video URL -->
+            <div x-show="selectedType === 'video'" x-transition>
+                <label for="{{ form.video_url.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.video_url.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.video_url }}
+                </div>
+                {% if form.video_url.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.video_url.errors }}
+                    </div>
+                {% endif %}
+                <div class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-blue-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-blue-700">
+                                <strong>Recomendación de privacidad:</strong> Para mayor privacidad, usa videos "No listados" en YouTube o configuraciones similares en otras plataformas.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audio URL -->
+            <div x-show="selectedType === 'audio'" x-transition>
+                <label for="{{ form.audio_url.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.audio_url.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.audio_url }}
+                </div>
+                {% if form.audio_url.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.audio_url.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    URL del archivo de audio (MP3, WAV, etc.) o enlace a plataforma de audio.
+                </p>
+            </div>
+
+            <!-- Contenido de Lectura -->
+            <div x-show="selectedType === 'reading'" x-transition>
+                <label for="quill-editor" class="block text-sm font-medium text-gray-700">
+                    {{ form.reading_content.label }}
+                </label>
+                <div class="mt-1">
+                    <div id="quill-editor" class="bg-white border border-gray-300 rounded-lg" style="height: 300px;">
+                        {% if form.instance.reading_content %}
+                            {{ form.instance.reading_content|safe }}
+                        {% endif %}
+                    </div>
+                    <!-- Hidden textarea to store Quill content -->
+                    <div class="hidden">
+                        {{ form.reading_content }}
+                    </div>
+                </div>
+                {% if form.reading_content.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.reading_content.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Contenido de texto enriquecido que se mostrará al estudiante.
+                </p>
+            </div>
+
+            <!-- Archivo -->
+            <div x-show="selectedType === 'file'" x-transition>
+                <label for="{{ form.file.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.file.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.file }}
+                </div>
+                {% if form.file.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.file.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Archivo descargable (PDF, PPTX, imágenes, etc.). Tamaño máximo: 10MB.
+                </p>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                <a href="{% url 'dashboard:session_detail' module_pk=session.module.pk pk=session.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    Cancelar
+                </a>
+                <button type="submit" 
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-save mr-2"></i>
+                    {% if form.instance.pk %}
+                        Guardar Cambios
+                    {% else %}
+                        Crear Material
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Information Cards -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Material Types Info -->
+        <div class="bg-white shadow rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Tipos de Materiales</h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4 text-sm text-gray-600">
+                    <div class="flex items-start">
+                        <i class="fas fa-video text-red-500 mt-0.5 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">Video</p>
+                            <p>Videos de YouTube, Vimeo u otras plataformas. Se recomienda usar videos "No listados" para mayor privacidad.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-music text-green-500 mt-0.5 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">Audio</p>
+                            <p>Archivos de audio o enlaces a plataformas de audio como Spotify, SoundCloud, etc.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-book text-blue-500 mt-0.5 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">Lectura</p>
+                            <p>Contenido de texto enriquecido con formato, listas, enlaces y otros elementos.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-file-download text-purple-500 mt-0.5 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-gray-900">Archivo</p>
+                            <p>Documentos descargables como PDF, presentaciones, imágenes o cualquier archivo.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Best Practices -->
+        <div class="bg-white shadow rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Buenas Prácticas</h3>
+            </div>
+            <div class="p-6">
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3"></i>
+                        <span class="text-gray-600">Usa títulos descriptivos y claros para cada material</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3"></i>
+                        <span class="text-gray-600">Mantén los archivos bajo 10MB para mejor rendimiento</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3"></i>
+                        <span class="text-gray-600">Verifica que los enlaces externos funcionen correctamente</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-0.5 mr-3"></i>
+                        <span class="text-gray-600">Organiza los materiales en un orden lógico de aprendizaje</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Session Info -->
+    <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-play-circle text-blue-400"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">Sesión Actual</h3>
+                <div class="mt-2 text-sm text-blue-700">
+                    <p><strong>{{ session.title }}</strong></p>
+                    <p class="mt-1">Módulo: {{ session.module.title }}</p>
+                    <p class="mt-2 text-xs">
+                        <i class="fas fa-sort-numeric-up mr-1"></i>
+                        Orden: {{ session.order }} | 
+                        <i class="fas fa-layer-group mr-1"></i>
+                        Materiales: {{ session.materials.count }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Quill.js CSS -->
+<link href="{% static 'css/quill.snow.css' %}" rel="stylesheet">
+
+<!-- Quill.js JavaScript -->
+<script src="{% static 'js/quill.min.js' %}"></script>
+
+<script>
+let quill = null;
+
+function materialForm() {
+    return {
+        selectedType: '{{ form.type.value|default:"video" }}',
+        init() {
+            // Inicializar con el valor actual del formulario
+            this.selectedType = '{{ form.type.value|default:"video" }}';
+            
+            // Inicializar Quill si el tipo es reading
+            this.$watch('selectedType', (value) => {
+                if (value === 'reading') {
+                    this.$nextTick(() => {
+                        initQuill();
+                    });
+                }
+            });
+            
+            // Inicializar Quill inmediatamente si ya es reading
+            if (this.selectedType === 'reading') {
+                this.$nextTick(() => {
+                    initQuill();
+                });
+            }
+        }
+    }
+}
+
+function initQuill() {
+    // Destruir instancia anterior si existe
+    if (quill) {
+        quill.destroy();
+        quill = null;
+    }
+    
+    // Verificar que el elemento existe
+    const editorElement = document.getElementById('quill-editor');
+    if (!editorElement) {
+        console.warn('Quill editor element not found');
+        return;
+    }
+    
+    // Initialize Quill editor
+    quill = new Quill('#quill-editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                [{ 'header': [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'align': [] }],
+                ['link', 'blockquote', 'code-block'],
+                ['clean']
+            ]
+        },
+        placeholder: 'Escribe el contenido de la lectura aquí...'
+    });
+    
+    // Update hidden textarea with Quill content
+    quill.on('text-change', () => {
+        const textarea = document.getElementById('{{ form.reading_content.id_for_label }}');
+        if (textarea) {
+            textarea.value = quill.root.innerHTML;
+        }
+    });
+}
+
+// Update hidden textarea with Quill content before form submission
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const quillEditor = document.getElementById('quill-editor');
+            const textarea = document.getElementById('{{ form.reading_content.id_for_label }}');
+            
+            if (quillEditor && textarea && quill) {
+                textarea.value = quill.root.innerHTML;
+            }
+        });
+    }
+});
+</script>
+{% endblock %} 

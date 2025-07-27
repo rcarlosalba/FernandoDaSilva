@@ -1,0 +1,155 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <!-- Messages -->
+    {% include 'common/messages.html' %}
+    
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">
+                    {% if form.instance.pk %}
+                        Editar Asignación
+                    {% else %}
+                        Nueva Asignación
+                    {% endif %}
+                </h1>
+                <p class="mt-2 text-sm text-gray-600">
+                    {% if form.instance.pk %}
+                        Modifica la asignación de estudiante a programa
+                    {% else %}
+                        Asigna un estudiante a un programa para iniciar su recorrido de aprendizaje
+                    {% endif %}
+                </p>
+            </div>
+            <div>
+                <a href="{% url 'dashboard:assignment_list' %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Volver a la Lista
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white shadow rounded-lg">
+        <form method="post" class="space-y-6 p-6">
+            {% csrf_token %}
+            
+            <!-- Estudiante -->
+            <div>
+                <label for="{{ form.student.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.student.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.student }}
+                </div>
+                {% if form.student.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.student.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Selecciona el estudiante que deseas asignar a un programa.
+                </p>
+            </div>
+
+            <!-- Programa -->
+            <div>
+                <label for="{{ form.program.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.program.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.program }}
+                </div>
+                {% if form.program.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.program.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Elige el programa al que se inscribirá el estudiante.
+                </p>
+            </div>
+
+            <!-- Estado -->
+            <div>
+                <label for="{{ form.status.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.status.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.status }}
+                </div>
+                {% if form.status.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.status.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Define el estado inicial de la asignación (activo, completado, pausado).
+                </p>
+            </div>
+
+            <!-- Porcentaje de progreso (solo edición) -->
+            {% if form.instance.pk %}
+            <div>
+                <label for="{{ form.progress_percentage.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.progress_percentage.label }}
+                </label>
+                <div class="mt-1">
+                    {{ form.progress_percentage }}
+                </div>
+                {% if form.progress_percentage.errors %}
+                    <div class="mt-2 text-sm text-red-600">
+                        {{ form.progress_percentage.errors }}
+                    </div>
+                {% endif %}
+                <p class="mt-2 text-sm text-gray-500">
+                    Puedes ajustar manualmente el progreso si es necesario (0 a 100%).
+                </p>
+            </div>
+            {% endif %}
+
+            <!-- Botones de acción -->
+            <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                <a href="{% url 'dashboard:assignment_list' %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    Cancelar
+                </a>
+                <button type="submit" 
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-save mr-2"></i>
+                    {% if form.instance.pk %}
+                        Guardar Cambios
+                    {% else %}
+                        Crear Asignación
+                    {% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Info Card -->
+    <div class="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <i class="fas fa-info-circle text-blue-400"></i>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">¿Cómo funciona la asignación?</h3>
+                <div class="mt-2 text-sm text-blue-700">
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Un estudiante solo puede estar asignado una vez a cada programa.</li>
+                        <li>Al crear la asignación, el estudiante recibirá un correo de bienvenida.</li>
+                        <li>El progreso se actualiza automáticamente según las sesiones completadas.</li>
+                        <li>Solo los managers pueden modificar el estado y el progreso manualmente.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

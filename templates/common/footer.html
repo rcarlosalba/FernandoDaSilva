@@ -5,7 +5,7 @@
             
             <!-- About Section -->
             <div>
-                <h3 class="title-subsection text-background-cream mb-4">Fernando da Silva</h3>
+                <h3 class="title-subsection text-background-cream mb-4">Fernando Da Silva</h3>
                 <p class="text-body text-neutral-300 mb-4">
                     Consultor Filosófico dedicado al acompañamiento de personas en crisis existenciales y búsquedas de sentido.
                 </p>
@@ -27,10 +27,10 @@
             <div>
                 <h4 class="title-subsection text-background-cream mb-4">Enlaces Rápidos</h4>
                 <ul class="space-y-2">
-                    <li><a href="#" class="text-body text-neutral-300 hover:text-primary-300 transition-colors duration-300">Programa CAMINO</a></li>
-                    <li><a href="#" class="text-body text-neutral-300 hover:text-primary-300 transition-colors duration-300">Sesiones Individuales</a></li>
-                    <li><a href="#" class="text-body text-neutral-300 hover:text-primary-300 transition-colors duration-300">Recursos Gratuitos</a></li>
-                    <li><a href="#" class="text-body text-neutral-300 hover:text-primary-300 transition-colors duration-300">Testimonios</a></li>
+                    <li><a href="{% url 'public:services' %}" class="text-body text-neutral-300 hover:text-primary-300 transition-colors duration-300">Programa CAMINO</a></li>
+                    <li><a href="{% url 'blog:post_list' %}" class="text-body text-neutral-300 hover:text-primary-300 transition-colors duration-300">Recursos Gratuitos</a></li>
+                    <li><a href="{% url 'public:testimonials' %}" class="text-body text-neutral-300 hover:text-primary-300 transition-colors duration-300">Testimonios</a></li>
+                    <li><a href="{% url 'events:event_list' %}" class="text-body text-neutral-300 hover:text-primary-300 transition-colors duration-300">Eventos</a></li>
                 </ul>
             </div>
             
@@ -40,7 +40,7 @@
                 <div class="space-y-2">
                     <p class="text-body text-neutral-300">Corrientes, Argentina</p>
                     <p class="text-body text-neutral-300">fernando@example.com</p>
-                    <a href="#" class="btn-secondary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300 inline-block mt-4">
+                    <a href="https://calendly.com/proffernandodasilva/30min" class="btn-secondary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300 inline-block mt-4">
                         Agendar Consulta
                     </a>
                 </div>
@@ -50,7 +50,7 @@
         <!-- Copyright -->
         <div class="border-t border-neutral-700 mt-8 pt-8 text-center">
             <p class="text-small text-neutral-400">
-                © {% now "Y" %} Fernando da Silva. Todos los derechos reservados.
+                © {% now "Y" %} Fernando Da Silva. Todos los derechos reservados.
             </p>
         </div>
     </div>

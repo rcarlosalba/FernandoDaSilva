@@ -1,0 +1,154 @@
+---
+description: Conjunto de reglas para el desarrollo de aplicaciones Django. Prioriza el uso de "The Django Way", la seguridad, el rendimiento y la mantenibilidad, siguiendo una estructura de proyecto y patrones de código específicos.
+globs: "**/*.py"
+---
+
+# Reglas de Desarrollo para Django
+
+**Objetivo principal:** Generar código Django que sea idiomático, seguro, de alto rendimiento y fácil de mantener, adhiriéndose estrictamente a los patrones y la estructura definidos en este documento.
+
+## Principios Fundamentales
+
+1.  **"The Django Way":** Prioriza siempre el uso de las herramientas y patrones nativos de Django (ORM, Forms, Vistas Basadas en Clases/Funciones, Templates, Signals, etc.) antes de recurrir a librerías de terceros o lógica personalizada compleja para funcionalidades que Django ya resuelve de forma nativa.
+2.  **Minimalismo Estricto (No "Gold Plating"):** Genera **única y exclusivamente** el código solicitado en el prompt. No añadas funcionalidades, archivos, abstracciones o complejidad no solicitada (como paginación, búsqueda, etc.) bajo la suposición de que "podría ser útil". La solución debe ser la más simple y directa para el requerimiento explícito.
+3.  **Claridad y PEP 8:** Todo el código Python generado debe cumplir estrictamente con el estándar **PEP 8**. Los nombres de variables, funciones y clases deben ser descriptivos en inglés. Todas las funciones y clases deben incluir `docstrings` claros y concisos.
+
+---
+
+## 1. Estructura del Proyecto y Código
+
+Se seguirá una estructura de proyecto específica y consistente.
+
+-   **Proyecto Principal:** El proyecto se crea como `django-admin startproject core .`.
+-   **Configuración (Settings):** El archivo `core/settings.py` es reemplazado por un directorio `settings/` dentro de core. Este contiene:
+    -   `base.py`: Configuraciones comunes.
+    -   `local.py`: Configuraciones de desarrollo (importa de `base.py`).
+    -   `production.py`: Configuraciones de producción (importa de `base.py`).
+    -   Los archivos `manage.py`, `asgi.py` y `wsgi.py` se ajustan para apuntar por defecto a `settings.local`.
+-   **Nomenclatura:**
+    -   Clases: `PascalCase` (e.g., `UserProfile`).
+    -   Funciones y variables: `snake_case` (e.g., `get_user_profile`).
+-   **Estructura de Directorios de Referencia:**
+    ```
+    /
+    ├── proyecto/                 # Contenedor para todas las apps de Django
+    │   ├── accounts/
+    │   │   ├── migrations/
+    │   │   ├── tests/        # Pruebas de la app 'accounts' aquí.
+    │   │   ├── __init__.py
+    │   │   ├── models.py
+    │   │   └── views.py
+    │   └── products/
+    ├── constants/
+    │   └── constant.py       # Único lugar para constantes globales.
+    ├── core/                 # App núcleo del proyecto
+    ├── settings/
+    │   ├── __init__.py
+    │   ├── base.py
+    │   ├── local.py
+    │   └── production.py
+    ├── static/
+    ├── templates/            # Templates a nivel de proyecto
+    ├── .env
+    └── manage.py
+    ```
+
+## 2. Modelos y ORM
+
+El ORM de Django es la única forma de interactuar con la base de datos, salvo casos excepcionales.
+
+-   **Anti-Patrón N+1 (Regla Crítica de Rendimiento):** **NUNCA** realices consultas a la base de datos dentro de un bucle. Utiliza `select_related` (para relaciones `ForeignKey` y `OneToOne`) y `prefetch_related` (para relaciones `ManyToManyField` y `ForeignKey` inversas) para obtener todos los datos necesarios en una consulta optimizada.
+
+    -   ❌ **INCORRECTO (genera múltiples queries):**
+        ```python
+        # for author in Author.objects.all():
+        #     # Causa una nueva consulta a la DB por cada autor en el bucle
+        #     books = author.book_set.all()
+        ```
+    -   ✅ **CORRECTO (optimizado):**
+        ```python
+        # for author in Author.objects.prefetch_related('book_set'):
+        #     # Utiliza los datos ya precargados, sin nuevas consultas
+        #     books = author.book_set.all()
+        ```
+-   **Modelos "Ligeros" (Thin Models):** La lógica de negocio compleja no debe residir en los métodos de los modelos. Prefiere ubicarla en **vistas**, **managers de modelo personalizados** o **clases de servicio** dedicadas para mantener los modelos enfocados en la representación de datos.
+-   **Managers Personalizados:** Utiliza managers de modelo personalizados para encapsular consultas complejas o de uso frecuente.
+    ```python
+    # models.py
+    class PublishedPostManager(models.Manager):
+        def get_queryset(self):
+            return super().get_queryset().filter(status='published')
+
+    class Post(models.Model):
+        # ... fields
+        objects = models.Manager() # El manager por defecto
+        published = PublishedPostManager() # Manager personalizado
+    ```
+
+## 3. Vistas y Lógica de Negocio
+
+La lógica debe estar claramente separada de la capa de presentación.
+
+-   **Anti-Patrón: Lógica en Templates:** **NUNCA** coloques lógica de negocio, cálculos o condiciones complejas en los templates de Django. Pre-procesa los datos en la vista y pasa al template solo los valores o booleanos necesarios para la renderización.
+
+    -   ❌ **INCORRECTO (lógica en el template):**
+        ```html
+        <!-- {% if user.is_authenticated and user.is_staff and order.total > 100 %} -->
+        ```
+    -   ✅ **CORRECTO (lógica en la vista):**
+        ```python
+        # views.py
+        def order_detail(request, order_id):
+            order = get_object_or_404(Order, pk=order_id)
+            # La lógica se resuelve aquí
+            can_see_discount = request.user.is_authenticated and request.user.is_staff and order.total > 100
+            context = {
+                'order': order,
+                'can_see_discount': can_see_discount,
+            }
+            return render(request, 'orders/order_detail.html', context)
+        ```
+
+## 4. Seguridad (Reglas Inquebrantables)
+
+La seguridad no es opcional.
+
+1.  **Anti-Patrón: Secretos en el Código:** **NUNCA** escribas claves secretas, contraseñas de API o cualquier credencial directamente en el código (`settings.py` u otro).
+    -   ✅ **SIEMPRE** utiliza la librería `python-decouple` para leer estas variables desde un archivo `.env` (que no se incluye en Git).
+        ```python
+        # settings/base.py (CORRECTO)
+        from decouple import config
+
+        SECRET_KEY = config("DJANGO_SECRET_KEY")
+        DATABASE_PASSWORD = config("DATABASE_PASSWORD")
+        ```
+2.  **Protección CSRF:** **NUNCA** olvides incluir la etiqueta `{% csrf_token %}` dentro de cualquier formulario (`<form>`) que envíe datos mediante el método `POST`. Es obligatorio.
+3.  **Validación de Entradas:** **SIEMPRE** utiliza **Django Forms** para manejar, validar y limpiar los datos enviados por el usuario. Esto proporciona una capa robusta de seguridad contra ataques como XSS e inyección de datos.
+4.  **Uso de `mark_safe`:** Utiliza `mark_safe` con **extremo cuidado** y solo cuando el contenido proviene de una fuente 100% segura y controlada. Su uso incorrecto es una puerta de entrada directa a vulnerabilidades XSS. Por defecto, deja que el sistema de templates de Django escape todo el contenido.
+
+## 5. Pruebas
+
+Las pruebas garantizan la fiabilidad del código.
+
+-   **Framework de Pruebas:** El único framework a utilizar es **`pytest`** junto con `pytest-django`.
+-   **Ubicación de las Pruebas:** Todas las pruebas para una aplicación deben residir dentro del directorio `tests/` de dicha aplicación (ej. `apps/accounts/tests/`).
+-   **Enfoque:** Escribe pruebas unitarias claras y enfocadas que prueben una sola cosa. Utiliza mocks para aislar dependencias externas.
+
+## 6. Constantes
+
+La gestión de valores fijos debe estar centralizada.
+
+-   **Ubicación:** Todas las constantes globales o de aplicación se definirán en el archivo `constants/constant.py`.
+-   **Nomenclatura:** Las constantes deben usar `UPPER_SNAKE_CASE` (e.g., `MAX_LOGIN_ATTEMPTS = 5`).
+
+---
+
+### ✅ Checklist de Verificación para el LLM (Antes de Generar Respuesta)
+
+Antes de finalizar tu respuesta, verifica mentalmente estos puntos:
+
+1.  **Enfoque y Minimalismo:** ¿Mi respuesta se limita *estrictamente* a lo solicitado? ¿He evitado añadir código o funcionalidades extra ("gold plating")?
+2.  **ORM y Rendimiento:** ¿He usado el ORM? ¿He aplicado `select_related`/`prefetch_related` para evitar problemas N+1 si aplica?
+3.  **Seguridad:** ¿Hay un `{% csrf_token %}` en los formularios POST? ¿Hay secretos hardcodeados? ¿Se usa Django Forms para la validación?
+4.  **Estructura y Estilo:** ¿El código sigue la estructura de proyecto definida? ¿Cumple con PEP 8 y la nomenclatura correcta?
+5.  **Lógica:** ¿La lógica de negocio está en las vistas/managers y no en los templates?

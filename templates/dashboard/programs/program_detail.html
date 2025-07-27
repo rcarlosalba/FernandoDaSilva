@@ -1,0 +1,254 @@
+{% extends 'dashboard/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Messages -->
+    {% include 'common/messages.html' %}
+    
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center">
+                {% if program.cover_image %}
+                    <img class="h-16 w-16 rounded-lg object-cover mr-4" src="{{ program.cover_image.url }}" alt="{{ program.title }}">
+                {% else %}
+                    <div class="h-16 w-16 rounded-lg bg-gray-200 flex items-center justify-center mr-4">
+                        <i class="fas fa-graduation-cap text-gray-400 text-xl"></i>
+                    </div>
+                {% endif %}
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">{{ program.title }}</h1>
+                    <p class="mt-1 text-sm text-gray-600">{{ program.description }}</p>
+                </div>
+            </div>
+            <div class="mt-4 sm:mt-0 flex space-x-3">
+                <a href="{% url 'dashboard:program_update' pk=program.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-edit mr-2"></i>
+                    Editar Programa
+                </a>
+                <a href="{% url 'dashboard:program_list' %}" 
+                   class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Volver
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-book text-2xl text-blue-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Total Módulos</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ program.modules.count }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-play-circle text-2xl text-green-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Total Sesiones</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ program.total_sessions }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-users text-2xl text-purple-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Estudiantes Asignados</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ program.assignments.count }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <i class="fas fa-clipboard-check text-2xl text-orange-600"></i>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Evaluación Final</dt>
+                            <dd class="text-lg font-medium text-gray-900">
+                                {% if program.final_feedback %}
+                                    <span class="text-green-600">Configurada</span>
+                                {% else %}
+                                    <span class="text-red-600">Pendiente</span>
+                                {% endif %}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modules Section -->
+    <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-medium text-gray-900">Módulos del Programa</h2>
+                <a href="{% url 'dashboard:module_create' program_pk=program.pk %}" 
+                   class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-plus mr-2"></i>
+                    Agregar Módulo
+                </a>
+            </div>
+        </div>
+
+        {% if program.modules.all %}
+            <div class="divide-y divide-gray-200">
+                {% for module in program.modules.all %}
+                <div class="px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <span class="text-sm font-medium text-blue-600">{{ module.order }}</span>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-medium text-gray-900">
+                                    <a href="{% url 'dashboard:module_detail' program_pk=program.pk pk=module.pk %}" class="hover:text-primary-600">
+                                        {{ module.title }}
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-500 mt-1">{{ module.description|truncatewords:15 }}</p>
+                                <div class="flex items-center mt-2 text-sm text-gray-500">
+                                    <i class="fas fa-play-circle mr-1"></i>
+                                    <span>{{ module.sessions.count }} sesiones</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <a href="{% url 'dashboard:module_detail' program_pk=program.pk pk=module.pk %}" 
+                               class="text-primary-600 hover:text-primary-900 text-sm font-medium">
+                                Ver Detalles
+                            </a>
+                            <a href="{% url 'dashboard:module_update' program_pk=program.pk pk=module.pk %}" 
+                               class="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                                Editar
+                            </a>
+                            <button data-delete-url="{% url 'dashboard:module_delete' program_pk=program.pk pk=module.pk %}"
+                                    data-delete-title="Eliminar Módulo"
+                                    data-delete-message="¿Estás seguro de que deseas eliminar el módulo '{{ module.title }}'? Esta acción eliminará también todas sus sesiones y materiales."
+                                    class="text-red-600 hover:text-red-900 text-sm font-medium">
+                                Eliminar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-12">
+                <i class="fas fa-book text-4xl text-gray-300 mb-4"></i>
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No hay módulos creados</h3>
+                <p class="text-gray-500 mb-6">Comienza agregando el primer módulo al programa.</p>
+                <a href="{% url 'dashboard:module_create' program_pk=program.pk %}" 
+                   class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    <i class="fas fa-plus mr-2"></i>
+                    Crear Primer Módulo
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Final Feedback Section -->
+        <div class="bg-white shadow rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Evaluación Final</h3>
+            </div>
+            <div class="p-6">
+                {% if program.final_feedback %}
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-900">{{ program.final_feedback.title }}</h4>
+                            <p class="text-sm text-gray-500 mt-1">{{ program.final_feedback.description|truncatewords:10 }}</p>
+                        </div>
+                        <a href="{% url 'dashboard:final_feedback_detail' pk=program.final_feedback.pk %}" 
+                           class="text-primary-600 hover:text-primary-900 text-sm font-medium">
+                            Ver Detalles
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="text-center">
+                        <i class="fas fa-clipboard-list text-3xl text-gray-300 mb-3"></i>
+                        <p class="text-sm text-gray-500 mb-4">No hay evaluación final configurada</p>
+                        <a href="{% url 'dashboard:final_feedback_create' %}" 
+                           class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                            <i class="fas fa-plus mr-2"></i>
+                            Crear Evaluación
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Assignments Section (Manager only) -->
+        {% if user.role == 'manager' %}
+        <div class="bg-white shadow rounded-lg">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900">Asignaciones</h3>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm text-gray-500">{{ program.assignments.count }} estudiantes asignados</span>
+                    <a href="{% url 'dashboard:assignment_create' %}" 
+                       class="text-primary-600 hover:text-primary-900 text-sm font-medium">
+                        <i class="fas fa-plus mr-1"></i>
+                        Asignar Estudiantes
+                    </a>
+                </div>
+                {% if program.assignments.all %}
+                    <div class="space-y-2">
+                        {% for assignment in program.assignments.all|slice:":3" %}
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-900">{{ assignment.student.get_full_name }}</span>
+                            <span class="text-gray-500">{{ assignment.progress }}%</span>
+                        </div>
+                        {% endfor %}
+                        {% if program.assignments.count > 3 %}
+                            <p class="text-xs text-gray-500 text-center">Y {{ program.assignments.count|add:"-3" }} más...</p>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="text-sm text-gray-500 text-center">No hay estudiantes asignados</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal de eliminación -->
+{% include 'common/modal_delete.html' %}
+{% endblock %} 
