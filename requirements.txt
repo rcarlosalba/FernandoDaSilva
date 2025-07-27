@@ -13,3 +13,4 @@ six==1.17.0
 sqlparse==0.5.3
 types-python-dateutil==2.9.0.20250708
 wcwidth==0.2.13
+mysqlclient==2.2.4
