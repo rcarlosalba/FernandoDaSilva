@@ -1,0 +1,8 @@
+.django-ckeditor-5 {
+    width: 100%;
+    min-height: 400px;
+}
+
+.ck-editor__editable {
+    min-height: 400px;
+}
