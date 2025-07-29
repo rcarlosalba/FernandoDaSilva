@@ -47,7 +47,7 @@ def newsletter_create(request):
             newsletter = form.save()
             messages.success(
                 request, f'Newsletter "{newsletter.title}" creado exitosamente.')
-            return redirect('newsletter:list')
+            return redirect('dashboard:list_newsletter')
     else:
         form = NewsletterForm()
 
@@ -68,7 +68,7 @@ def newsletter_edit(request, pk):
 
     if not newsletter.can_edit():
         messages.error(request, 'Este newsletter no puede ser editado.')
-        return redirect('newsletter:list')
+        return redirect('dashboard:list_newsletter')
 
     if request.method == 'POST':
         form = NewsletterForm(request.POST, instance=newsletter)
@@ -76,7 +76,7 @@ def newsletter_edit(request, pk):
             newsletter = form.save()
             messages.success(
                 request, f'Newsletter "{newsletter.title}" actualizado exitosamente.')
-            return redirect('newsletter:list')
+            return redirect('dashboard:list_newsletter')
     else:
         form = NewsletterForm(instance=newsletter)
 
@@ -98,14 +98,14 @@ def newsletter_delete(request, pk):
 
     if not newsletter.can_delete():
         messages.error(request, 'Este newsletter no puede ser eliminado.')
-        return redirect('newsletter:list')
+        return redirect('dashboard:list_newsletter')
 
     if request.method == 'POST':
         title = newsletter.title
         newsletter.delete()
         messages.success(
             request, f'Newsletter "{title}" eliminado exitosamente.')
-        return redirect('newsletter:list')
+        return redirect('dashboard:list_newsletter')
 
     context = {
         'newsletter': newsletter,
@@ -138,7 +138,7 @@ def newsletter_send(request, pk):
 
     if not newsletter.can_send():
         messages.error(request, 'Este newsletter no puede ser enviado.')
-        return redirect('newsletter:list')
+        return redirect('dashboard:list_newsletter')
 
     if request.method == 'POST':
         # Update status to sending
@@ -155,7 +155,7 @@ def newsletter_send(request, pk):
 
         messages.success(
             request, f'Newsletter "{newsletter.title}" está siendo enviado. Se te notificará cuando se complete.')
-        return redirect('newsletter:list')
+        return redirect('dashboard:list_newsletter')
 
     subscriber_count = Subscriber.objects.filter(is_subscribed=True).count()
 
