@@ -4,23 +4,24 @@ from django.contrib.auth.views import (
     LoginView
 )
 from django.contrib import messages
-from django.core.signing import BadSignature, SignatureExpired, Signer
+from django.core.signing import BadSignature, SignatureExpired, Signer, TimestampSigner
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, DetailView, TemplateView, UpdateView
+from django.views.generic import CreateView, DeleteView, DetailView, TemplateView, UpdateView, FormView
 from django.views import View
+from django.utils import timezone
 
 from constants.constant import UserRoles
 from .forms import (
     CompleteProfileForm,
     LoginForm,
+    PasswordResetConfirmForm,
+    PasswordResetRequestForm,
     ProfileEditForm,
     SubscriberRegistrationForm,
 )
-from .utils import send_welcome_subscriber_email, send_welcome_member_email, send_account_deactivation_email
+from .utils import send_welcome_subscriber_email, send_welcome_member_email, send_account_deactivation_email, send_password_reset_email
 from .models import Profile, User
-
-# TODO: Implement email sending for registration and password reset.
 
 
 class SubscriberRegistrationView(CreateView):
@@ -197,3 +198,90 @@ class CustomLogoutView(View):
             messages.success(
                 request, f'Has cerrado sesión correctamente. ¡Esperamos verte pronto!')
         return redirect('public:index')
+
+
+class PasswordResetRequestView(FormView):
+    """
+    Vista para solicitar el restablecimiento de contraseña.
+    """
+    
+    form_class = PasswordResetRequestForm
+    template_name = "accounts/password/password_reset_request.html"
+    success_url = reverse_lazy("accounts:password_reset_sent")
+    
+    def form_valid(self, form):
+        """
+        Envía el email de restablecimiento de contraseña.
+        """
+        email = form.cleaned_data["email"]
+        user = User.objects.get(email=email, is_active=True)
+        send_password_reset_email(user.email, user.pk, self.request)
+        return super().form_valid(form)
+
+
+class PasswordResetSentView(TemplateView):
+    """
+    Vista de confirmación después de enviar el email de reset.
+    """
+    
+    template_name = "accounts/password/password_reset_sent.html"
+
+
+class PasswordResetConfirmView(FormView):
+    """
+    Vista para confirmar el restablecimiento de contraseña con token.
+    """
+    
+    form_class = PasswordResetConfirmForm
+    template_name = "accounts/password/password_reset_confirm.html"
+    success_url = reverse_lazy("accounts:password_reset_complete")
+    
+    def get_user(self):
+        """
+        Obtiene el usuario basado en el token firmado.
+        """
+        signed_user_id = self.kwargs.get("signed_user_id")
+        signer = TimestampSigner()
+        try:
+            # Verificar que el token no haya expirado (3 horas = 10800 segundos)
+            user_id = signer.unsign(signed_user_id, max_age=10800)
+            return get_object_or_404(User, pk=user_id, is_active=True)
+        except (BadSignature, SignatureExpired):
+            return None
+    
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Verifica la validez del token antes de procesar la vista.
+        """
+        self.user = self.get_user()
+        if not self.user:
+            messages.error(request, "El enlace de restablecimiento es inválido o ha expirado.")
+            return redirect("accounts:password_reset_request")
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get_form(self, form_class=None):
+        """
+        Pasa el usuario al formulario.
+        """
+        if form_class is None:
+            form_class = self.get_form_class()
+        return form_class(user=self.user, **self.get_form_kwargs())
+    
+    def form_valid(self, form):
+        """
+        Guarda la nueva contraseña y muestra mensaje de éxito.
+        """
+        form.save()
+        messages.success(
+            self.request, 
+            "Tu contraseña ha sido restablecida exitosamente. Ya puedes iniciar sesión con tu nueva contraseña."
+        )
+        return super().form_valid(form)
+
+
+class PasswordResetCompleteView(TemplateView):
+    """
+    Vista de confirmación después de completar el restablecimiento.
+    """
+    
+    template_name = "accounts/password/password_reset_complete.html"

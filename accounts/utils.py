@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.utils.html import strip_tags
 from django.urls import reverse
-from django.core.signing import Signer
+from django.core.signing import Signer, TimestampSigner
 
 
 def send_email_notification(email_type, recipient_email, context=None, request=None):
@@ -53,7 +53,13 @@ def send_email_notification(email_type, recipient_email, context=None, request=N
 
     # Generate signed URL if required
     if config['requires_signed_url'] and 'user_id' in context and request:
-        signer = Signer()
+        if email_type == 'password_reset':
+            # Use TimestampSigner for password reset (expires in 3 hours)
+            signer = TimestampSigner()
+        else:
+            # Use regular Signer for other types
+            signer = Signer()
+        
         signed_user_id = signer.sign(context['user_id'])
 
         if email_type == 'welcome_subscriber':
@@ -122,4 +128,16 @@ def send_account_deactivation_email(recipient_email):
     return send_email_notification(
         email_type='account_deactivation',
         recipient_email=recipient_email
+    )
+
+
+def send_password_reset_email(recipient_email, user_id, request):
+    """
+    Convenience function for sending password reset email with timestamp token.
+    """
+    return send_email_notification(
+        email_type='password_reset',
+        recipient_email=recipient_email,
+        context={'user_id': user_id},
+        request=request
     )

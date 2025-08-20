@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, SetPasswordForm
 from django.core.exceptions import ValidationError
 
 from constants.form_styles import BASE_INPUT, PASSWORD_INPUT, SEARCH_INPUT, BASE_TEXTAREA, FILE_INPUT
@@ -145,3 +145,51 @@ class CustomPasswordChangeForm(PasswordChangeForm):
             field.widget.attrs.update({
                 'class': BASE_INPUT
             })
+
+
+class PasswordResetRequestForm(forms.Form):
+    """
+    Formulario para solicitar el restablecimiento de contraseña.
+    """
+    
+    email = forms.EmailField(
+        label="Correo Electrónico",
+        widget=forms.EmailInput(attrs={
+            "placeholder": "tu@correo.com",
+            "class": SEARCH_INPUT,
+            "autofocus": True
+        })
+    )
+    
+    def clean_email(self):
+        """
+        Valida que el email existe en el sistema.
+        """
+        email = self.cleaned_data.get("email")
+        if not User.objects.filter(email=email, is_active=True).exists():
+            raise ValidationError("No existe una cuenta activa con este correo electrónico.")
+        return email
+
+
+class PasswordResetConfirmForm(SetPasswordForm):
+    """
+    Formulario para confirmar el nuevo password después del reset.
+    """
+    
+    new_password1 = forms.CharField(
+        label="Nueva Contraseña",
+        widget=forms.PasswordInput(attrs={
+            "placeholder": "Ingresa tu nueva contraseña",
+            "class": SEARCH_INPUT,
+            "autocomplete": "new-password"
+        })
+    )
+    
+    new_password2 = forms.CharField(
+        label="Confirmar Nueva Contraseña",
+        widget=forms.PasswordInput(attrs={
+            "placeholder": "Confirma tu nueva contraseña",
+            "class": SEARCH_INPUT,
+            "autocomplete": "new-password"
+        })
+    )

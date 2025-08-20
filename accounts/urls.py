@@ -7,6 +7,10 @@ from .views import (
     CompleteProfileView,
     CustomLoginView,
     CustomLogoutView,
+    PasswordResetCompleteView,
+    PasswordResetConfirmView,
+    PasswordResetRequestView,
+    PasswordResetSentView,
     ProfileEditView,
     ProfileView,
     RegistrationDoneView,
@@ -60,37 +64,25 @@ urlpatterns = [
         ),
         name="password_change_done",
     ),
-    # Password Reset
+    # Password Reset - Custom Implementation
     path(
         "restablecer-contrasena/",
-        auth_views.PasswordResetView.as_view(
-            template_name="accounts/password/password_reset_form.html",
-            email_template_name="accounts/email/password_reset_email.html",
-            subject_template_name="accounts/email/password_reset_subject.txt",
-            success_url="/cuentas/restablecer-contrasena/enviado/",
-        ),
-        name="password_reset",
+        PasswordResetRequestView.as_view(),
+        name="password_reset_request",
     ),
     path(
         "restablecer-contrasena/enviado/",
-        auth_views.PasswordResetDoneView.as_view(
-            template_name="accounts/password/password_reset_done.html"
-        ),
-        name="password_reset_done",
+        PasswordResetSentView.as_view(),
+        name="password_reset_sent",
     ),
     path(
-        "restablecer-contrasena/<uidb64>/<token>/",
-        auth_views.PasswordResetConfirmView.as_view(
-            template_name="accounts/password/password_reset_confirm.html",
-            success_url="/cuentas/restablecer-contrasena/completo/",
-        ),
+        "restablecer-contrasena/confirmar/<str:signed_user_id>/",
+        PasswordResetConfirmView.as_view(),
         name="password_reset_confirm",
     ),
     path(
         "restablecer-contrasena/completo/",
-        auth_views.PasswordResetCompleteView.as_view(
-            template_name="accounts/password/password_reset_complete.html"
-        ),
+        PasswordResetCompleteView.as_view(),
         name="password_reset_complete",
     ),
 ]
