@@ -23,7 +23,7 @@
                 <a href="{% url "blog:post_list" %}" class="nav-link hover:text-primary-300 transition-colors duration-300 text-sm xl:text-base">Recursos</a>
                 <a href="{% url 'public:testimonials' %}" class="nav-link hover:text-primary-300 transition-colors duration-300 text-sm xl:text-base">Testimonios</a>
                 <a href="{% url 'events:event_list' %}" class="nav-link hover:text-primary-300 transition-colors duration-300 text-sm xl:text-base">Eventos</a>
-                <a href="#" class="btn-primary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300 text-sm xl:text-base px-4 xl:px-6 py-2 xl:py-3">Contacto</a>
+                <a href="{% url "public:contact" %}" class="btn-primary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300 text-sm xl:text-base px-4 xl:px-6 py-2 xl:py-3">Contacto</a>
                 
                 <!-- Authentication Links Desktop -->
                 {% if user.is_authenticated %}
@@ -102,7 +102,7 @@
                 <a href="{% url "blog:post_list" %}" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Recursos</a>
                 <a href="{% url 'public:testimonials' %}" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Testimonios</a>
                 <a href="{% url 'events:event_list' %}" class="text-gray-700 hover:text-primary-500 text-lg font-medium transition-colors duration-300">Eventos</a>
-                <a href="#" class="w-full text-center mt-6 py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg shadow-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-opacity-75 transition-colors duration-300">Contacto</a>
+                <a href="{% url "public:contact" %}" class="w-full text-center mt-6 py-2 px-4 bg-primary-500 text-white font-semibold rounded-lg shadow-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-opacity-75 transition-colors duration-300">Contacto</a>
                 
                 <!-- Authentication Links Mobile -->
                 <div class="border-t border-gray-200 pt-6 mt-6">
