@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Contacto - Fernando Da Silva - Consultor Filosófico{% endblock %}
+
+{% block description %}Contacto directo con Fernando Da Silva. Consultor filosófico en Corrientes, Argentina. Acompañamiento en crisis existenciales y búsquedas de sentido.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-background-light to-background-cream py-16 lg:py-24">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="title-hero warm-title mb-6">
+                Empecemos una conversación
+            </h1>
+            <p class="text-intro text-neutral-700 mb-8 max-w-3xl mx-auto">
+                Si algo profundo en vos está pidiendo atención, no esperés más. 
+                El primer paso hacia la transformación es una simple conversación.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Información de Contacto Principal -->
+<section class="py-16 lg:py-20 bg-background-cream">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <!-- Información de contacto -->
+                <div>
+                    <h2 class="title-section mb-8 warm-title">
+                        Formas de contacto
+                    </h2>
+                    
+                    <!-- Email -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-envelope text-primary-600 text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="title-subsection text-primary-600">Correo Electrónico</h3>
+                                <p class="text-small text-neutral-600">La forma más directa de contacto</p>
+                            </div>
+                        </div>
+                        <a href="mailto:info@fernandodasilva.me" 
+                           class="text-body text-primary-600 hover:text-primary-700 transition-colors duration-300 font-medium">
+                            info@fernandodasilva.me
+                        </a>
+                    </div>
+                    
+                    <!-- Ubicación -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm mb-6">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-secondary-100 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-map-marker-alt text-secondary-600 text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="title-subsection text-secondary-600">Ubicación</h3>
+                                <p class="text-small text-neutral-600">Desde el corazón de Argentina</p>
+                            </div>
+                        </div>
+                        <p class="text-body text-secondary-600 font-medium">
+                            Corrientes, Argentina
+                        </p>
+                        <p class="text-small text-neutral-600 mt-2">
+                            Sesiones presenciales y virtuales disponibles
+                        </p>
+                    </div>
+                    
+                    <!-- Redes Sociales -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <div class="flex items-center mb-4">
+                            <div class="w-12 h-12 bg-accent-blue/10 rounded-full flex items-center justify-center mr-4">
+                                <i class="fas fa-share-alt text-accent-blue text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="title-subsection text-accent-blue">Redes Sociales</h3>
+                                <p class="text-small text-neutral-600">Reflexiones y contenido inspirador</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-4">
+                            <a href="https://www.facebook.com/fernando.dasilva.39501" 
+                               target="_blank" rel="noopener"
+                               class="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 hover:bg-primary-200 transition-colors duration-300"
+                               aria-label="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://www.instagram.com/proffernandodasilva" 
+                               target="_blank" rel="noopener"
+                               class="w-10 h-10 bg-secondary-100 rounded-full flex items-center justify-center text-secondary-600 hover:bg-secondary-200 transition-colors duration-300"
+                               aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="https://www.youtube.com/@proffernandodasilva" 
+                               target="_blank" rel="noopener"
+                               class="w-10 h-10 bg-accent-blue/10 rounded-full flex items-center justify-center text-accent-blue hover:bg-accent-blue/20 transition-colors duration-300"
+                               aria-label="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CTA Principal - Calendly -->
+                <div class="bg-gradient-to-br from-primary-100 to-secondary-100 rounded-2xl p-8 shadow-lg">
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-primary-300 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-calendar-alt text-white text-2xl"></i>
+                        </div>
+                        <h3 class="title-main text-primary-700 mb-4">
+                            Agenda tu consulta gratuita
+                        </h3>
+                        <p class="text-body text-neutral-700 mb-6">
+                            Una conversación de 30 minutos para conocernos y explorar cómo puedo acompañarte en tu camino de transformación.
+                        </p>
+                        <div class="space-y-3 mb-6 text-small text-neutral-600">
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-check-circle text-primary-400 mr-2"></i>
+                                <span>30 minutos sin costo</span>
+                            </div>
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-check-circle text-primary-400 mr-2"></i>
+                                <span>Completamente confidencial</span>
+                            </div>
+                            <div class="flex items-center justify-center">
+                                <i class="fas fa-check-circle text-primary-400 mr-2"></i>
+                                <span>Sin compromiso</span>
+                            </div>
+                        </div>
+                        <a href="https://calendly.com/proffernandodasilva/30min" 
+                           target="_blank" rel="noopener"
+                           class="btn-primary bg-primary-300 text-white rounded-lg hover:bg-primary-400 transition-colors duration-300 inline-block font-semibold text-lg px-8 py-4 mb-4 w-full">
+                            Agendar mi consulta gratuita
+                        </a>
+                        <p class="text-small text-neutral-500">
+                            Horarios flexibles " Modalidad presencial o virtual
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Expectativas de la consulta -->
+<section class="py-16 lg:py-20 bg-background-light">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="title-section text-center mb-12 warm-title">
+                ¿Qué podés esperar de nuestra primera conversación?
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Escucha Profunda -->
+                <div class="bg-white rounded-xl p-6 text-center shadow-sm">
+                    <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-ear-listen text-primary-600 text-xl"></i>
+                    </div>
+                    <h3 class="title-subsection text-primary-600 mb-3">Escucha Profunda</h3>
+                    <p class="text-small text-neutral-600">
+                        Te voy a escuchar de verdad, más allá de las palabras, para entender lo que tu alma está necesitando.
+                    </p>
+                </div>
+                
+                <!-- Claridad -->
+                <div class="bg-white rounded-xl p-6 text-center shadow-sm">
+                    <div class="w-16 h-16 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-lightbulb text-secondary-600 text-xl"></i>
+                    </div>
+                    <h3 class="title-subsection text-secondary-600 mb-3">Claridad</h3>
+                    <p class="text-small text-neutral-600">
+                        Juntos vamos a dar forma a lo que estás sintiendo y a identificar el camino más apropiado para vos.
+                    </p>
+                </div>
+                
+                <!-- Orientación -->
+                <div class="bg-white rounded-xl p-6 text-center shadow-sm">
+                    <div class="w-16 h-16 bg-accent-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-compass text-accent-blue text-xl"></i>
+                    </div>
+                    <h3 class="title-subsection text-accent-blue mb-3">Orientación</h3>
+                    <p class="text-small text-neutral-600">
+                        Te voy a orientar sobre qué tipo de acompañamiento puede ser más útil para tu momento actual.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Preguntas frecuentes sobre el contacto -->
+<section class="py-16 lg:py-20 bg-background-cream">
+    <div class="container mx-auto px-4">
+        <div class="max-w-3xl mx-auto">
+            <h2 class="title-section text-center mb-12 warm-title">
+                Dudas frecuentes
+            </h2>
+            
+            <div class="space-y-6">
+                <!-- FAQ 1 -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-emphasis text-primary-600 mb-3">¿Realmente es gratuita la primera consulta?</h3>
+                    <p class="text-body text-neutral-700">
+                        Sí, completamente. Creo que es importante que nos conozcamos antes de iniciar cualquier proceso. No hay letra chica ni compromisos ocultos.
+                    </p>
+                </div>
+                
+                <!-- FAQ 2 -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-emphasis text-secondary-600 mb-3">¿Puedo tener la consulta de forma virtual?</h3>
+                    <p class="text-body text-neutral-700">
+                        Por supuesto. Trabajo tanto de forma presencial (en Corrientes) como virtual. La modalidad la elegís vos según tu comodidad y ubicación.
+                    </p>
+                </div>
+                
+                <!-- FAQ 3 -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-emphasis text-accent-blue mb-3">¿Qué pasa si no sé bien qué necesito?</h3>
+                    <p class="text-body text-neutral-700">
+                        Perfecto, esa es exactamente la razón de esta primera conversación. Muchas personas llegan sin claridad total, y eso está bien. Juntos vamos a explorar qué es lo que está pidiendo tu alma.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Final Potente -->
+<section class="py-16 lg:py-20 bg-gradient-to-r from-primary-300 via-secondary-300 to-primary-400 text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="title-section mb-6">
+            Tu alma ya sabe que es momento
+        </h2>
+        <p class="text-intro mb-8 max-w-2xl mx-auto opacity-90">
+            No dejes que pase más tiempo. Si llegaste hasta acá, es porque algo profundo en vos está pidiendo atención. El primer paso es el más importante.
+        </p>
+        <a href="https://calendly.com/proffernandodasilva/30min" 
+           target="_blank" rel="noopener"
+           class="btn-primary bg-white text-primary-600 rounded-lg hover:bg-neutral-100 transition-colors duration-300 inline-block font-bold text-xl px-12 py-6">
+            Elegir mi momento para la conversación
+        </a>
+        <div class="mt-8">
+            <blockquote class="quote-main opacity-90 mb-4">
+                "No estás perdido, solo estás dormido. El camino no es hacia afuera, es hacia adentro."
+            </blockquote>
+            <p class="text-small opacity-75">Fernando Da Silva</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
