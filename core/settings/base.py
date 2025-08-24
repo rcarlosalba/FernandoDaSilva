@@ -13,8 +13,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Load environment variables
 env = environ.Env()
-environ.Env.read_env(os.path.join(BASE_DIR, '.env.local'))
-# environ.Env.read_env(os.path.join(BASE_DIR, '.env.production'))
+# environ.Env.read_env(os.path.join(BASE_DIR, '.env.local'))
+environ.Env.read_env(os.path.join(BASE_DIR, '.env.production'))
 
 
 # Quick-start development settings - unsuitable for production
