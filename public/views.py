@@ -17,6 +17,10 @@ def services(request):
 
 def testimonials(request):
     return render(request, 'public/testimonials.html')
+    
+
+def books(request):
+    return render(request, 'public/books_publications.html')
 
 
 def contact(request):
