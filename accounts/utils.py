@@ -44,6 +44,11 @@ def send_email_notification(email_type, recipient_email, context=None, request=N
             'subject': 'Recuperación de contraseña - Fernando Da Silva',
             'template': 'accounts/emails/password_reset.html',
             'requires_signed_url': True,
+        },
+        'book_download': {
+            'subject': '¡Tu Capítulo 1 está listo! - Camino, Verdad y Vida',
+            'template': 'public/emails/book_download.html',
+            'requires_signed_url': True,
         }
     }
 
@@ -59,7 +64,7 @@ def send_email_notification(email_type, recipient_email, context=None, request=N
         else:
             # Use regular Signer for other types
             signer = Signer()
-        
+
         signed_user_id = signer.sign(context['user_id'])
 
         if email_type == 'welcome_subscriber':
@@ -67,6 +72,9 @@ def send_email_notification(email_type, recipient_email, context=None, request=N
                                kwargs={'signed_user_id': signed_user_id})
         elif email_type == 'password_reset':
             url_path = reverse('accounts:password_reset_confirm',
+                               kwargs={'signed_user_id': signed_user_id})
+        elif email_type == 'book_download':
+            url_path = reverse('accounts:complete_profile',
                                kwargs={'signed_user_id': signed_user_id})
 
         context['action_url'] = request.build_absolute_uri(url_path)
@@ -137,6 +145,19 @@ def send_password_reset_email(recipient_email, user_id, request):
     """
     return send_email_notification(
         email_type='password_reset',
+        recipient_email=recipient_email,
+        context={'user_id': user_id},
+        request=request
+    )
+
+
+def send_book_download_email(recipient_email, user_id, request):
+    """
+    Convenience function for sending book download email.
+    Sends email with download confirmation and profile completion link.
+    """
+    return send_email_notification(
+        email_type='book_download',
         recipient_email=recipient_email,
         context={'user_id': user_id},
         request=request
