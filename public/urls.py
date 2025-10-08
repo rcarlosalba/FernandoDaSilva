@@ -8,6 +8,7 @@ urlpatterns = [
     path('acerca-de/', views.about, name='about'),
     path('servicios/', views.services, name='services'),
     path('testimonios/', views.testimonials, name='testimonials'),
-    path('libros/', views.books, name='books'),
+    path('libros/', views.BookLandingView.as_view(), name='books'),
+    path('download-chapter/', views.download_chapter, name='download_chapter'),
     path('contacto/', views.contact, name='contact'),
 ]
